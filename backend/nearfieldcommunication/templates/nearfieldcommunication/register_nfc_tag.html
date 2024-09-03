@@ -1,0 +1,37 @@
+{% extends "index.html" %}
+{% load static %}
+
+{% block title %}Register NFC Tag{% endblock title %}
+
+{% block body %}
+  <a href="/" class="brand-center w-nav-brand">
+    <img src="{% static 'base/images/logos/logo.svg' %}" alt="Digidex Logo" class="logo">
+  </a>
+  {% if messages %}
+    <section class="section-top-bar">
+      <div class="top-bar-block">
+        <div class="top-bar">
+          {% for message in messages %}
+            <div class="info-top-bar">{{ message }}</div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+  {% endif %}
+  <section class="section-full">
+    <div class="content">
+      <div class="account-form">
+        {% block content %}
+          <h3 class="account-heading">Register NFC Tag</h3>
+          <form method="post" class="form">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <input type="submit" value="Confirm" class="submit-button w-button"> 
+          </form> 
+        {% endblock %}
+      </div>
+    </div>
+  </section>
+{% endblock body %}
+
+{% block extra_body %}{% endblock extra_body %}

@@ -1,0 +1,14 @@
+{% load wagtailcore_tags %}
+
+<footer role="contentinfo">
+  <section class="section-footer">
+    <div class="content">
+      <div class="block-footer">
+        {{ footer_body|richtext }}
+      </div>
+      <div class="block-footer-down">
+        <div class="text-footer-down">{{ footer_copyright }} Built with <a href="https://wagtail.org/" target="_blank" class="link-footer-down">Wagtail</a><br></div>
+      </div>
+    </div>
+  </section>
+</footer>

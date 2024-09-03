@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://digidex.tech/nfc.schema.json",
+  "title": "Near Field Communication",
+  "description": "An NFC-Tag used for mapping a physical-object to an external system like a CMS.",
+  "type": "object",
+  "properties": {
+    "NfcTagType": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "description": {
+          "type": ["string", "null"]
+        },
+        "integrated_circuit": {
+          "type": "string",
+          "enum": ["213", "215", "216"],
+          "default": "213"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "last_modified": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["name", "integrated_circuit", "created_at", "last_modified"]
+    },
+    "NfcTag": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "serial_number": {
+          "type": "string",
+          "maxLength": 32
+        },
+        "nfc_tag_type": {
+          "type": "string",
+          "description": "Foreign key reference to NfcTagType"
+        },
+        "user": {
+          "type": ["string", "null"],
+          "description": "Foreign key reference to User"
+        },
+        "url": {
+          "type": ["string", "null"],
+          "format": "uri"
+        },
+        "content": {
+          "type": ["object", "null"],
+          "description": "JSON field for storing arbitrary structured data"
+        },
+        "active": {
+          "type": "boolean",
+          "default": true
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "last_modified": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["uuid", "serial_number", "created_at", "last_modified"]
+    },
+    "NfcTagScan": {
+      "type": "object",
+      "properties": {
+        "nfc_tag": {
+          "type": "string",
+          "description": "Foreign key reference to NfcTag"
+        },
+        "counter": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "scanned_by": {
+          "type": ["string", "null"],
+          "description": "Foreign key reference to User"
+        },
+        "scanned_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["nfc_tag", "counter", "scanned_at"]
+    }
+  }
+}
+  

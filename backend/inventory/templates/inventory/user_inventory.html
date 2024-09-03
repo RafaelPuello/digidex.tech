@@ -1,0 +1,33 @@
+{% extends "inventory/base.html" %}
+{% load static wagtailimages_tags %}
+
+{% block content %}
+    <section class="section">
+        <div class="content">
+            <div class="collection-list-wrapper-posts w-dyn-list">
+                <div role="list" class="collection-list-posts w-dyn-items">
+                    {% for entity in entities %}
+                    <div role="listitem" class="w-dyn-item">
+                        <div class="block-post" data-id="{{ entity.uuid }}" data-name="{{ entity.title }}"
+                            data-description="{{ entity.description }}">
+                            <img src="{{ entity.image.thumbnail }}" loading="lazy" decoding="async"
+                                alt="Asset Thumbnail Placeholder" class="image-post-thumbnail">
+                            <div class="post">
+                                <h4 class="heading-post">{{ entity.title }}</h4>
+                                <p class="paragraph-post">{{ entity.description }}</p>
+                                <div class="block-button">
+                                    <a href="{{ entity.url }}" class="button-small w-button">View</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="empty-state w-dyn-empty">
+                        <div class="text-empty">No entities found.</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock content %}
