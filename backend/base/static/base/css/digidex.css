@@ -728,6 +728,7 @@ figcaption {
   grid-column-gap: .87em;
   grid-row-gap: .87em;
   grid-template-rows: auto;
+  grid-template-columns: 1fr 1fr 1fr;
   align-items: start;
 }
 
@@ -743,8 +744,12 @@ figcaption {
   display: flex;
 }
 
-.numbers.green {
+.numbers.blue {
   background-color: var(--accent-b3);
+}
+
+.numbers.red {
+  background-color: var(--accent-b2);
 }
 
 .icon-numbers {
@@ -761,6 +766,10 @@ figcaption {
   color: var(--accent-a3);
 }
 
+.heading-numbers.red {
+  color: var(--accent-a2);
+}
+
 .text-numbers {
   max-width: 11em;
   color: var(--accent-a1);
@@ -770,8 +779,12 @@ figcaption {
   line-height: 130%;
 }
 
-.text-numbers.green {
+.text-numbers.blue {
   color: var(--accent-a3);
+}
+
+.text-numbers.red {
+  color: var(--accent-a2);
 }
 
 .lottie {
