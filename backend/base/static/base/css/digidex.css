@@ -744,12 +744,12 @@ figcaption {
   display: flex;
 }
 
-.numbers.blue {
-  background-color: var(--accent-b3);
-}
-
 .numbers.red {
   background-color: var(--accent-b2);
+}
+
+.numbers.blue {
+  background-color: var(--accent-b3);
 }
 
 .icon-numbers {
@@ -762,12 +762,12 @@ figcaption {
   font-weight: 500;
 }
 
-.heading-numbers.green {
-  color: var(--accent-a3);
-}
-
 .heading-numbers.red {
   color: var(--accent-a2);
+}
+
+.heading-numbers.blue {
+  color: var(--accent-a3);
 }
 
 .text-numbers {
@@ -779,12 +779,12 @@ figcaption {
   line-height: 130%;
 }
 
-.text-numbers.blue {
-  color: var(--accent-a3);
-}
-
 .text-numbers.red {
   color: var(--accent-a2);
+}
+
+.text-numbers.blue {
+  color: var(--accent-a3);
 }
 
 .lottie {
