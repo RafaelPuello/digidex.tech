@@ -1,19 +1,20 @@
-from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import status, viewsets, permissions
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.utils.translation import gettext as _
-from wagtail.api.v2.views import BaseAPIViewSet
 
 from .models import UserAssistant
 from .serializers import UserAssistantSerializer
 
 
-class UserAssistantDetail(BaseAPIViewSet):
+class UserAssistantDetail(viewsets.ReadOnlyModelViewSet):
     serializer_class = UserAssistantSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [JWTAuthentication]
+
+    def get_queryset(self):
+        return UserAssistant.objects.filter(user=self.request.user)
 
     @action(detail=True, methods=['get'])
     def chat(self, request):
