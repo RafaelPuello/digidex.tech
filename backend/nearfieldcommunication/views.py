@@ -7,7 +7,6 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.decorators import login_required
 
 from .models import NfcTag
-from .serializers import NfcTagSerializer
 
 def link(request):
     """

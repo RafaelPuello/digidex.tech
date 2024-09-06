@@ -1,9 +1,9 @@
 import pytest
 from wagtail.models import Page
+from django.contrib.auth import get_user_model
 from selenium import webdriver
 
 from inventory.models import InventoryIndex
-from accounts.models import DigiDexUser
 
 
 @pytest.fixture(scope="class")
@@ -22,7 +22,8 @@ def home_page():
     root_page.add_child(instance=home_page)
     return home_page
 
+User = get_user_model()
 
 @pytest.fixture
-def new_user(db):
-    return DigiDexUser.objects.create_user(username='testuser', password='testpass123')
+def user(db):
+    return User.objects.create_user(username='testuser', password='testpass123')
