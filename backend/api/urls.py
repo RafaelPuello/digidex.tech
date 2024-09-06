@@ -7,5 +7,5 @@ app_name = 'api'
 urlpatterns = [
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('v2/', api_router.urls),
+    path('v1/', api_router.urls),
 ]
