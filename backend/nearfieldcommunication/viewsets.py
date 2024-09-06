@@ -35,7 +35,7 @@ class NfcTagViewSet(viewsets.ModelViewSet):
     """
     A viewset for viewing and editing NFC tags.
     """
-
+    queryset = NfcTag.objects.all()
     serializer_class = NfcTagSerializer
     permission_classes = [permissions.IsAdminUser]
     authentication_classes = [JWTAuthentication]

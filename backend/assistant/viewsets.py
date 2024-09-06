@@ -9,6 +9,7 @@ from .serializers import UserAssistantSerializer
 
 
 class UserAssistantDetail(viewsets.ReadOnlyModelViewSet):
+    queryset = UserAssistant.objects.all()
     serializer_class = UserAssistantSerializer
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [JWTAuthentication]
