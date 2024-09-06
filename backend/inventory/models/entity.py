@@ -1,6 +1,7 @@
 from datetime import datetime
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from modelcluster.models import ClusterableModel
 from modelcluster.fields import ParentalKey
 from wagtail.api import APIField
 from wagtail.images import get_image_model
