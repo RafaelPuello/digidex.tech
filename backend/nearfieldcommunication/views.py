@@ -50,16 +50,11 @@ def protected_link(request, ntag):
         messages.error(request, _('Tag registered by another user.'))
         return redirect('/')
 
-    # If the tag is not owned, ask the user if they want to register it
+    # If the tag is not owned, assign it to the current user
     if not ntag_user:
-        if request.method == "POST":
-            ntag.user = request.user
-            ntag.save()
-            messages.success(request, _('NFC tag registered successfully.'))
-        else:
-            # Show confirmation page
-            template = loader.get_template('nearfieldcommunication/register_nfc_tag.html')
-            context = {'nfc_tag': ntag}
-            return HttpResponse(template.render(context, request))
+        ntag.user = request.user
+        ntag.save()
+        messages.success(request, _('NFC tag registered successfully.'))
+
     user_inv_page = request.user.get_inventory_page()
     return redirect(user_inv_page.url)
