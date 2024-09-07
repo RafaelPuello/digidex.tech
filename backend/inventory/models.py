@@ -63,7 +63,7 @@ class UserInventory(Page):
         return user_inventory_page
 
     def create_collection(self, title=None):
-        parent_collection = self.get_parent().specific.collection if self.get_parent().specific else None
+        parent_collection = Collection.get_first_root_node().get_chidren().first()
         if not parent_collection:
             return None
         if not title:

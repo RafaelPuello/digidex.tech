@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     "search",
     "nearfieldcommunication",
     "inventory",
+    "biodiversity",
     "assistant",
     "api",
 
