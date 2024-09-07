@@ -1,7 +1,6 @@
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel
-from wagtail.fields import StreamField
 from wagtail.contrib.routable_page.models import RoutablePageMixin
 
 from .base import AbstractInventory
@@ -28,26 +27,17 @@ class UserInventory(AbstractInventory):
 
     parent_page_types = ['inventory.InventoryIndex']
 
-    subpage_types = ['inventory.Entity']
+    subpage_types = []
 
     template = 'inventory/user_inventory.html'
 
     def get_context(self, request):
         context = super().get_context(request)
-        from ..serializers import InventoryEntitySerializer
-        entities = self.get_entities()
-        entities = InventoryEntitySerializer(entities, many=True).data
-        context.update({'entities': entities})
+        context.update({'key': 'value'})
         return context
 
-    def get_entities(self):
-        return self.get_children().live().specific()
-
     def generate_prompt(self):
-        entities = self.get_entities()
         prompt = f"The user's username is {self.owner.username}:\n"
-        if entities:
-            prompt += f"In their inventory they have {len(entities)} plants and/or pets.\n"        
         if not self.description:
             return prompt
         return f"{prompt}. The user's inventory description is: {self.description}"
