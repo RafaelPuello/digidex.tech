@@ -41,7 +41,13 @@ class UserInventory(Page):
 
     content_panels = Page.content_panels + [
         FieldPanel('description'),
-        InlinePanel('plants', label=_('Plants')),
+        InlinePanel(
+            'plants',
+            panels=[
+                FieldPanel('name'),
+                FieldPanel('description'),
+            ],
+            label=_('Plants')),
     ]
 
     template = 'inventory/user_inventory.html'
