@@ -20,6 +20,5 @@ class Plant(models.Model):
         return self.name
 
     class Meta:
-        abstract = True
         verbose_name = _('plant')
         verbose_name_plural = _('plants')

@@ -41,13 +41,6 @@ class UserInventory(Page):
 
     content_panels = Page.content_panels + [
         FieldPanel('description'),
-        InlinePanel(
-            'plants',
-            panels=[
-                FieldPanel('name'),
-                FieldPanel('description'),
-            ],
-            label=_('Plants')),
     ]
 
     template = 'inventory/user_inventory.html'
@@ -89,6 +82,10 @@ class UserInventory(Page):
             self.collection = self.create_collection()
         super().save(*args, **kwargs)
 
+    def delete(self, *args, **kwargs):
+        self.collection.delete()
+        super().delete(*args, **kwargs)
+
     def __str__(self):
         return self.title
 
@@ -97,33 +94,4 @@ class UserInventory(Page):
         verbose_name_plural = _("user inventories")
         indexes = [
             models.Index(fields=['uuid']),
-        ]
-
-
-class InventoryPlant(Plant):
-    uuid = models.UUIDField(
-        default=uuid4,
-        editable=False,
-        unique=True,
-        db_index=True
-    )
-    slug = models.SlugField(
-        editable=False,
-        max_length=250
-    )
-    user_inventory = ParentalKey(
-        UserInventory,
-        on_delete=models.CASCADE,
-        related_name='plants'
-    )
-    nfc_tag = models.OneToOneField(
-        NfcTag,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name='plant',
-    )
-
-    class Meta:
-        indexes = [
-            models.Index(fields=['uuid', 'slug']),
         ]
