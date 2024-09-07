@@ -67,8 +67,6 @@ class NfcTag(models.Model):
         serial_number (str): The serial number of the NFC tag.
         nfc_tag_type (NfcTagType): The type of NFC tag.
         user (User): The user who owns the NFC tag.
-        url (URLField): An optional URL associated with the NFC tag.
-        content (JSONField): Optional JSON content associated with the NFC tag.
         active (bool): Indicates whether the NFC tag is active.
         created_at (datetime): The date and time when the NFC tag was created.
         last_modified (datetime): The date and time when the NFC tag was last modified.
@@ -100,14 +98,6 @@ class NfcTag(models.Model):
         blank=True,
         null=True,
         related_name='nfc_tags'
-    )
-    url = models.URLField(
-        blank=True,
-        null=True
-    )
-    content = models.JSONField(
-        blank=True,
-        null=True
     )
     active = models.BooleanField(
         default=True

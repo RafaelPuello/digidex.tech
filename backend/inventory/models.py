@@ -116,9 +116,6 @@ class InventoryPlant(Plant):
         null=True,
         related_name='plant',
     )
-    quantity = models.PositiveIntegerField(
-        default=1
-    )
 
     class Meta:
         indexes = [
