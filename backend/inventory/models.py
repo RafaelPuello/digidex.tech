@@ -1,14 +1,13 @@
 from uuid import uuid4
 from django.db import models
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
-from wagtail.api import APIField
-from wagtail.fields import RichTextField
 from wagtail.search import index
 from wagtail.models import Page, Collection
 from wagtail.admin.panels import FieldPanel
 
 
-class AbstractInventory(Page):
+class UserInventory(Page):
     uuid = models.UUIDField(
         default=uuid4,
         editable=False,
@@ -25,9 +24,12 @@ class AbstractInventory(Page):
         blank=True,
         max_length=250
     )
-    body = RichTextField(
-        blank=True
-    )
+
+    parent_page_types = [
+        'home.HomePage'
+    ]
+
+    subpage_types = []
 
     search_fields = Page.search_fields + [
         index.SearchField('description')
@@ -35,29 +37,30 @@ class AbstractInventory(Page):
 
     content_panels = Page.content_panels + [
         FieldPanel('description'),
-        FieldPanel('body'),
     ]
 
-    api_fields = [
-        APIField('title'),
-        APIField('uuid'),
-        APIField('description'),
-        APIField('body'),
-        APIField('url'),
-    ]
+    template = 'inventory/user_inventory.html'
 
-    def get_context(self, request):
-        context = super().get_context(request)
-        details = {
-            'uuid': self.uuid,
-            'name': self.title,
-            'description': self.description,
-            'body': self.body,
-            'url': self.url,
-        }
+    def generate_prompt(self):
+        prompt = f"The user's username is {self.owner.username}:\n"
+        if not self.description:
+            return prompt
+        return f"{prompt}. The user's inventory description is: {self.description}"
 
-        context.update(details)
-        return context
+    @classmethod
+    def create_for_user(cls, user, parent=None):
+        if not parent:
+            from home.models import HomePage
+            parent = HomePage.objects.first()
+        user_inventory_page = cls(
+            title=user.username.title(),
+            owner=user,
+            slug=slugify(user.username),
+        )
+
+        parent.add_child(instance=user_inventory_page)
+        user_inventory_page.save_revision().publish()
+        return user_inventory_page
 
     def create_collection(self, title=None):
         parent_collection = self.get_parent().specific.collection if self.get_parent().specific else None
@@ -79,7 +82,8 @@ class AbstractInventory(Page):
         return self.title
 
     class Meta:
-        abstract = True
+        verbose_name = _("user inventory")
+        verbose_name_plural = _("user inventories")
         indexes = [
             models.Index(fields=['uuid']),
         ]

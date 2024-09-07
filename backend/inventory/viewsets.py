@@ -12,5 +12,5 @@ class UserInventoryAPIViewSet(PagesAPIViewSet):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
     lookup_field = 'uuid'
-    body_fields = ['uuid', 'slug', 'title', 'description', 'body', 'url']
+    body_fields = ['uuid', 'slug', 'title', 'description', 'url']
     meta_fields = ['uuid']

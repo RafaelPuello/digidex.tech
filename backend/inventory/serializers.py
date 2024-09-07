@@ -7,4 +7,4 @@ class UserInventorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserInventory
-        fields = ['uuid', 'slug', 'title', 'description', 'body', 'url']
+        fields = ['uuid', 'slug', 'title', 'description', 'url']
