@@ -1,13 +1,8 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from modelcluster.fields import ParentalKey
 
 
-class InventoryPlant(models.Model):
-    inventory = ParentalKey(
-        'inventory.UserInventory',
-        related_name='plants'
-    )
+class Plant(models.Model):
     name = models.CharField(
         max_length=255
     )
@@ -25,5 +20,6 @@ class InventoryPlant(models.Model):
         return self.name
 
     class Meta:
+        abstract = True
         verbose_name = _('plant')
         verbose_name_plural = _('plants')

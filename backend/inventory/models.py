@@ -2,9 +2,13 @@ from uuid import uuid4
 from django.db import models
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+from modelcluster.fields import ParentalKey
 from wagtail.search import index
 from wagtail.models import Page, Collection
-from wagtail.admin.panels import FieldPanel
+from wagtail.admin.panels import FieldPanel, InlinePanel
+
+from nearfieldcommunication.models import NfcTag
+from biodiversity.models import Plant
 
 
 class UserInventory(Page):
@@ -37,6 +41,7 @@ class UserInventory(Page):
 
     content_panels = Page.content_panels + [
         FieldPanel('description'),
+        InlinePanel('plants', label=_('Plants')),
     ]
 
     template = 'inventory/user_inventory.html'
@@ -86,4 +91,36 @@ class UserInventory(Page):
         verbose_name_plural = _("user inventories")
         indexes = [
             models.Index(fields=['uuid']),
+        ]
+
+
+class InventoryPlant(Plant):
+    uuid = models.UUIDField(
+        default=uuid4,
+        editable=False,
+        unique=True,
+        db_index=True
+    )
+    slug = models.SlugField(
+        editable=False,
+        max_length=250
+    )
+    user_inventory = ParentalKey(
+        UserInventory,
+        on_delete=models.CASCADE,
+        related_name='plants'
+    )
+    nfc_tag = models.OneToOneField(
+        NfcTag,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='plant',
+    )
+    quantity = models.PositiveIntegerField(
+        default=1
+    )
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['uuid', 'slug']),
         ]
