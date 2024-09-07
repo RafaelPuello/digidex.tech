@@ -1,10 +1,10 @@
 from rest_framework import serializers
 
-from .models import UserInventory
+from .models import TrainerInventory
 
 
-class UserInventorySerializer(serializers.ModelSerializer):
+class TrainerInventorySerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = UserInventory
-        fields = ['uuid', 'slug', 'title', 'description', 'url']
+        model = TrainerInventory
+        fields = ['uuid', 'trainer', 'description']

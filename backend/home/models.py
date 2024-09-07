@@ -16,7 +16,7 @@ class HomePage(RoutablePageMixin, Page):
 
     parent_page_types = ['wagtailcore.Page']
 
-    child_page_types = ['inventory.InventoryUserPage']
+    child_page_types = []
 
     def __str__(self):
         return self.title
