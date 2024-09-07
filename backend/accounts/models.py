@@ -2,13 +2,12 @@ import uuid
 
 from django.db import models, transaction
 from django.utils.translation import gettext_lazy as _
-from django.utils.text import slugify
 from django.contrib.auth.models import AbstractUser, Group, Permission
 
 from wagtail.models import Page, GroupPagePermission, GroupCollectionPermission
 
 
-class DigiDexUser(AbstractUser):
+class Trainer(AbstractUser):
 
     uuid = models.UUIDField(
         default=uuid.uuid4,

@@ -276,7 +276,7 @@ HEADLESS_FRONTEND_URLS = {
 # HEADLESS_ONLY = True
 
 # allauth settings
-AUTH_USER_MODEL = 'accounts.DigiDexUser'
+AUTH_USER_MODEL = 'accounts.Trainer'
 
 ACCOUNT_ADAPTER = 'accounts.adapter.DigidexAccountAdapter'
 
