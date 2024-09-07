@@ -63,7 +63,6 @@ class DigiDexUser(AbstractUser):
             'access_admin',
         ]
         SNIPPET_PERMISSIONS = [
-            "add_entitygalleryimage", "change_entitygalleryimage", "delete_entitygalleryimage",
             "view_nfctagscan", "view_nfctagtype"
         ]
         user_group, created = Group.objects.get_or_create(name=f"user_{self.username}")
