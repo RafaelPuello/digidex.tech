@@ -4,18 +4,18 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.utils.translation import gettext as _
 
-from .models import UserAssistant
-from .serializers import UserAssistantSerializer
+from .models import TrainerAssistant
+from .serializers import TrainerAssistantSerializer
 
 
-class UserAssistantDetail(viewsets.ReadOnlyModelViewSet):
-    queryset = UserAssistant.objects.all()
-    serializer_class = UserAssistantSerializer
+class TrainerAssistantDetail(viewsets.ReadOnlyModelViewSet):
+    queryset = TrainerAssistant.objects.all()
+    serializer_class = TrainerAssistantSerializer
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [JWTAuthentication]
 
     def get_queryset(self):
-        return UserAssistant.objects.filter(user=self.request.user)
+        return TrainerAssistant.objects.filter(trainer=self.request.user)
 
     @action(detail=True, methods=['get'])
     def chat(self, request):

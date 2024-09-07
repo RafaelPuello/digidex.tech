@@ -4,12 +4,12 @@ from django.utils.translation import gettext_lazy as _
 
 from .utils import generate_chat
 
-User = get_user_model()
+Trainer = get_user_model()
 
 
-class UserAssistant(models.Model):
-    user = models.OneToOneField(
-        User,
+class TrainerAssistant(models.Model):
+    trainer = models.OneToOneField(
+        Trainer,
         on_delete=models.CASCADE,
         related_name='assistant'
     )
@@ -20,8 +20,8 @@ class UserAssistant(models.Model):
         return generate_chat(question)
 
     def __str__(self):
-        return f"{self.user.username}'s Assistant"
+        return f"{self.trainer.username}'s Assistant"
 
     class Meta:
-        verbose_name = _('User Chat Bot')
-        verbose_name_plural = _('User Chat Bots')
+        verbose_name = _('Trainer Chat Bot')
+        verbose_name_plural = _('Trainer Chat Bots')
