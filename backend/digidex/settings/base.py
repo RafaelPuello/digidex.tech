@@ -278,7 +278,7 @@ HEADLESS_FRONTEND_URLS = {
 # allauth settings
 AUTH_USER_MODEL = 'trainers.Trainer'
 
-ACCOUNT_ADAPTER = 'trainers.adapter.DigidexAccountAdapter'
+ACCOUNT_ADAPTER = 'trainers.adapter.TrainerAccountAdapter'
 
 ACCOUNT_PRESERVE_USERNAME_CASING = False
 
