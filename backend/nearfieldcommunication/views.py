@@ -1,8 +1,5 @@
 from django.contrib import messages
-from django.http import HttpResponse
 from django.shortcuts import redirect, get_object_or_404
-from django.template import loader
-from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.decorators import login_required
 
@@ -27,15 +24,14 @@ def link(request):
         return redirect('/')
 
     ntag = get_object_or_404(
-        NfcTag.objects.select_related('user', 'plant'),
+        NfcTag.objects.select_related('user', 'link'),
         serial_number=serial_number
     )
-    # Not needed
-    # ntag.log_scan(request.user, scan_counter)
+    ntag.log_scan(request.user, scan_counter)
 
     # Need better handling
-    if hasattr(ntag, 'plant'):
-        return redirect(ntag.plant.url)
+    if hasattr(ntag, 'link'):
+        return redirect(ntag.link.url)
     return protected_link(request, ntag)
 
 @login_required

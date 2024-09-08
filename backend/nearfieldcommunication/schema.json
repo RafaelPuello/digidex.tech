@@ -15,11 +15,6 @@
         "description": {
           "type": ["string", "null"]
         },
-        "integrated_circuit": {
-          "type": "string",
-          "enum": ["213", "215", "216"],
-          "default": "213"
-        },
         "created_at": {
           "type": "string",
           "format": "date-time"
@@ -29,7 +24,7 @@
           "format": "date-time"
         }
       },
-      "required": ["name", "integrated_circuit", "created_at", "last_modified"]
+      "required": ["name", "created_at", "last_modified"]
     },
     "NfcTag": {
       "type": "object",
@@ -42,6 +37,11 @@
           "type": "string",
           "maxLength": 32
         },
+        "integrated_circuit": {
+          "type": "string",
+          "enum": ["213", "215", "216"],
+          "default": "213"
+        },
         "nfc_tag_type": {
           "type": "string",
           "description": "Foreign key reference to NfcTagType"
@@ -49,18 +49,6 @@
         "user": {
           "type": ["string", "null"],
           "description": "Foreign key reference to User"
-        },
-        "content_type": {
-          "type": ["string", "null"],
-          "description": "The content type of the linked object."
-        },
-        "object_id": {
-          "type": ["string", "null"],
-          "description": "The ID of the linked object."
-        },
-        "linked_object": {
-          "type": ["string", "null"],
-          "description": "The linked object."
         },
         "active": {
           "type": "boolean",
@@ -75,7 +63,7 @@
           "format": "date-time"
         }
       },
-      "required": ["uuid", "serial_number", "created_at", "last_modified"]
+      "required": ["uuid", "serial_number", "integrated_circuit", "created_at", "last_modified"]
     },
     "NfcTagScan": {
       "type": "object",

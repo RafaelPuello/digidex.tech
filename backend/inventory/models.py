@@ -1,10 +1,9 @@
 from uuid import uuid4
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from modelcluster.models import ClusterableModel
 
 
-class TrainerInventory(ClusterableModel):
+class TrainerInventory(models.Model):
     uuid = models.UUIDField(
         default=uuid4,
         editable=False,
@@ -39,3 +38,35 @@ class TrainerInventory(ClusterableModel):
         indexes = [
             models.Index(fields=['uuid']),
         ]
+
+
+class InventoryPlant(models.Model):
+    inventory = models.ForeignKey(
+        TrainerInventory,
+        on_delete=models.CASCADE,
+        related_name='plants'
+    )
+    plant = models.OneToOneField(
+        'biodiversity.Plant',
+        on_delete=models.CASCADE,
+        related_name='inventory'
+    )
+    nfc_tag = models.OneToOneField(
+        'nearfieldcommunication.NfcTag',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='link'
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+    last_updated = models.DateTimeField(
+        auto_now=True
+    )
+
+    def __str__(self):
+        return f"Plant: {self.plant.name} -> {self.inventory.name}"
+
+    class Meta:
+        unique_together = ('inventory', 'plant', 'nfc_tag')

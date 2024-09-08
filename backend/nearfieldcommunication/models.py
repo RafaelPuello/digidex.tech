@@ -1,8 +1,6 @@
 import uuid
 from django.db import models
 from django.conf import settings
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
 
@@ -16,29 +14,15 @@ class NfcTagType(models.Model):
     Attributes:
         name (str): The name of the NFC tag type.
         description (str): A description of the NFC tag type.
-        integrated_circuit (str): The type of integrated circuit used in the NFC tag.
         created_at (datetime): The date and time when the tag type was created.
         last_modified (datetime): The date and time when the tag type was last modified.
     """
-    NTAG213 = "213"
-    NTAG215 = "215"
-    NTAG216 = "216"
-    IC_CHOICES = (
-        (NTAG213, _("NTAG 213")),
-        (NTAG215, _("NTAG 215")),
-        (NTAG216, _("NTAG 216")),
-    )
     name = models.CharField(
         max_length=255,
         unique=True
     )
     description = models.TextField(
         null=True
-    )
-    integrated_circuit = models.CharField(
-        max_length=5,
-        choices=IC_CHOICES,
-        default=NTAG213,
     )
     created_at = models.DateTimeField(
         auto_now_add=True
@@ -65,15 +49,21 @@ class NfcTag(models.Model):
     Attributes:
         uuid (UUID): A unique identifier for the NFC tag.
         serial_number (str): The serial number of the NFC tag.
+        integrated_circuit (str): The type of integrated circuit used in the NFC tag.
         nfc_tag_type (NfcTagType): The type of NFC tag.
-        user (Trainer): The user using the NFC tag.
-        content_type (ContentType): The content type of the linked object.
-        object_id (int): The ID of the linked object.
-        linked_object (GenericForeignKey): The linked object.
+        user (User): The user using the NFC tag.
         active (bool): Indicates whether the NFC tag is active.
         created_at (datetime): The date and time when the NFC tag was created.
         last_modified (datetime): The date and time when the NFC tag was last modified.
     """
+    NTAG213 = "213"
+    NTAG215 = "215"
+    NTAG216 = "216"
+    IC_CHOICES = (
+        (NTAG213, _("NTAG 213")),
+        (NTAG215, _("NTAG 215")),
+        (NTAG216, _("NTAG 216")),
+    )
 
     uuid = models.UUIDField(
         default=uuid.uuid4,
@@ -86,6 +76,11 @@ class NfcTag(models.Model):
         unique=True,
         db_index=True,
         validators=[validate_serial_number]
+    )
+    integrated_circuit = models.CharField(
+        max_length=5,
+        choices=IC_CHOICES,
+        default=NTAG213,
     )
     nfc_tag_type = models.ForeignKey(
         NfcTagType,
@@ -100,17 +95,6 @@ class NfcTag(models.Model):
         blank=True,
         null=True,
         related_name='nfc_tags'
-    )
-    content_type = models.ForeignKey(
-        ContentType,
-        on_delete=models.CASCADE
-    )
-    object_id = models.PositiveIntegerField(
-        db_index=True
-    )
-    linked_object = GenericForeignKey(
-        'content_type',
-        'object_id'
     )
     active = models.BooleanField(
         default=True

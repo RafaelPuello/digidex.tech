@@ -1,9 +1,9 @@
 from rest_framework import serializers
 
-from .models import TrainerAssistant
+from .models import UserAssistant
 
 
-class TrainerAssistantSerializer(serializers.ModelSerializer):
+class UserAssistantSerializer(serializers.ModelSerializer):
     class Meta:
-        model = TrainerAssistant
-        fields = ['trainer']
+        model = UserAssistant
+        fields = ['user']

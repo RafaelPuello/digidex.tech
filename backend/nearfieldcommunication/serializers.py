@@ -7,7 +7,7 @@ class NfcTagSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = NfcTag
-        fields = ['uuid', 'serial_number', 'nfc_tag_type', 'active', 'user']
+        fields = ['uuid', 'serial_number', 'integrated_circuit', 'nfc_tag_type', 'active', 'user']
 
     def create(self, validated_data):
         """
@@ -19,11 +19,9 @@ class NfcTagSerializer(serializers.ModelSerializer):
         """
         Update and return an existing `NfcTag` instance, given the validated data.
         """
+        instance.integrated_circuit = validated_data.get('integrated_circuit', instance.integrated_circuit)
         instance.nfc_tag_type = validated_data.get('nfc_tag_type', instance.nfc_tag_type)
         instance.user = validated_data.get('user', instance.user)
-        # instance.plant = validated_data.get('plant', instance.plant)
-        # instance.plant = validated_data.get('plant', instance.plant)
-        # instance.plant = validated_data.get('plant', instance.plant)
         instance.active = validated_data.get('active', instance.active)
         instance.save()
         return instance
@@ -33,7 +31,7 @@ class NfcTagTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = NfcTagType
-        fields = ['name', 'description', 'integrated_circuit']
+        fields = ['name', 'description']
 
     def create(self, validated_data):
         """
@@ -47,7 +45,6 @@ class NfcTagTypeSerializer(serializers.ModelSerializer):
         """
         instance.name = validated_data.get('name', instance.name)
         instance.description = validated_data.get('description', instance.description)
-        instance.integrated_circuit = validated_data.get('integrated_circuit', instance.integrated_circuit)
         instance.save()
         return instance
 
