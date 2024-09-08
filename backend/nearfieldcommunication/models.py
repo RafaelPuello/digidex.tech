@@ -92,12 +92,19 @@ class NfcTag(models.Model):
         null=True,
         related_name='tags'
     )
-    user = models.ForeignKey(
+    trainer = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
         related_name='nfc_tags'
+    )
+    plant = models.OneToOneField(
+        'biodiversity.Plant',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='nfc_tag'
     )
     active = models.BooleanField(
         default=True

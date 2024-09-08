@@ -31,10 +31,10 @@ INSTALLED_APPS = [
     "accounts",
     "home",
     "search",
-    "nearfieldcommunication",
-    "biodiversity",
-    "inventory",
     "assistant",
+    "inventory",
+    "biodiversity",
+    "nearfieldcommunication",
     "api",
 
     "wagtail.contrib.settings",

@@ -11,14 +11,17 @@ class TrainerInventory(ClusterableModel):
         unique=True,
         db_index=True
     )
-    trainer = models.OneToOneField(
+    trainer = models.ForeignKey(
         'accounts.Trainer',
         on_delete=models.CASCADE,
-        related_name='inventory'
+        related_name='inventories'
+    )
+    name = models.CharField(
+        max_length=25
     )
     description = models.CharField(
         blank=True,
-        max_length=250
+        max_length=255
     )
 
     def generate_prompt(self):

@@ -27,15 +27,15 @@ def link(request):
         return redirect('/')
 
     ntag = get_object_or_404(
-        NfcTag.objects.select_related('user', 'linked_entity'),
+        NfcTag.objects.select_related('user', 'plant'),
         serial_number=serial_number
     )
     # Not needed
     # ntag.log_scan(request.user, scan_counter)
 
     # Need better handling
-    if hasattr(ntag, 'linked_entity'):
-        return redirect(ntag.linked_entity.url)
+    if hasattr(ntag, 'plant'):
+        return redirect(ntag.plant.url)
     return protected_link(request, ntag)
 
 @login_required

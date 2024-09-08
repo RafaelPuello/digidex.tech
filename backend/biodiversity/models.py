@@ -3,6 +3,11 @@ from django.utils.translation import gettext_lazy as _
 
 
 class Plant(models.Model):
+    inventory = models.ForeignKey(
+        'inventory.TrainerInventory',
+        on_delete=models.CASCADE,
+        related_name='plants'
+    )
     name = models.CharField(
         max_length=255
     )
