@@ -46,10 +46,6 @@
           "type": "string",
           "description": "Foreign key reference to NfcTagType"
         },
-        "user": {
-          "type": ["string", "null"],
-          "description": "Foreign key reference to User"
-        },
         "active": {
           "type": "boolean",
           "default": true

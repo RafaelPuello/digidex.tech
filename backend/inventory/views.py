@@ -3,7 +3,7 @@ from django.shortcuts import redirect, get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.decorators import login_required
 
-from .models import NfcTag
+from nearfieldcommunication.models import NfcTag
 
 def link(request):
     """

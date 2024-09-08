@@ -9,7 +9,7 @@ from .validators import validate_serial_number
 
 class NfcTagType(models.Model):
     """
-    Model representing the type of an NFC tag.
+    Model representing the type of NFC tag.
     
     Attributes:
         name (str): The name of the NFC tag type.
@@ -145,9 +145,6 @@ class NfcTag(models.Model):
     class Meta:
         verbose_name = _("nfc tag")
         verbose_name_plural = _("nfc tags")
-        indexes = [
-            models.Index(fields=['serial_number', 'uuid']),
-        ]
 
 
 class NfcTagScan(models.Model):
@@ -191,6 +188,3 @@ class NfcTagScan(models.Model):
     class Meta:
         verbose_name = _("nfc tag scan")
         verbose_name_plural = _("nfc tag scans")
-        indexes = [
-            models.Index(fields=['nfc_tag', 'scanned_at', 'counter']),
-        ]

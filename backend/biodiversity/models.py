@@ -3,8 +3,18 @@ from django.utils.translation import gettext_lazy as _
 
 
 class Plant(models.Model):
+    """
+    Represents a plant in the database.
+
+    Attributes:
+        name (str): The name of the plant.
+        description (str): A description of the plant.
+        created_at (datetime): The date and time the plant was created.
+        updated_at (datetime): The date and time the plant was last updated.
+    """
     name = models.CharField(
-        max_length=255
+        max_length=255,
+        db_index=True
     )
     description = models.TextField(
         blank=True

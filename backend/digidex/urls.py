@@ -3,8 +3,8 @@ from wagtail.admin import urls as dashboard_urls
 from wagtail import urls as wagtail_urls
 from search.views import search
 
-from nearfieldcommunication.views import link
 from assistant.views import chat
+from inventory.views import link
 
 urlpatterns = [
     path("accounts/", include('allauth.urls')),
