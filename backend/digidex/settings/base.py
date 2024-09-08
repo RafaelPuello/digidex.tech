@@ -28,7 +28,7 @@ INSTALLED_APPS = [
     "queryish",
 
     "base",
-    "accounts",
+    "trainers",
     "biodiversity",
     "nearfieldcommunication",
     "assistant",
@@ -276,9 +276,9 @@ HEADLESS_FRONTEND_URLS = {
 # HEADLESS_ONLY = True
 
 # allauth settings
-AUTH_USER_MODEL = 'accounts.Trainer'
+AUTH_USER_MODEL = 'trainers.Trainer'
 
-ACCOUNT_ADAPTER = 'accounts.adapter.DigidexAccountAdapter'
+ACCOUNT_ADAPTER = 'trainers.adapter.DigidexAccountAdapter'
 
 ACCOUNT_PRESERVE_USERNAME_CASING = False
 
@@ -322,11 +322,11 @@ ACCOUNT_EMAIL_UNKNOWN_ACCOUNTS = False
 
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 
-LOGIN_URL = '/accounts/login/'
+LOGIN_URL = '/login/'
 
-SIGNUP_URL = '/accounts/signup/'
+SIGNUP_URL = '/signup/'
 
-LOGOUT_URL = '/accounts/logout/'
+LOGOUT_URL = '/logout/'
 
 LOGIN_REDIRECT_URL = '/'
 

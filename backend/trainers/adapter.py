@@ -2,7 +2,7 @@ from django.utils.text import slugify
 from allauth.account.adapter import DefaultAccountAdapter
 
 
-class DigidexAccountAdapter(DefaultAccountAdapter):
+class TrainerAccountAdapter(DefaultAccountAdapter):
 
     def get_login_redirect_url(self, request):
         """
