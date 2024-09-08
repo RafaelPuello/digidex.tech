@@ -46,13 +46,21 @@
           "type": "string",
           "description": "Foreign key reference to NfcTagType"
         },
-        "trainer": {
+        "user": {
           "type": ["string", "null"],
-          "description": "Foreign key reference to Trainer"
+          "description": "Foreign key reference to User"
         },
-        "plant": {
+        "content_type": {
           "type": ["string", "null"],
-          "description": "Foreign key reference to Plant"
+          "description": "The content type of the linked object."
+        },
+        "object_id": {
+          "type": ["string", "null"],
+          "description": "The ID of the linked object."
+        },
+        "linked_object": {
+          "type": ["string", "null"],
+          "description": "The linked object."
         },
         "active": {
           "type": "boolean",

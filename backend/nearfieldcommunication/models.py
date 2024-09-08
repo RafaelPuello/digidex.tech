@@ -1,13 +1,12 @@
 import uuid
 from django.db import models
 from django.conf import settings
-from django.contrib.auth import get_user_model
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
 
 from .validators import validate_serial_number
-
-User = get_user_model()
 
 
 class NfcTagType(models.Model):
@@ -67,8 +66,10 @@ class NfcTag(models.Model):
         uuid (UUID): A unique identifier for the NFC tag.
         serial_number (str): The serial number of the NFC tag.
         nfc_tag_type (NfcTagType): The type of NFC tag.
-        trainer (Trainer): The trainer using the NFC tag.
-        plant (Plant): The plant associated with the NFC tag.
+        user (Trainer): The user using the NFC tag.
+        content_type (ContentType): The content type of the linked object.
+        object_id (int): The ID of the linked object.
+        linked_object (GenericForeignKey): The linked object.
         active (bool): Indicates whether the NFC tag is active.
         created_at (datetime): The date and time when the NFC tag was created.
         last_modified (datetime): The date and time when the NFC tag was last modified.
@@ -93,19 +94,23 @@ class NfcTag(models.Model):
         null=True,
         related_name='tags'
     )
-    trainer = models.ForeignKey(
+    user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
         blank=True,
         null=True,
         related_name='nfc_tags'
     )
-    plant = models.OneToOneField(
-        'biodiversity.Plant',
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        related_name='nfc_tag'
+    content_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE
+    )
+    object_id = models.PositiveIntegerField(
+        db_index=True
+    )
+    linked_object = GenericForeignKey(
+        'content_type',
+        'object_id'
     )
     active = models.BooleanField(
         default=True

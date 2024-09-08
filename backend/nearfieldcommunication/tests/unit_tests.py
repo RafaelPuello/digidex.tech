@@ -32,16 +32,12 @@ def test_nfc_tag_creation():
         serial_number="04AABBCCDDEEFF",
         nfc_tag_type=tag_type,
         user=user,
-        url="https://example.com",
-        content={"key": "value"},
         active=True
     )
     assert isinstance(nfc_tag.uuid, UUID)
     assert nfc_tag.serial_number == "04AABBCCDDEEFF"
     assert nfc_tag.nfc_tag_type == tag_type
     assert nfc_tag.user == user
-    assert nfc_tag.url == "https://example.com"
-    assert nfc_tag.content == {"key": "value"}
     assert nfc_tag.active is True
     assert nfc_tag.created_at is not None
     assert nfc_tag.last_modified is not None
