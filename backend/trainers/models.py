@@ -1,13 +1,21 @@
 import uuid
-
 from django.db import models, transaction
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import AbstractUser, Group, Permission
-
 from wagtail.models import Page, GroupPagePermission, GroupCollectionPermission
+from wagtail.fields import RichTextField
+from wagtail.admin.panels import FieldPanel
 
 
 class Trainer(AbstractUser):
+    """
+    Represents a trainer in the database.
+
+    Attributes:
+        uuid (uuid): A unique identifier for the trainer.
+        created_at (datetime): The date and time the trainer was created.
+        last_modified (datetime): The date and time the trainer was last updated.
+    """
 
     uuid = models.UUIDField(
         default=uuid.uuid4,
@@ -111,3 +119,30 @@ class Trainer(AbstractUser):
     class Meta:
         verbose_name = _('user')
         verbose_name_plural = _('users')
+
+
+class TrainerPage(Page):
+    """
+    Represents a trainer page in the database.
+
+    Attributes:
+        body (RichTextField): The body of the trainer page.
+    """
+    body = RichTextField(
+        blank=True
+    )
+
+    content_panels = Page.content_panels + [
+        FieldPanel('body')
+    ]
+
+    parent_page_types = ['home.HomePage']
+
+    child_page_types = []
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = _('trainer page')
+        verbose_name_plural = _('trainer pages')
