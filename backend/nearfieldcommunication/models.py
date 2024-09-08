@@ -51,7 +51,6 @@ class NfcTag(models.Model):
         serial_number (str): The serial number of the NFC tag.
         integrated_circuit (str): The type of integrated circuit used in the NFC tag.
         nfc_tag_type (NfcTagType): The type of NFC tag.
-        user (User): The user using the NFC tag.
         active (bool): Indicates whether the NFC tag is active.
         created_at (datetime): The date and time when the NFC tag was created.
         last_modified (datetime): The date and time when the NFC tag was last modified.
@@ -89,13 +88,6 @@ class NfcTag(models.Model):
         null=True,
         related_name='tags'
     )
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.PROTECT,
-        blank=True,
-        null=True,
-        related_name='nfc_tags'
-    )
     active = models.BooleanField(
         default=True
     )
@@ -129,7 +121,7 @@ class NfcTag(models.Model):
             print(f"Error logging scan: {e}")
             return False
 
-    def activate_tag(self, user):
+    def activate_tag(self):
         """
         Activates the NFC tag.
         """

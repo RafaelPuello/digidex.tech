@@ -24,7 +24,7 @@ def link(request):
         return redirect('/')
 
     ntag = get_object_or_404(
-        NfcTag.objects.select_related('user', 'link'),
+        NfcTag.objects.select_related('link'),
         serial_number=serial_number
     )
     ntag.log_scan(request.user, scan_counter)
