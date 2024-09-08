@@ -1,7 +1,8 @@
 import uuid
 from django.db import models
 from django.conf import settings
-from django.contrib.auth import get_user_model 
+from django.contrib.auth import get_user_model
+from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
 
 from .validators import validate_serial_number
@@ -66,7 +67,8 @@ class NfcTag(models.Model):
         uuid (UUID): A unique identifier for the NFC tag.
         serial_number (str): The serial number of the NFC tag.
         nfc_tag_type (NfcTagType): The type of NFC tag.
-        user (User): The user who owns the NFC tag.
+        trainer (Trainer): The trainer using the NFC tag.
+        plant (Plant): The plant associated with the NFC tag.
         active (bool): Indicates whether the NFC tag is active.
         created_at (datetime): The date and time when the NFC tag was created.
         last_modified (datetime): The date and time when the NFC tag was last modified.
@@ -75,8 +77,7 @@ class NfcTag(models.Model):
     uuid = models.UUIDField(
         default=uuid.uuid4,
         editable=False,
-        unique=True,
-        db_index=True
+        unique=True
     )
     serial_number = models.CharField(
         max_length=32,
@@ -87,14 +88,14 @@ class NfcTag(models.Model):
     )
     nfc_tag_type = models.ForeignKey(
         NfcTagType,
-        on_delete=models.SET_NULL,
+        on_delete=models.PROTECT,
         blank=True,
         null=True,
         related_name='tags'
     )
     trainer = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,
+        on_delete=models.PROTECT,
         blank=True,
         null=True,
         related_name='nfc_tags'
@@ -184,7 +185,9 @@ class NfcTagScan(models.Model):
         on_delete=models.CASCADE,
         related_name='scans'
     )
-    counter = models.PositiveIntegerField()
+    counter = models.PositiveIntegerField(
+        validators=[MinValueValidator(0)]
+    )
     scanned_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -208,5 +211,5 @@ class NfcTagScan(models.Model):
         verbose_name = _("nfc tag scan")
         verbose_name_plural = _("nfc tag scans")
         indexes = [
-            models.Index(fields=['counter']),
+            models.Index(fields=['nfc_tag', 'scanned_at', 'counter']),
         ]
