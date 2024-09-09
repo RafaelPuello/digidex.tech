@@ -90,5 +90,9 @@
       "required": ["inventory", "plant", "uuid", "slug", "created_at", "last_updated"],
       "additionalProperties": false
     }
+  },
+  "properties": {
+    "trainerInventory": { "$ref": "#/definitions/TrainerInventory" },
+    "inventoryPlant": { "$ref": "#/definitions/InventoryPlant" }
   }
 }

@@ -1,10 +1,10 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$schema": "https://json-schema.org/draft-07/schema",
   "$id": "https://digidex.tech/nfc.schema.json",
   "title": "Near Field Communication",
   "description": "An NFC-Tag used for mapping a physical-object to an external system like a CMS.",
   "type": "object",
-  "properties": {
+  "definitions": {
     "NfcTagType": {
       "type": "object",
       "properties": {
@@ -39,16 +39,14 @@
         },
         "integrated_circuit": {
           "type": "string",
-          "enum": ["213", "215", "216"],
-          "default": "213"
+          "enum": ["213", "215", "216"]
         },
         "nfc_tag_type": {
           "type": "string",
           "description": "Foreign key reference to NfcTagType"
         },
         "active": {
-          "type": "boolean",
-          "default": true
+          "type": "boolean"
         },
         "created_at": {
           "type": "string",
@@ -83,6 +81,11 @@
       },
       "required": ["nfc_tag", "counter", "scanned_at"]
     }
+  },
+  "properties": {
+    "nfc_tag": { "$ref": "#/definitions/NfcTag" },
+    "nfc_tag_type": { "$ref": "#/definitions/NfcTagType" },
+    "nfc_tag_scan": { "$ref": "#/definitions/NfcTagScan" }
   }
 }
   

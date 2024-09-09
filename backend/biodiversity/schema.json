@@ -4,7 +4,7 @@
   "title": "Plant Model Schema",
   "description": "Model for managing plants.",
   "type": "object",
-  "properties": {
+  "definitions": {
     "name": {
       "type": "string",
       "description": "The name of the plant",
