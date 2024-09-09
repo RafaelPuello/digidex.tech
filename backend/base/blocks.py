@@ -2,6 +2,7 @@ from wagtail.blocks import (
     CharBlock,
     ChoiceBlock,
     RichTextBlock,
+    TextBlock,
     StreamBlock,
     StructBlock,
 )

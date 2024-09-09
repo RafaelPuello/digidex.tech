@@ -19,7 +19,6 @@ class NfcTagSerializer(serializers.ModelSerializer):
         """
         Update and return an existing `NfcTag` instance, given the validated data.
         """
-        instance.integrated_circuit = validated_data.get('integrated_circuit', instance.integrated_circuit)
         instance.nfc_tag_type = validated_data.get('nfc_tag_type', instance.nfc_tag_type)
         instance.active = validated_data.get('active', instance.active)
         instance.save()

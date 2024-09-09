@@ -12,11 +12,26 @@ class NfcTagType(models.Model):
     Model representing the type of NFC tag.
     
     Attributes:
+        integrated_circuit (str): The type of integrated circuit used in the NFC tag.
         name (str): The name of the NFC tag type.
         description (str): A description of the NFC tag type.
         created_at (datetime): The date and time when the tag type was created.
         last_modified (datetime): The date and time when the tag type was last modified.
     """
+    NTAG213 = "213"
+    NTAG215 = "215"
+    NTAG216 = "216"
+    IC_CHOICES = (
+        (NTAG213, _("NTAG 213")),
+        (NTAG215, _("NTAG 215")),
+        (NTAG216, _("NTAG 216")),
+    )
+
+    integrated_circuit = models.CharField(
+        max_length=5,
+        choices=IC_CHOICES,
+        default=NTAG213,
+    )
     name = models.CharField(
         max_length=255,
         unique=True
@@ -49,20 +64,11 @@ class NfcTag(models.Model):
     Attributes:
         uuid (UUID): A unique identifier for the NFC tag.
         serial_number (str): The serial number of the NFC tag.
-        integrated_circuit (str): The type of integrated circuit used in the NFC tag.
         nfc_tag_type (NfcTagType): The type of NFC tag.
         active (bool): Indicates whether the NFC tag is active.
         created_at (datetime): The date and time when the NFC tag was created.
         last_modified (datetime): The date and time when the NFC tag was last modified.
     """
-    NTAG213 = "213"
-    NTAG215 = "215"
-    NTAG216 = "216"
-    IC_CHOICES = (
-        (NTAG213, _("NTAG 213")),
-        (NTAG215, _("NTAG 215")),
-        (NTAG216, _("NTAG 216")),
-    )
 
     uuid = models.UUIDField(
         default=uuid.uuid4,
@@ -75,11 +81,6 @@ class NfcTag(models.Model):
         unique=True,
         db_index=True,
         validators=[validate_serial_number]
-    )
-    integrated_circuit = models.CharField(
-        max_length=5,
-        choices=IC_CHOICES,
-        default=NTAG213,
     )
     nfc_tag_type = models.ForeignKey(
         NfcTagType,

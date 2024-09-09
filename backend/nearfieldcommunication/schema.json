@@ -8,6 +8,10 @@
     "NfcTagType": {
       "type": "object",
       "properties": {
+        "integrated_circuit": {
+          "type": "string",
+          "enum": ["213", "215", "216"]
+        },
         "name": {
           "type": "string",
           "maxLength": 255
@@ -36,10 +40,6 @@
         "serial_number": {
           "type": "string",
           "maxLength": 32
-        },
-        "integrated_circuit": {
-          "type": "string",
-          "enum": ["213", "215", "216"]
         },
         "nfc_tag_type": {
           "type": "string",
