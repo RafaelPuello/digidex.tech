@@ -30,34 +30,8 @@ class Trainer(AbstractUser):
         auto_now=True
     )
 
-    def get_user_pages(self):
-        """
-        Retrieve pages owned by the user.
-
-        Returns:
-            QuerySet: Filtered and ordered queryset of pages owned by the user.
-        """
-        return Page.objects.filter(owner=self).order_by('depth')
-
-    def get_inventory_page(self):
-        """
-        Retrieve user inventory page.
-
-        Returns:
-            Page: User inventory page.
-        """
-        return self.get_user_pages().first().specific
-
-    def get_inventory(self):
-        """
-        Retrieve user inventory.
-
-        Returns:
-            QuerySet: Filtered and ordered queryset of pages owned by the user.
-        """
-        usr_inv_page = self.get_inventory_page()
-        if usr_inv_page:
-            return usr_inv_page.get_inventory()
+    def get_inventories(self):
+        return self.inventories.all()
 
     @transaction.atomic
     def set_user_permissions(self, user_page):
@@ -72,7 +46,7 @@ class Trainer(AbstractUser):
         SNIPPET_PERMISSIONS = [
             "view_nfctagscan", "view_nfctagtype"
         ]
-        user_group, created = Group.objects.get_or_create(name=f"user_{self.username}")
+        user_group, created = Group.objects.get_or_create(name=f"user_{self.uuid}")
         if hasattr(user_page, 'collection'):
             user_collection = user_page.collection
         else:
@@ -113,6 +87,12 @@ class Trainer(AbstractUser):
             self.groups.add(user_group)
             self.save()
 
+    def delete(self, *args, **kwargs):
+        with transaction.atomic():
+            user_group = Group.objects.get(name=f"user_{self.uuid}")
+            user_group.delete()
+            super().delete(*args, **kwargs)
+
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.username})"
 
@@ -128,6 +108,12 @@ class TrainerPage(Page):
     Attributes:
         body (RichTextField): The body of the trainer page.
     """
+    trainer = models.OneToOneField(
+        Trainer,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name='trainer_pages'
+    )
     body = RichTextField(
         blank=True
     )
@@ -139,6 +125,14 @@ class TrainerPage(Page):
     parent_page_types = ['home.HomePage']
 
     child_page_types = []
+
+    def get_context(self, request):
+        context = super().get_context(request)
+        context['inventories'] = self.get_trainer_inventories()
+        return context
+
+    def get_trainer_inventories(self):
+        return self.trainer.get_inventories()
 
     def __str__(self):
         return self.title
