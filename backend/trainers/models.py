@@ -102,7 +102,7 @@ class Trainer(AbstractUser):
         return
 
     @transaction.atomic
-    def set_trainer_permissions(self):
+    def user_setup(self):
         PERMISSIONS = [
             # Wagtail snippet permissions
             "view_nfctagscan", "view_nfctagtype",

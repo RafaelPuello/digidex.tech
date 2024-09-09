@@ -1,15 +1,10 @@
-from django.db import transaction
 from django.db.models.signals import post_save
+from django.conf import settings
 from django.dispatch import receiver
 
-from .models import Trainer, TrainerPage
+User = settings.AUTH_USER_MODEL
 
-@transaction.atomic
-def setup_new_trainer(instance):
-    trainer_page = TrainerPage.create_for_trainer(instance)
-    instance.set_trainer_permissions(trainer_page)
-
-@receiver(post_save, sender=Trainer)
-def new_trainer_setup(sender, instance, created, **kwargs):
+@receiver(post_save, sender=User)
+def new_user_setup(sender, instance, created, **kwargs):
     if created:
-        setup_new_trainer(instance)
+        instance.user_setup()

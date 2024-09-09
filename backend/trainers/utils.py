@@ -23,17 +23,17 @@ def create_trainer_collection(trainer):
         raise Exception("Root collection not found. Please ensure a root collection exists.")
 
     # Get or create the 'Trainer Collection' under the root
-    trainer_collection, created = Collection.objects.get_or_create(
-        name="Trainer Collections",
-        parent=root_collection
+    trainer_collection, created = Collection(
+        name="Trainer Collections"
     )
+    root_collection.add_child(instance=trainer_collection)
 
     # Create or get the user's specific collection under the 'Trainer Collections'
     user_collection_name = f"trainer_{trainer.uuid}"
-    user_collection, created = Collection.objects.get_or_create(
-        name=user_collection_name,
-        parent=trainer_collection
+    user_collection, created = Collection(
+        name=user_collection_name
     )
+    trainer_collection.add_child(instance=user_collection)
 
     # Assign the collection to the trainer
     trainer.collection = user_collection
