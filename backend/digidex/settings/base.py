@@ -322,11 +322,11 @@ ACCOUNT_EMAIL_UNKNOWN_ACCOUNTS = False
 
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 
-LOGIN_URL = '/accounts/login/'
+LOGIN_URL = '/account/login/'
 
-SIGNUP_URL = '/accounts/signup/'
+SIGNUP_URL = '/account/signup/'
 
-LOGOUT_URL = '/accounts/logout/'
+LOGOUT_URL = '/account/logout/'
 
 LOGIN_REDIRECT_URL = '/'
 
