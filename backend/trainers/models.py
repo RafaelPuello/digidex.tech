@@ -141,7 +141,8 @@ class TrainerPage(Page):
     Represents a trainer page in the database.
 
     Attributes:
-        body (RichTextField): The body of the trainer page.
+        description (RichTextField): The description of the trainer page.
+        inventory (StreamField): The inventory of the trainer page.
     """
     trainer = models.OneToOneField(
         Trainer,
@@ -152,13 +153,14 @@ class TrainerPage(Page):
     description = RichTextField(
         blank=True
     )
-    body = StreamField([
-        ('inventory', InventoryBlock())
-    ])
+    inventory = StreamField(
+        [('inventory', InventoryBlock())],
+        null=True,
+    )
 
     content_panels = Page.content_panels + [
         FieldPanel('description'),
-        FieldPanel('body')
+        FieldPanel('inventory')
     ]
 
     parent_page_types = ['home.HomePage']

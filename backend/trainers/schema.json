@@ -68,9 +68,13 @@
           "type": "string",
           "description": "The title of the trainer page"
         },
-        "body": {
+        "description": {
           "type": "string",
           "description": "The body content of the trainer page (RichTextField)"
+        },
+        "inventory": {
+          "type": "string",
+          "description": "The inventory content of the trainer page (StreamField)"
         },
         "parent_page": {
           "type": "string",
