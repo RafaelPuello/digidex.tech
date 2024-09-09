@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://digidex.tech/biodiversity.schema.json",
+  "title": "Plant Model Schema",
+  "description": "Model for managing plants.",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The name of the plant",
+      "maxLength": 255
+    },
+    "description": {
+      "type": "string",
+      "description": "A description of the plant",
+      "maxLength": 10000
+    },
+    "created_at": {
+      "type": "string",
+      "description": "The date and time the plant was created",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "description": "The date and time the plant was last updated",
+      "format": "date-time"
+    }
+  },
+  "required": ["name", "created_at", "updated_at"],
+  "additionalProperties": false
+}

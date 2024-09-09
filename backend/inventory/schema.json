@@ -1,0 +1,94 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://digidex.tech/inventory.schema.json",
+  "title": "Inventory Models Schema",
+  "description": "Models for managing plant inventories.",
+  "type": "object",
+  "definitions": {
+    "TrainerInventory": {
+      "type": "object",
+      "properties": {
+        "trainer": {
+          "type": "string",
+          "description": "Reference to the trainer (ForeignKey to the user model)"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the inventory",
+          "maxLength": 25
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the inventory",
+          "maxLength": 255
+        },
+        "slug": {
+          "type": "string",
+          "description": "A unique slug for the inventory",
+          "maxLength": 255
+        },
+        "uuid": {
+          "type": "string",
+          "description": "A unique identifier for the inventory",
+          "format": "uuid"
+        },
+        "created_at": {
+          "type": "string",
+          "description": "The date and time the inventory was created",
+          "format": "date-time"
+        },
+        "last_updated": {
+          "type": "string",
+          "description": "The date and time the inventory was last updated",
+          "format": "date-time"
+        }
+      },
+      "required": ["trainer", "name", "slug", "uuid", "created_at", "last_updated"],
+      "additionalProperties": false
+    },
+    "InventoryPlant": {
+      "type": "object",
+      "properties": {
+        "inventory": {
+          "type": "string",
+          "description": "Reference to the inventory (ForeignKey to TrainerInventory)"
+        },
+        "plant": {
+          "type": "string",
+          "description": "Reference to the plant (OneToOneField to biodiversity.Plant)"
+        },
+        "label": {
+          "type": "string",
+          "description": "A label for the plant in the inventory",
+          "maxLength": 255
+        },
+        "nfc_tag": {
+          "type": "string",
+          "description": "Reference to the NFC tag (OneToOneField to nearfieldcommunication.NfcTag)"
+        },
+        "uuid": {
+          "type": "string",
+          "description": "A unique identifier for the plant in the inventory",
+          "format": "uuid"
+        },
+        "slug": {
+          "type": "string",
+          "description": "A unique slug for the plant in the inventory",
+          "maxLength": 255
+        },
+        "created_at": {
+          "type": "string",
+          "description": "The date and time the plant was added to the inventory",
+          "format": "date-time"
+        },
+        "last_updated": {
+          "type": "string",
+          "description": "The date and time the plant was last updated",
+          "format": "date-time"
+        }
+      },
+      "required": ["inventory", "plant", "uuid", "slug", "created_at", "last_updated"],
+      "additionalProperties": false
+    }
+  }
+}
