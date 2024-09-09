@@ -65,7 +65,7 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.mfa",
-    "allauth.headless",
+    # "allauth.headless",
 ]
 
 MIDDLEWARE = [
@@ -262,17 +262,6 @@ SIMPLE_JWT = {
     'TOKEN_TYPE_CLAIM': 'token_type',
 }
 
-# These are the URLs to be implemented by your single-page application.
-HEADLESS_FRONTEND_URLS = {
-    "account_confirm_email": "https://digidex.tech/account/verify-email/{key}",
-    "account_reset_password_from_key": "https://digidex.tech/account/password/reset/key/{key}",
-    "account_signup": "https://digidex.tech/account/signup",
-    "account_confirm_email": "https://digidex.tech/account/verify-email/{key}",
-    "account_reset_password": "https://digidex.tech/account/password/reset",
-    "account_reset_password_from_key": "https://digidex.tech/account/password/reset/key/{key}",
-    "account_signup": "https://digidex.tech/account/signup",
-}
-
 # HEADLESS_ONLY = True
 
 # allauth settings
@@ -322,11 +311,11 @@ ACCOUNT_EMAIL_UNKNOWN_ACCOUNTS = False
 
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 
-LOGIN_URL = '/account/login/'
+LOGIN_URL = '/accounts/login/'
 
-SIGNUP_URL = '/account/signup/'
+SIGNUP_URL = '/accounts/signup/'
 
-LOGOUT_URL = '/account/logout/'
+LOGOUT_URL = '/accounts/logout/'
 
 LOGIN_REDIRECT_URL = '/'
 
