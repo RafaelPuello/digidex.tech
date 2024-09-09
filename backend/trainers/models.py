@@ -4,9 +4,10 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.text import slugify
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from wagtail.models import Page, Collection, GroupPagePermission, GroupCollectionPermission
-from wagtail.fields import RichTextField
+from wagtail.fields import RichTextField, StreamField
 from wagtail.admin.panels import FieldPanel
 
+from inventory.blocks import InventoryBlock
 from .utils import create_trainer_collection
 
 
@@ -148,11 +149,15 @@ class TrainerPage(Page):
         on_delete=models.SET_NULL,
         related_name='page'
     )
-    body = RichTextField(
+    description = RichTextField(
         blank=True
     )
+    body = StreamField([
+        ('inventory', InventoryBlock())
+    ])
 
     content_panels = Page.content_panels + [
+        FieldPanel('description'),
         FieldPanel('body')
     ]
 

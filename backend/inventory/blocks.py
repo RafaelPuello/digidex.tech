@@ -10,3 +10,13 @@ class InventoryPlantBlock(blocks.StructBlock):
     class Meta:
         icon = 'tablet-alt'
         template = 'inventory/blocks/inventory_block.html'
+
+
+class InventoryBlock(blocks.StructBlock):
+    name = blocks.CharBlock()
+    description = blocks.RichTextBlock()
+    plants = blocks.ListBlock(InventoryPlantBlock())
+
+    class Meta:
+        icon = 'list-ul'
+        template = 'inventory/blocks/inventory_block.html'
