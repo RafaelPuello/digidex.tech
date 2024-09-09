@@ -7,7 +7,7 @@ from assistant.views import chat
 from inventory.views import link
 
 urlpatterns = [
-    path("account", include('allauth.urls')),
+    path("account/", include('allauth.urls')),
     path("_allauth/", include("allauth.headless.urls")),
     path("search/", search, name="search"),
     path("link/", link, name="link"),
