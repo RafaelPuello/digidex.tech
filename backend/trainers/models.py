@@ -1,6 +1,7 @@
 import uuid
 from django.db import models, transaction
 from django.utils.translation import gettext_lazy as _
+from django.utils.text import slugify
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from wagtail.models import Page, GroupPagePermission, GroupCollectionPermission
 from wagtail.fields import RichTextField
@@ -34,7 +35,7 @@ class Trainer(AbstractUser):
         return self.inventories.all()
 
     @transaction.atomic
-    def set_user_permissions(self, user_page):
+    def set_trainer_permissions(self, user_page):
         PAGE_PERMISSIONS = ('add_page', 'change_page', 'delete_page', 'publish_page')
         IMAGE_PERMISSIONS = ('add_image', 'change_image', 'choose_image')
         DOCUMENT_PERMISSIONS = ('add_document', 'change_document', 'choose_document')
@@ -125,6 +126,19 @@ class TrainerPage(Page):
     parent_page_types = ['home.HomePage']
 
     child_page_types = []
+
+    @classmethod
+    def create_for_trainer(cls, trainer):
+        from home.models import HomePage
+        parent_page = HomePage.objects.first()
+        trainer_page = cls(
+            slug=slugify(trainer.username),
+            owner=trainer,
+            trainer=trainer
+        )
+        parent_page.add_child(instance=trainer_page)
+        trainer_page.save_revision().publish()
+        return trainer_page
 
     def get_context(self, request):
         context = super().get_context(request)
