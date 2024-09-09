@@ -166,6 +166,7 @@ class TrainerPage(Page):
         parent_page = HomePage.objects.first()
         trainer_page = cls(
             slug=slugify(trainer.username),
+            title=trainer.username,
             owner=trainer,
             trainer=trainer
         )
