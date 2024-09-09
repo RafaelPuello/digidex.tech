@@ -19,14 +19,14 @@ class InventoryPlantViewSet(SnippetViewSet):
 
     panels = [
         FieldPanel("inventory"),
+        FieldPanel("plant"),
         MultiFieldPanel(
             [
                 FieldPanel("label"),
                 FieldPanel("nfc_tag"),
             ],
-            heading="Plant Details"
+            heading="NFC Tag Details"
         ),
-        FieldPanel("plant"),
     ]
 
 register_snippet(TrainerInventoryViewSet)

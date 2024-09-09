@@ -3,9 +3,11 @@ from django.db import models, transaction
 from django.utils.translation import gettext_lazy as _
 from django.utils.text import slugify
 from django.contrib.auth.models import AbstractUser, Group, Permission
-from wagtail.models import Page, GroupPagePermission, GroupCollectionPermission
+from wagtail.models import Page, Collection, GroupPagePermission, GroupCollectionPermission
 from wagtail.fields import RichTextField
 from wagtail.admin.panels import FieldPanel
+
+from .utils import create_trainer_collection
 
 
 class Trainer(AbstractUser):
@@ -24,6 +26,12 @@ class Trainer(AbstractUser):
         editable=False,
         db_index=True,
     )
+    collection = models.ForeignKey(
+        Collection,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name='trainers'
+    )
     created_at = models.DateTimeField(
         auto_now_add=True
     )
@@ -34,63 +42,88 @@ class Trainer(AbstractUser):
     def get_inventories(self):
         return self.inventories.all()
 
+    def set_trainer_group(self):
+        trainer_group, created = Group.objects.get_or_create(name=f"trainer_{self.uuid}")
+        if created:
+            self.groups.add(trainer_group)
+        return trainer_group
+
+    def set_image_permissions(self, collection, group):
+        IMAGE_PERMISSIONS = (
+            'add_image', 'change_image', 'choose_image'
+        )
+
+        for perm in IMAGE_PERMISSIONS:
+            permission = Permission.objects.get(codename=perm)
+            GroupCollectionPermission.objects.create(
+                group=group,
+                collection=collection,
+                permission=permission
+            )
+        return
+
+    def set_document_permissions(self, collection, group):
+        DOCUMENT_PERMISSIONS = (
+            'add_document', 'change_document', 'choose_document'
+        )
+
+        for perm in DOCUMENT_PERMISSIONS:
+            permission = Permission.objects.get(codename=perm)
+            GroupCollectionPermission.objects.create(
+                group=group,
+                collection=collection,
+                permission=permission
+            )
+        return
+
+    def set_collection(self, group):
+        if not self.collection:
+            create_trainer_collection(self)
+        self.set_image_permissions(self.collection, group)
+        self.set_document_permissions(self.collection, group)
+        return
+
+    def set_page_permissions(self, page, group):
+        PAGE_PERMISSIONS = ('change_page', 'publish_page')
+
+        for perm in PAGE_PERMISSIONS:
+            permission = Permission.objects.get(codename=perm)
+            GroupPagePermission.objects.create(
+                group=group,
+                page=page,
+                permission=permission
+            )
+        return
+
+    def set_page(self, group):
+        if not hasattr(self, 'page'):
+            TrainerPage.create_for_trainer(self)
+        self.set_page_permissions(self.page, group)
+        return
+
     @transaction.atomic
-    def set_trainer_permissions(self, user_page):
-        PAGE_PERMISSIONS = ('add_page', 'change_page', 'delete_page', 'publish_page')
-        IMAGE_PERMISSIONS = ('add_image', 'change_image', 'choose_image')
-        DOCUMENT_PERMISSIONS = ('add_document', 'change_document', 'choose_document')
-        BASE_PERMISSIONS = [
-            'add_document', 'change_document', 'choose_document',
-            'add_image', 'change_image', 'choose_image',
+    def set_trainer_permissions(self):
+        PERMISSIONS = [
+            # Wagtail snippet permissions
+            "view_nfctagscan", "view_nfctagtype",
+            # Wagtail admin dashboard permissions
             'access_admin',
         ]
-        SNIPPET_PERMISSIONS = [
-            "view_nfctagscan", "view_nfctagtype"
-        ]
-        user_group, created = Group.objects.get_or_create(name=f"user_{self.uuid}")
-        if hasattr(user_page, 'collection'):
-            user_collection = user_page.collection
-        else:
-            user_collection = user_page.create_collection()
 
-        if created:
-            for page_perm in PAGE_PERMISSIONS:
-                page_permission = Permission.objects.get(codename=page_perm)
-                GroupPagePermission.objects.create(
-                    group=user_group,
-                    page=user_page,
-                    permission=page_permission
-                )
-            for image_perm in IMAGE_PERMISSIONS:
-                image_permission = Permission.objects.get(codename=image_perm)
-                GroupCollectionPermission.objects.create(
-                    group=user_group,
-                    collection=user_collection,
-                    permission=image_permission
-                )
+        trainer_group = self.set_trainer_group()
+        self.set_collection(trainer_group)
+        self.set_page(trainer_group)
 
-            for document_perm in DOCUMENT_PERMISSIONS:
-                document_permission = Permission.objects.get(codename=document_perm)
-                GroupCollectionPermission.objects.create(
-                    group=user_group,
-                    collection=user_collection,
-                    permission=document_permission
-                )
-
-            # Fetch all necessary permissions once
-            permissions = Permission.objects.filter(
-                codename__in=BASE_PERMISSIONS + SNIPPET_PERMISSIONS
-            )
-            user_group.permissions.add(*permissions)
-            user_group.save()
-
-            # Step 3: Assign the user to the group
-            self.groups.add(user_group)
-            self.save()
+        permissions = Permission.objects.filter(
+            codename__in=PERMISSIONS
+        )
+        trainer_group.permissions.add(*permissions)
+        trainer_group.save()
+        return
 
     def delete(self, *args, **kwargs):
         with transaction.atomic():
-            user_group = Group.objects.get(name=f"user_{self.uuid}")
+            user_group = Group.objects.get(name=f"trainer_{self.uuid}")
             user_group.delete()
             super().delete(*args, **kwargs)
 
@@ -113,7 +146,7 @@ class TrainerPage(Page):
         Trainer,
         null=True,
         on_delete=models.SET_NULL,
-        related_name='trainer_pages'
+        related_name='page'
     )
     body = RichTextField(
         blank=True
