@@ -18,6 +18,7 @@ class TrainerInventoryViewSet(SnippetViewSet):
 
 class InventoryPlantViewSet(SnippetViewSet):
     model = InventoryPlant
+    icon = "desktop"
     add_to_admin_menu = True
 
     panels = [
