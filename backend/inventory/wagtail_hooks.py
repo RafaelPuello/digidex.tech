@@ -7,6 +7,8 @@ from .models import TrainerInventory, InventoryPlant
 
 class TrainerInventoryViewSet(SnippetViewSet):
     model = TrainerInventory
+    icon = 'desktop'
+    add_to_admin_menu = True
 
     panels = [
         TitleFieldPanel("name"),
@@ -16,6 +18,7 @@ class TrainerInventoryViewSet(SnippetViewSet):
 
 class InventoryPlantViewSet(SnippetViewSet):
     model = InventoryPlant
+    add_to_admin_menu = True
 
     panels = [
         FieldPanel("inventory"),
