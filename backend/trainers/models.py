@@ -106,7 +106,8 @@ class Trainer(AbstractUser):
     def user_setup(self):
         PERMISSIONS = [
             # Wagtail snippet permissions
-            "view_nfctagscan", "view_nfctagtype",
+            "add_plant", "change_plant", "delete_plant",
+            "add_user_inventory", "change_user_inventory", "delete_user_inventory",
             # Wagtail admin dashboard permissions
             'access_admin',
         ]
