@@ -29,10 +29,6 @@
     "NfcTag": {
       "type": "object",
       "properties": {
-        "uuid": {
-          "type": "string",
-          "format": "uuid"
-        },
         "serial_number": {
           "type": "string",
           "maxLength": 32
@@ -65,7 +61,7 @@
           "description": "Object ID for GenericForeignKey"
         }
       },
-      "required": ["uuid", "serial_number", "created_at", "last_modified"]
+      "required": ["serial_number", "created_at", "last_modified"]
     },
     "NfcTagScan": {
       "type": "object",
@@ -92,6 +88,10 @@
     "NfcTagMemory": {
       "type": "object",
       "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "uuid"
+        },
         "nfc_tag": {
           "type": "string",
           "description": "Foreign key reference to NfcTag"
@@ -113,7 +113,7 @@
           "format": "date-time"
         }
       },
-      "required": ["nfc_tag", "memory", "created_at", "last_modified"]
+      "required": ["uuid", "nfc_tag", "memory", "created_at", "last_modified"]
     }
   },
   "properties": {

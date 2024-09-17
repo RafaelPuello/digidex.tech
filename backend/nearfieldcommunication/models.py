@@ -69,7 +69,6 @@ class NfcTag(models.Model):
     Model representing an individual NFC tag, which is linked to a physical object.
 
     Attributes:
-        uuid (UUID): A unique identifier for the NFC tag.
         serial_number (str): The serial number of the NFC tag.
         user (User): The user who is assigned the NFC tag.
         nfc_tag_type (NfcTagType): The type of NFC tag.
@@ -81,11 +80,6 @@ class NfcTag(models.Model):
         memory (GenericForeignKey): The generic foreign key to the memory instance.
     """
 
-    uuid = models.UUIDField(
-        default=uuid.uuid4,
-        editable=False,
-        unique=True
-    )
     serial_number = models.CharField(
         max_length=32,
         editable=False,
@@ -157,7 +151,6 @@ class NfcTag(models.Model):
 
         # Step 3: Create the NfcTagMemory object in the database
         nfc_tag_memory = NfcTagMemory.objects.create(
-            uuid=self.uuid,
             nfc_tag=self,
             integrated_circuit=ic_type,
             memory=memory_bytes

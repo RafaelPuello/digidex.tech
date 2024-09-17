@@ -7,7 +7,7 @@ class NfcTagSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = NfcTag
-        fields = ['uuid', 'serial_number', 'user', 'nfc_tag_type', 'active']
+        fields = ['serial_number', 'user', 'nfc_tag_type', 'active']
 
     def create(self, validated_data):
         """
@@ -64,7 +64,7 @@ class NfcTagMemorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = NfcTagMemory
-        fields = ['nfc_tag', 'integrated_circuit', 'memory']
+        fields = ['uuid', 'nfc_tag', 'integrated_circuit', 'memory']
 
     def create(self, validated_data):
         """

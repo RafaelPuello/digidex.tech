@@ -131,9 +131,9 @@ class NfcTagMemoryViewSet(viewsets.ModelViewSet):
     serializer_class = NfcTagMemorySerializer
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [JWTAuthentication]
-    lookup_field = 'id'
+    lookup_field = 'uuid'
     body_fields = ['nfc_tag', 'memory']
-    meta_fields = ['id']
+    meta_fields = ['uuid']
 
     def get_queryset(self):
         """
