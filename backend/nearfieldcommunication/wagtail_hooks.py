@@ -38,6 +38,14 @@ class NfcTagViewSet(SnippetViewSet):
         ]
     )
 
+    def get_queryset(self):
+        """
+        Filter to only show NFC tags for the current user if they're not a superuser.
+        """
+        if self.request.user.is_superuser:
+            return super().get_queryset()
+        return super().get_queryset().filter(user=self.request.user)
+
 
 class NfcTagTypeViewSet(SnippetViewSet):
     model = NfcTagType
@@ -51,7 +59,6 @@ class NfcTagTypeViewSet(SnippetViewSet):
     ]
 
     private_panels = [
-        FieldPanel("integrated_circuit"),
     ]
 
     edit_handler = TabbedInterface(
@@ -82,6 +89,14 @@ class NfcTagScanViewSet(SnippetViewSet):
             ObjectList(private_panels, heading='Admin only', permission="superuser"),
         ]
     )
+
+    def get_queryset(self):
+        """
+        Filter to only show NFC tags for the current user if they're not a superuser.
+        """
+        if self.request.user.is_superuser:
+            return NfcTag.objects.all()
+        return NfcTag.objects.filter(user=self.request.user)
 
 
 class NfcTagViewSetGroup(SnippetViewSetGroup):

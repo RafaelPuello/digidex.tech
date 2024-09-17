@@ -29,7 +29,7 @@ class NfcTagTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = NfcTagType
-        fields = ['integrated_circuit', 'name', 'description']
+        fields = ['name', 'description']
 
     def create(self, validated_data):
         """

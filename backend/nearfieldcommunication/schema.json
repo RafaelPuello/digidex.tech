@@ -8,10 +8,6 @@
     "NfcTagType": {
       "type": "object",
       "properties": {
-        "integrated_circuit": {
-          "type": "string",
-          "enum": ["213", "215", "216"]
-        },
         "name": {
           "type": "string",
           "maxLength": 255
@@ -88,6 +84,32 @@
         }
       },
       "required": ["nfc_tag", "counter", "scanned_at"]
+    },
+    "NfcTagMemory": {
+      "type": "object",
+      "properties": {
+        "nfc_tag": {
+          "type": "string",
+          "description": "Foreign key reference to NfcTag"
+        },
+        "integrated_circuit": {
+          "type": "string",
+          "enum": ["213", "215", "216"]
+        },
+        "memory": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "last_modified": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["nfc_tag", "memory", "created_at", "last_modified"]
     }
   },
   "properties": {

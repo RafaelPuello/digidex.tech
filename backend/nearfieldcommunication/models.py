@@ -12,26 +12,12 @@ class NfcTagType(models.Model):
     Model representing the type of NFC tag.
     
     Attributes:
-        integrated_circuit (str): The type of integrated circuit used in the NFC tag.
         name (str): The name of the NFC tag type.
         description (str): A description of the NFC tag type.
         created_at (datetime): The date and time when the tag type was created.
         last_modified (datetime): The date and time when the tag type was last modified.
     """
-    NTAG213 = "213"
-    NTAG215 = "215"
-    NTAG216 = "216"
-    IC_CHOICES = (
-        (NTAG213, _("NTAG 213")),
-        (NTAG215, _("NTAG 215")),
-        (NTAG216, _("NTAG 216")),
-    )
 
-    integrated_circuit = models.CharField(
-        max_length=5,
-        choices=IC_CHOICES,
-        default=NTAG213,
-    )
     name = models.CharField(
         max_length=255,
         unique=True
@@ -202,3 +188,54 @@ class NfcTagScan(models.Model):
     class Meta:
         verbose_name = _("nfc tag scan")
         verbose_name_plural = _("nfc tag scans")
+
+
+class NfcTagMemory(models.Model):
+    """
+    Model representing the memory contents of an NFC tag.
+    
+    Attributes:
+        nfc_tag (NfcTag): The NFC tag whose memory contents are stored.
+        integrated_circuit (str): The type of integrated circuit used in the NFC tag.
+        memory (binary): The memory contents of the NFC tag.
+        created_at (datetime): The date and time when the memory contents were created.
+        last_modified (datetime): The date and time when the memory contents were last modified.
+    """
+    NTAG213 = "213"
+    NTAG215 = "215"
+    NTAG216 = "216"
+    IC_CHOICES = (
+        (NTAG213, _("NTAG 213")),
+        (NTAG215, _("NTAG 215")),
+        (NTAG216, _("NTAG 216")),
+    )
+
+    nfc_tag = models.OneToOneField(
+        NfcTag,
+        on_delete=models.CASCADE,
+        related_name='memory'
+    )
+    integrated_circuit = models.CharField(
+        max_length=5,
+        choices=IC_CHOICES,
+        default=NTAG213,
+    )
+    memory = models.BinaryField(
+        max_length=888,
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+    last_modified = models.DateTimeField(
+        auto_now=True
+    )
+
+    def __str__(self):
+        """
+        Returns a string representation of the NFC tag memory contents.
+        """
+        return str(self.nfc_tag)
+
+    class Meta:
+        verbose_name = _("nfc tag memory")
+        verbose_name_plural = _("nfc tag memory")
