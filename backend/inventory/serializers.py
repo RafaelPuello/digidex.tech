@@ -1,10 +1,10 @@
 from rest_framework import serializers
 
-from .models import InventoryBox
+from .models import Box
 
 
-class InventoryBoxSerializer(serializers.ModelSerializer):
+class BoxSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = InventoryBox
+        model = Box
         fields = ['uuid', 'owner', 'description']

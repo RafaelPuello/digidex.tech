@@ -5,7 +5,7 @@
   "description": "Models for managing plant inventories.",
   "type": "object",
   "definitions": {
-    "InventoryBox": {
+    "Box": {
       "type": "object",
       "properties": {
         "owner": {
@@ -45,9 +45,48 @@
       },
       "required": ["owner", "name", "slug", "uuid", "created_at", "last_updated"],
       "additionalProperties": false
+    },
+    "BoxItem": {
+      "type": "object",
+      "properties": {
+        "box": {
+          "type": "string",
+          "description": "Reference to the box (ForeignKey to the box model)"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the item",
+          "maxLength": 25
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the item",
+          "maxLength": 255
+        },
+        "slug": {
+          "type": "string",
+          "description": "A unique slug for the item",
+          "maxLength": 255
+        },
+        "uuid": {
+          "type": "string",
+          "description": "A unique identifier for the item",
+          "format": "uuid"
+        },
+        "created_at": {
+          "type": "string",
+          "description": "The date and time the item was created",
+          "format": "date-time"
+        },
+        "last_updated": {
+          "type": "string",
+          "description": "The date and time the item was last updated",
+          "format": "date-time"
+        }
+      }
     }
   },
   "properties": {
-    "inventoryBox": { "$ref": "#/definitions/InventoryBox" }
+    "Box": { "$ref": "#/definitions/Box" }
   }
 }

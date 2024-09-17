@@ -18,7 +18,6 @@ class PlantViewSet(SnippetViewSet):
     panels = [
         FieldPanel("name"),
         FieldPanel("description"),
-        FieldPanel("nfc_tag")
     ]
 
 register_snippet(PlantViewSet)

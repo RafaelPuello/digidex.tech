@@ -145,6 +145,8 @@ class NfcTag(models.Model):
         """
         Returns a string representation of the NFC tag, with the serial number formatted as pairs of characters.
         """
+        if self.label:
+            return str(self.label)
         uid = ':'.join(self.serial_number[i:i+2] for i in range(0, len(self.serial_number), 2))
         return str(f"NFC Tag: {uid}")
 
