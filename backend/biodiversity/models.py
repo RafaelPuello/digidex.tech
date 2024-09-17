@@ -10,7 +10,7 @@ class Plant(models.Model):
         name (str): The name of the plant.
         description (str): A description of the plant.
         created_at (datetime): The date and time the plant was created.
-        updated_at (datetime): The date and time the plant was last updated.
+        last_modified (datetime): The date and time the plant was last updated.
     """
     name = models.CharField(
         max_length=255,
@@ -22,7 +22,7 @@ class Plant(models.Model):
     created_at = models.DateTimeField(
         auto_now_add=True
     )
-    updated_at = models.DateTimeField(
+    last_modified = models.DateTimeField(
         auto_now=True
     )
 

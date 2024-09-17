@@ -17,7 +17,7 @@ class Box(Orderable, models.Model):
         slug (str): A unique slug for the inventory.
         uuid (uuid): A unique identifier for the inventory.
         created_at (datetime): The date and time the inventory was created.
-        last_updated (datetime): The date and time the inventory was last updated.
+        last_modified (datetime): The date and time the inventory was last updated.
     """
 
     owner = models.ForeignKey(
@@ -47,7 +47,7 @@ class Box(Orderable, models.Model):
     created_at = models.DateTimeField(
         auto_now_add=True
     )
-    last_updated = models.DateTimeField(
+    last_modified = models.DateTimeField(
         auto_now=True
     )
 
@@ -85,7 +85,7 @@ class BoxItem(Orderable, models.Model):
         nfc_tag (OneToOneField): The NFC tag associated with the item.
         plant (OneToOneField): The plant associated with the item.
         created_at (datetime): The date and time the item was created.
-        last_updated (datetime): The date and time the item was last updated.
+        last_modified (datetime): The date and time the item was last updated.
     """
 
     box = models.ForeignKey(
@@ -108,7 +108,7 @@ class BoxItem(Orderable, models.Model):
     created_at = models.DateTimeField(
         auto_now_add=True
     )
-    last_updated = models.DateTimeField(
+    last_modified = models.DateTimeField(
         auto_now=True
     )
 

@@ -15,22 +15,17 @@
       "description": "A description of the plant",
       "maxLength": 10000
     },
-    "nfc_tag": {
-      "type": "string",
-      "description": "Reference to the NFC Tag used for mapping (ForeignKey to the NfcTag model)",
-      "maxLength": 255
-    },
     "created_at": {
       "type": "string",
       "description": "The date and time the plant was created",
       "format": "date-time"
     },
-    "updated_at": {
+    "last_modified": {
       "type": "string",
       "description": "The date and time the plant was last updated",
       "format": "date-time"
     }
   },
-  "required": ["name", "created_at", "updated_at"],
+  "required": ["name", "created_at", "last_modified"],
   "additionalProperties": false
 }

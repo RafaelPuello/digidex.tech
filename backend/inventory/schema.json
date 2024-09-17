@@ -37,7 +37,7 @@
           "description": "The date and time the inventory was created",
           "format": "date-time"
         },
-        "last_updated": {
+        "last_modified": {
           "type": "string",
           "description": "The date and time the inventory was last updated",
           "format": "date-time"
@@ -67,7 +67,7 @@
           "description": "The date and time the item was created",
           "format": "date-time"
         },
-        "last_updated": {
+        "last_modified": {
           "type": "string",
           "description": "The date and time the item was last updated",
           "format": "date-time"
