@@ -93,20 +93,6 @@ class TrainerPage(Page):
 
     child_page_types = []
 
-    @classmethod
-    def create_for_trainer(cls, trainer):
-        from home.models import HomePage
-        parent_page = HomePage.objects.first()
-        trainer_page = cls(
-            slug=slugify(trainer.username),
-            title=trainer.username,
-            owner=trainer,
-            trainer=trainer
-        )
-        parent_page.add_child(instance=trainer_page)
-        trainer_page.save_revision().publish()
-        return trainer_page
-
     def get_context(self, request):
         context = super().get_context(request)
         context['inventories'] = self.get_trainer_inventories()
