@@ -1,5 +1,5 @@
 from wagtail import hooks
-from wagtail.admin.panels import TitleFieldPanel, FieldPanel, MultiFieldPanel
+from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet
 
@@ -16,8 +16,9 @@ class PlantViewSet(SnippetViewSet):
     add_to_admin_menu = True
 
     panels = [
-        TitleFieldPanel("name"),
+        FieldPanel("name"),
         FieldPanel("description"),
+        FieldPanel("nfc_tag")
     ]
 
 register_snippet(PlantViewSet)
