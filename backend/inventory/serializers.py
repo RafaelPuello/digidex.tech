@@ -7,4 +7,4 @@ class InventoryBoxSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = InventoryBox
-        fields = ['uuid', 'trainer', 'description']
+        fields = ['uuid', 'owner', 'description']

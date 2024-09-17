@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from biodiversity.models import Plant
+from .models import Plant
 
 
 class PlantSerializer(serializers.ModelSerializer):

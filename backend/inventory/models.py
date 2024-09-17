@@ -10,7 +10,7 @@ class InventoryBox(models.Model):
     Represents an inventory box in the database.
 
     Attributes:
-        trainer (ForeignKey): The trainer that owns the inventory.
+        owner (ForeignKey): The trainer that owns the inventory.
         name (str): The name of the inventory.
         description (str): A description of the inventory.
         slug (str): A unique slug for the inventory.
@@ -19,7 +19,7 @@ class InventoryBox(models.Model):
         last_updated (datetime): The date and time the inventory was last updated.
     """
 
-    trainer = models.ForeignKey(
+    owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='inventories'
@@ -68,10 +68,10 @@ class InventoryBox(models.Model):
         verbose_name = _("box")
         verbose_name_plural = _("boxes")
         indexes = [
-            models.Index(fields=['trainer', 'name']),
+            models.Index(fields=['owner', 'name']),
         ]
         constraints = [
-            models.UniqueConstraint(fields=['trainer', 'name'], name='unique_trainer_inventory')
+            models.UniqueConstraint(fields=['owner', 'name'], name='unique_owner_inventory')
         ]
 
 

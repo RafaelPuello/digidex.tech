@@ -8,9 +8,9 @@
     "InventoryBox": {
       "type": "object",
       "properties": {
-        "trainer": {
+        "owner": {
           "type": "string",
-          "description": "Reference to the trainer (ForeignKey to the user model)"
+          "description": "Reference to the owner (ForeignKey to the user model)"
         },
         "name": {
           "type": "string",
@@ -43,7 +43,7 @@
           "format": "date-time"
         }
       },
-      "required": ["trainer", "name", "slug", "uuid", "created_at", "last_updated"],
+      "required": ["owner", "name", "slug", "uuid", "created_at", "last_updated"],
       "additionalProperties": false
     },
     "InventoryPlant": {
