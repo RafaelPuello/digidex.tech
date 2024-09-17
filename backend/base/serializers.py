@@ -3,7 +3,7 @@ from rest_framework import serializers
 from wagtail.images.api.v2.serializers import BaseSerializer, ImageDownloadUrlField, ImageSerializer
 from wagtail.images.api.fields import ImageRenditionField
 
-from .models import BaseImage
+from base.models import BaseImage
 
 
 class MainImageField(Field):

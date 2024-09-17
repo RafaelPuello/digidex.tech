@@ -4,7 +4,7 @@ from wagtail import urls as wagtail_urls
 from search.views import search
 
 from assistant.views import chat
-from inventory.views import link
+from nearfieldcommunication.views import link
 
 urlpatterns = [
     path("accounts/", include('allauth.urls')),

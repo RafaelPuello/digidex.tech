@@ -1,13 +1,13 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from .models import TrainerInventory
-from .serializers import TrainerInventorySerializer
+from .models import InventoryBox
+from .serializers import InventoryBoxSerializer
 
 
-class TrainerInventoryAPIViewSet(viewsets.ModelViewSet):
-    queryset = TrainerInventory.objects.all()
-    base_serializer_class = TrainerInventorySerializer
+class InventoryBoxAPIViewSet(viewsets.ModelViewSet):
+    queryset = InventoryBox.objects.all()
+    base_serializer_class = InventoryBoxSerializer
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [JWTAuthentication]
     lookup_field = 'uuid'
