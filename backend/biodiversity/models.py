@@ -9,6 +9,7 @@ class Plant(models.Model):
     Attributes:
         name (str): The name of the plant.
         description (str): A description of the plant.
+        nfc_tag (NFCTag): The NFC tag associated with the plant.
         created_at (datetime): The date and time the plant was created.
         updated_at (datetime): The date and time the plant was last updated.
     """
@@ -18,6 +19,12 @@ class Plant(models.Model):
     )
     description = models.TextField(
         blank=True
+    )
+    nfc_tag = models.OneToOneField(
+        'nearfieldcommunication.NFCTag',
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name='linked_plant'
     )
     created_at = models.DateTimeField(
         auto_now_add=True
