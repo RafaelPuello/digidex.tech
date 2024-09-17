@@ -10,7 +10,7 @@ def create_trainer_group_permissions(group):
     PERMISSIONS = [
         "add_plant", "change_plant", "delete_plant",
         "add_box", "change_box", "delete_box",
-        "view_nfctag", "view_nfctagtype", "view_nfctagscan",
+        "view_nfctag", "view_nfctagtype", "view_nfctagscan", "view_nfctagmemory",
         "access_admin",
     ]
     
