@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static wagtailcore_tags wagtailimages_tags navigation_tags %}
+{% load static wagtailcore_tags wagtailuserbar wagtailimages_tags navigation_tags %}
 
 {% block body %}
   <header role="banner">
@@ -7,9 +7,13 @@
       <div class="nav-block">
         <div class="nav">
           {% get_site_root as site_root %}
+          {% if user.is_authenticated %}
+            {% wagtailuserbar 'top-left' %}
+          {% else %}
             <a href="{% pageurl site_root %}" class="brand w-nav-brand">
               <img src="{% static 'base/images/logos/logo.svg' %}" alt="Digidex Logo" class="logo">
             </a>
+          {% endif %}
           <nav role="navigation" class="nav-menu w-nav-menu">
             <div class="button-mobile">
               {% get_navigation_buttons %}

@@ -148,7 +148,9 @@ class NfcTag(models.Model):
         if self.label:
             return str(self.label)
         uid = ':'.join(self.serial_number[i:i+2] for i in range(0, len(self.serial_number), 2))
-        return str(f"NFC Tag: {uid}")
+        if self.nfc_tag_type:
+            return str(f"{self.nfc_tag_type}: {uid}")
+        return str(uid)
 
     class Meta:
         verbose_name = _("nfc tag")

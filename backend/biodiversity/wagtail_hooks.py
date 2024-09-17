@@ -13,6 +13,7 @@ def register_icons(icons):
 class PlantViewSet(SnippetViewSet):
     model = Plant
     icon = "plant"
+    name = "plants"
     add_to_admin_menu = True
 
     panels = [
