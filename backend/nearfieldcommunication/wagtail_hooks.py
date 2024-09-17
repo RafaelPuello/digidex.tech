@@ -1,5 +1,5 @@
 from wagtail import hooks
-from wagtail.admin.panels import FieldPanel
+from wagtail.admin.panels import TabbedInterface, FieldPanel, ObjectList
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet, SnippetViewSetGroup
 
@@ -20,8 +20,23 @@ class NfcTagViewSet(SnippetViewSet):
     menu_label = "Tags"
     menu_name = "tags"
 
-    panels = [
+    shared_panels = [
+    
     ]
+
+    private_panels = [
+        FieldPanel("user"),
+        FieldPanel("nfc_tag_type"),
+        FieldPanel("url"),
+        FieldPanel("active"),
+    ]
+
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(shared_panels, heading='Details'),
+            ObjectList(private_panels, heading='Admin only', permission="superuser"),
+        ]
+    )
 
 
 class NfcTagTypeViewSet(SnippetViewSet):
@@ -30,10 +45,21 @@ class NfcTagTypeViewSet(SnippetViewSet):
     menu_label = "Tag Types"
     menu_name = "types"
 
-    panels = [
+    shared_panels = [
         FieldPanel("name"),
-        FieldPanel("description"),
+        FieldPanel("description"),   
     ]
+
+    private_panels = [
+        FieldPanel("integrated_circuit"),
+    ]
+
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(shared_panels, heading='Details'),
+            ObjectList(private_panels, heading='Admin only', permission="superuser"),
+        ]
+    )
 
 
 class NfcTagScanViewSet(SnippetViewSet):
@@ -42,8 +68,20 @@ class NfcTagScanViewSet(SnippetViewSet):
     menu_label = "Tag Scans"
     menu_name = "scans"
 
-    panels = [
+    shared_panels = [
+    
     ]
+
+    private_panels = [
+    
+    ]
+
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(shared_panels, heading='Details'),
+            ObjectList(private_panels, heading='Admin only', permission="superuser"),
+        ]
+    )
 
 
 class NfcTagViewSetGroup(SnippetViewSetGroup):

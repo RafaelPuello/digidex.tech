@@ -64,7 +64,9 @@ class NfcTag(models.Model):
     Attributes:
         uuid (UUID): A unique identifier for the NFC tag.
         serial_number (str): The serial number of the NFC tag.
+        user (User): The user who is assigned the NFC tag.
         nfc_tag_type (NfcTagType): The type of NFC tag.
+        url (URL): The URL associated with the NFC tag.
         active (bool): Indicates whether the NFC tag is active.
         created_at (datetime): The date and time when the NFC tag was created.
         last_modified (datetime): The date and time when the NFC tag was last modified.
@@ -82,12 +84,21 @@ class NfcTag(models.Model):
         db_index=True,
         validators=[validate_serial_number]
     )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='tags'
+    )
     nfc_tag_type = models.ForeignKey(
         NfcTagType,
         on_delete=models.PROTECT,
         blank=True,
         null=True,
         related_name='tags'
+    )
+    url = models.URLField(
+        null=True
     )
     active = models.BooleanField(
         default=True

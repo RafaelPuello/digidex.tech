@@ -41,9 +41,17 @@
           "type": "string",
           "maxLength": 32
         },
+        "user": {
+          "type": ["string", "null"],
+          "description": "Foreign key reference to User"
+        },
         "nfc_tag_type": {
           "type": "string",
           "description": "Foreign key reference to NfcTagType"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
         },
         "active": {
           "type": "boolean"

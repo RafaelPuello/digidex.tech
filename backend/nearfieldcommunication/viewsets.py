@@ -37,13 +37,16 @@ class NfcTagViewSet(viewsets.ModelViewSet):
     """
     queryset = NfcTag.objects.all()
     serializer_class = NfcTagSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     authentication_classes = [JWTAuthentication]
     lookup_field = 'serial_number'
     body_fields = ['serial_number', 'nfc_tag_type']
     meta_fields = ['id']
 
     def get_queryset(self):
+        """
+        Filter to only show NFC tags for the current user if they're not a superuser.
+        """
         if self.request.user.is_superuser:
             return NfcTag.objects.all()
         return NfcTag.objects.filter(user=self.request.user)
