@@ -27,7 +27,4 @@ def link(request):
     )
     ntag.log_scan(request.user, scan_counter)
 
-    # Need better handling
-    if hasattr(ntag, 'link'):
-        return redirect(ntag.link.url)
     return redirect('/')

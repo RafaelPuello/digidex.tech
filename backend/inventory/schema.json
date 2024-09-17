@@ -45,54 +45,9 @@
       },
       "required": ["owner", "name", "slug", "uuid", "created_at", "last_updated"],
       "additionalProperties": false
-    },
-    "InventoryPlant": {
-      "type": "object",
-      "properties": {
-        "inventory": {
-          "type": "string",
-          "description": "Reference to the inventory (ForeignKey to InventoryBox)"
-        },
-        "plant": {
-          "type": "string",
-          "description": "Reference to the plant (OneToOneField to biodiversity.Plant)"
-        },
-        "label": {
-          "type": "string",
-          "description": "A label for the plant in the inventory",
-          "maxLength": 255
-        },
-        "nfc_tag": {
-          "type": "string",
-          "description": "Reference to the NFC tag (OneToOneField to nearfieldcommunication.NfcTag)"
-        },
-        "uuid": {
-          "type": "string",
-          "description": "A unique identifier for the plant in the inventory",
-          "format": "uuid"
-        },
-        "slug": {
-          "type": "string",
-          "description": "A unique slug for the plant in the inventory",
-          "maxLength": 255
-        },
-        "created_at": {
-          "type": "string",
-          "description": "The date and time the plant was added to the inventory",
-          "format": "date-time"
-        },
-        "last_updated": {
-          "type": "string",
-          "description": "The date and time the plant was last updated",
-          "format": "date-time"
-        }
-      },
-      "required": ["inventory", "plant", "uuid", "slug", "created_at", "last_updated"],
-      "additionalProperties": false
     }
   },
   "properties": {
-    "inventoryBox": { "$ref": "#/definitions/InventoryBox" },
-    "inventoryPlant": { "$ref": "#/definitions/InventoryPlant" }
+    "inventoryBox": { "$ref": "#/definitions/InventoryBox" }
   }
 }

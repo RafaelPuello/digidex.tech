@@ -65,6 +65,7 @@ class NfcTag(models.Model):
         uuid (UUID): A unique identifier for the NFC tag.
         serial_number (str): The serial number of the NFC tag.
         nfc_tag_type (NfcTagType): The type of NFC tag.
+        label (str): A label for the NFC tag.
         active (bool): Indicates whether the NFC tag is active.
         created_at (datetime): The date and time when the NFC tag was created.
         last_modified (datetime): The date and time when the NFC tag was last modified.
@@ -88,6 +89,10 @@ class NfcTag(models.Model):
         blank=True,
         null=True,
         related_name='tags'
+    )
+    label = models.CharField(
+        max_length=255,
+        blank=True
     )
     active = models.BooleanField(
         default=True
