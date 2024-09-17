@@ -45,6 +45,10 @@
           "type": "string",
           "description": "Foreign key reference to NfcTagType"
         },
+        "label": {
+          "type": ["string", "null"],
+          "maxLength": 255
+        },
         "active": {
           "type": "boolean"
         },

@@ -5,7 +5,7 @@
   "description": "Models for managing plant inventories.",
   "type": "object",
   "definitions": {
-    "InventoryBox": {
+    "Box": {
       "type": "object",
       "properties": {
         "owner": {
@@ -46,53 +46,47 @@
       "required": ["owner", "name", "slug", "uuid", "created_at", "last_updated"],
       "additionalProperties": false
     },
-    "InventoryPlant": {
+    "BoxItem": {
       "type": "object",
       "properties": {
-        "inventory": {
+        "box": {
           "type": "string",
-          "description": "Reference to the inventory (ForeignKey to InventoryBox)"
+          "description": "Reference to the box (ForeignKey to the box model)"
         },
-        "plant": {
+        "name": {
           "type": "string",
-          "description": "Reference to the plant (OneToOneField to biodiversity.Plant)"
+          "description": "The name of the item",
+          "maxLength": 25
         },
-        "label": {
+        "description": {
           "type": "string",
-          "description": "A label for the plant in the inventory",
+          "description": "A description of the item",
           "maxLength": 255
-        },
-        "nfc_tag": {
-          "type": "string",
-          "description": "Reference to the NFC tag (OneToOneField to nearfieldcommunication.NfcTag)"
-        },
-        "uuid": {
-          "type": "string",
-          "description": "A unique identifier for the plant in the inventory",
-          "format": "uuid"
         },
         "slug": {
           "type": "string",
-          "description": "A unique slug for the plant in the inventory",
+          "description": "A unique slug for the item",
           "maxLength": 255
+        },
+        "uuid": {
+          "type": "string",
+          "description": "A unique identifier for the item",
+          "format": "uuid"
         },
         "created_at": {
           "type": "string",
-          "description": "The date and time the plant was added to the inventory",
+          "description": "The date and time the item was created",
           "format": "date-time"
         },
         "last_updated": {
           "type": "string",
-          "description": "The date and time the plant was last updated",
+          "description": "The date and time the item was last updated",
           "format": "date-time"
         }
-      },
-      "required": ["inventory", "plant", "uuid", "slug", "created_at", "last_updated"],
-      "additionalProperties": false
+      }
     }
   },
   "properties": {
-    "inventoryBox": { "$ref": "#/definitions/InventoryBox" },
-    "inventoryPlant": { "$ref": "#/definitions/InventoryPlant" }
+    "Box": { "$ref": "#/definitions/Box" }
   }
 }

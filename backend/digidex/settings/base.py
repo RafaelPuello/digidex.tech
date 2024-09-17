@@ -29,8 +29,8 @@ INSTALLED_APPS = [
 
     "base",
     "trainers",
-    "biodiversity",
     "nearfieldcommunication",
+    "biodiversity",
     "assistant",
     "inventory",
     "home",

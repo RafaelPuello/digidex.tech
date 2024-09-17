@@ -3,9 +3,10 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from django.utils.text import slugify
+from wagtail.models import Orderable
 
 
-class InventoryBox(models.Model):
+class Box(Orderable, models.Model):
     """
     Represents an inventory box in the database.
 
@@ -72,4 +73,50 @@ class InventoryBox(models.Model):
         ]
         constraints = [
             models.UniqueConstraint(fields=['owner', 'name'], name='unique_owner_inventory')
+        ]
+
+
+class BoxItem(Orderable, models.Model):
+    """
+    Represents an item in an inventory box in the database.
+
+    Attributes:
+        box (ForeignKey): The inventory box the item belongs to.
+        nfc_tag (OneToOneField): The NFC tag associated with the item.
+        created_at (datetime): The date and time the item was created.
+        last_updated (datetime): The date and time the item was last updated.
+    """
+
+    box = models.ForeignKey(
+        Box,
+        on_delete=models.CASCADE,
+        related_name='items'
+    )
+    nfc_tag = models.OneToOneField(
+        'nearfieldcommunication.NfcTag',
+        on_delete=models.SET_NULL,
+        related_name='linked_item',
+        null=True
+    )
+    plant = models.OneToOneField(
+        'biodiversity.Plant',
+        on_delete=models.SET_NULL,
+        related_name='+',
+        null=True
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+    last_updated = models.DateTimeField(
+        auto_now=True
+    )
+
+    def __str__(self):
+        return f"{self.box.name} item."
+
+    class Meta:
+        verbose_name = _("box item")
+        verbose_name_plural = _("box items")
+        constraints = [
+            models.UniqueConstraint(fields=['box', 'nfc_tag', 'plant'], name='unique_box_item')
         ]

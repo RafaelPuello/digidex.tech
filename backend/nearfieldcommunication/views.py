@@ -22,12 +22,11 @@ def link(request):
         return redirect('/')
 
     ntag = get_object_or_404(
-        NfcTag.objects.select_related('link'),
+        NfcTag.objects.select_related('linked_object'),
         serial_number=serial_number
     )
     ntag.log_scan(request.user, scan_counter)
 
-    # Need better handling
-    if hasattr(ntag, 'link'):
-        return redirect(ntag.link.url)
-    return redirect('/')
+    if not hasattr(ntag, 'linked_object'):
+        return redirect('/')
+    return redirect(ntag.linked_object.url)
