@@ -8,9 +8,9 @@ from .models import NfcTag, NfcTagType, NfcTagScan
 @hooks.register("register_icons")
 def register_icons(icons):
     return icons + [
-        'nearfieldcommunication/icons/nfc.svg',
-        'nearfieldcommunication/icons/nfc-google.svg',
-        'nearfieldcommunication/icons/scan.svg'
+        'nearfieldcommunication/icons/nfc-icon.svg',
+        'nearfieldcommunication/icons/nfc-types.svg',
+        'nearfieldcommunication/icons/nfc-scan.svg'
         ]
 
 
@@ -27,7 +27,7 @@ class NfcTagViewSet(SnippetViewSet):
 
 class NfcTagTypeViewSet(SnippetViewSet):
     model = NfcTagType
-    icon = "nfc-google"
+    icon = "nfc-types"
     menu_label = "Tag Types"
     menu_name = "types"
 
@@ -39,7 +39,7 @@ class NfcTagTypeViewSet(SnippetViewSet):
 
 class NfcTagScanViewSet(SnippetViewSet):
     model = NfcTagScan
-    icon = "scan"
+    icon = "nfc-scan"
     menu_label = "Tag Scans"
     menu_name = "scans"
 
@@ -49,7 +49,7 @@ class NfcTagScanViewSet(SnippetViewSet):
 
 class NfcTagViewSetGroup(SnippetViewSetGroup):
     items = [NfcTagViewSet, NfcTagTypeViewSet, NfcTagScanViewSet]
-    menu_icon = "nfc"
+    menu_icon = "nfc-icon"
     menu_label = "NFC Tags"
     menu_name = "nfc tags"
     add_to_admin_menu = True

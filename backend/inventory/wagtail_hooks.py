@@ -20,7 +20,7 @@ class BoxViewSet(SnippetViewSet):
 
 class InventoryViewSetGroup(SnippetViewSetGroup):
     items = [PlantViewSet, BoxViewSet]
-    icon = "desktop"
+    menu_icon = "desktop"
     menu_label = "Inventory"
     menu_name = "inventory"
     add_to_admin_menu = True
@@ -31,4 +31,4 @@ class InventoryViewSetGroup(SnippetViewSetGroup):
     ]
 
 
-register_snippet(BoxViewSet)
+register_snippet(InventoryViewSetGroup)
