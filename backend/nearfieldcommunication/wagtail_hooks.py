@@ -28,7 +28,6 @@ class NfcTagSnippetViewSet(SnippetViewSet):
     private_panels = [
         FieldPanel("user"),
         FieldPanel("nfc_tag_type"),
-        FieldPanel("url"),
         FieldPanel("active"),
     ]
 
