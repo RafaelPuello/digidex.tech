@@ -1,5 +1,6 @@
 from base import blocks
 
+
 class PlantBlock(blocks.StructBlock):
     name = blocks.CharBlock()
     description = blocks.TextBlock()

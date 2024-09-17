@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework import routers
 
-from views import TrainerViewSet
+from .views import TrainerViewSet
 
 router = routers.DefaultRouter()
 router.register(r'trainers', TrainerViewSet)

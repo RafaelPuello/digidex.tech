@@ -1,13 +1,14 @@
-from wagtail.admin.panels import TitleFieldPanel, FieldPanel, MultiFieldPanel
+from wagtail.admin.panels import TitleFieldPanel, FieldPanel
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet
 
-from .models import TrainerInventory, InventoryPlant
+from .models import InventoryBox
 
 
-class TrainerInventoryViewSet(SnippetViewSet):
-    model = TrainerInventory
-    icon = 'desktop'
+class InventoryBoxViewSet(SnippetViewSet):
+    model = InventoryBox
+    icon = "desktop"
+    name = "Inventory"
     add_to_admin_menu = True
 
     panels = [
@@ -15,23 +16,4 @@ class TrainerInventoryViewSet(SnippetViewSet):
         FieldPanel("description"),
     ]
 
-
-class InventoryPlantViewSet(SnippetViewSet):
-    model = InventoryPlant
-    icon = "desktop"
-    add_to_admin_menu = True
-
-    panels = [
-        FieldPanel("inventory"),
-        FieldPanel("plant"),
-        MultiFieldPanel(
-            [
-                FieldPanel("label"),
-                FieldPanel("nfc_tag"),
-            ],
-            heading="NFC Tag Details"
-        ),
-    ]
-
-register_snippet(TrainerInventoryViewSet)
-register_snippet(InventoryPlantViewSet)
+register_snippet(InventoryBoxViewSet)

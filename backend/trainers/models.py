@@ -7,7 +7,6 @@ from wagtail.models import Page, Collection, GroupPagePermission, GroupCollectio
 from wagtail.fields import RichTextField, StreamField
 from wagtail.admin.panels import FieldPanel
 
-from inventory.blocks import InventoryBlock
 from .utils import create_trainer_collection
 
 
@@ -44,7 +43,7 @@ class Trainer(AbstractUser):
         return self.inventories.all()
 
     def set_trainer_group(self):
-        trainer_group, created = Group.objects.get_or_create(name=f"trainer_{self.uuid}")
+        trainer_group, created = Group.objects.get_or_create(name=self.uuid)
         if created:
             self.groups.add(trainer_group)
         return trainer_group
@@ -99,7 +98,7 @@ class Trainer(AbstractUser):
     def set_page(self, group):
         if not hasattr(self, 'page'):
             TrainerPage.create_for_trainer(self)
-        self.set_page_permissions(self.page, group)
+        # self.set_page_permissions(self.page, group)
         return
 
     @transaction.atomic
@@ -125,7 +124,7 @@ class Trainer(AbstractUser):
 
     def delete(self, *args, **kwargs):
         with transaction.atomic():
-            user_group = Group.objects.get(name=f"trainer_{self.uuid}")
+            user_group = Group.objects.get(name=self.uuid)
             user_group.delete()
             super().delete(*args, **kwargs)
 
@@ -154,14 +153,9 @@ class TrainerPage(Page):
     description = RichTextField(
         blank=True
     )
-    inventory = StreamField(
-        [('inventory', InventoryBlock())],
-        null=True,
-    )
 
     content_panels = Page.content_panels + [
-        FieldPanel('description'),
-        FieldPanel('inventory')
+        FieldPanel('description')
     ]
 
     parent_page_types = ['home.HomePage']

@@ -5,12 +5,12 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.text import slugify
 
 
-class TrainerInventory(models.Model):
+class InventoryBox(models.Model):
     """
-    Represents a trainer's inventory in the database.
+    Represents an inventory box in the database.
 
     Attributes:
-        trainer (ForeignKey): The trainer that owns the inventory.
+        owner (ForeignKey): The trainer that owns the inventory.
         name (str): The name of the inventory.
         description (str): A description of the inventory.
         slug (str): A unique slug for the inventory.
@@ -19,7 +19,7 @@ class TrainerInventory(models.Model):
         last_updated (datetime): The date and time the inventory was last updated.
     """
 
-    trainer = models.ForeignKey(
+    owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='inventories'
@@ -51,10 +51,10 @@ class TrainerInventory(models.Model):
     )
 
     def generate_prompt(self):
-        prompt = f"The trainer's username is {self.trainer.username}:\n"
-        if not self.description:
-            return prompt
-        return f"{prompt}. The trainer's inventory description is: {self.description}"
+        prompt = f"The inventory box name is {self.name}"
+        if self.description:
+            return f"{prompt} and its description is {self.description}"
+        return prompt
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -62,16 +62,16 @@ class TrainerInventory(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.trainer.username
+        return self.name
 
     class Meta:
-        verbose_name = _("user inventory")
-        verbose_name_plural = _("user inventories")
+        verbose_name = _("box")
+        verbose_name_plural = _("boxes")
         indexes = [
-            models.Index(fields=['trainer', 'name']),
+            models.Index(fields=['owner', 'name']),
         ]
         constraints = [
-            models.UniqueConstraint(fields=['trainer', 'name'], name='unique_trainer_inventory')
+            models.UniqueConstraint(fields=['owner', 'name'], name='unique_owner_inventory')
         ]
 
 
@@ -90,7 +90,7 @@ class InventoryPlant(models.Model):
         last_updated (datetime): The date and time the plant was last updated.
     """
     inventory = models.ForeignKey(
-        TrainerInventory,
+        InventoryBox,
         on_delete=models.CASCADE,
         related_name='plants'
     )
