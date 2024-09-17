@@ -53,25 +53,14 @@
           "type": "string",
           "description": "Reference to the box (ForeignKey to the box model)"
         },
-        "name": {
+        "nfc_tag": {
           "type": "string",
-          "description": "The name of the item",
-          "maxLength": 25
-        },
-        "description": {
-          "type": "string",
-          "description": "A description of the item",
+          "description": "Reference to the NFC tag (ForeignKey to the nfc tag model)",
           "maxLength": 255
         },
-        "slug": {
+        "plant": {
           "type": "string",
-          "description": "A unique slug for the item",
-          "maxLength": 255
-        },
-        "uuid": {
-          "type": "string",
-          "description": "A unique identifier for the item",
-          "format": "uuid"
+          "description": "Reference to the plant (ForeignKey to the plant model)"
         },
         "created_at": {
           "type": "string",

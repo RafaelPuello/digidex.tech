@@ -21,7 +21,6 @@ class NfcTagViewSet(SnippetViewSet):
     menu_name = "tags"
 
     panels = [
-        FieldPanel("label"),
     ]
 
 

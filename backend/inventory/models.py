@@ -83,6 +83,7 @@ class BoxItem(Orderable, models.Model):
     Attributes:
         box (ForeignKey): The inventory box the item belongs to.
         nfc_tag (OneToOneField): The NFC tag associated with the item.
+        plant (OneToOneField): The plant associated with the item.
         created_at (datetime): The date and time the item was created.
         last_updated (datetime): The date and time the item was last updated.
     """
