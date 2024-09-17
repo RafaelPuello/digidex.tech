@@ -1,9 +1,11 @@
 import uuid
+import numpy as np
 from django.db import models
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
-import numpy as np
 
 from .validators import validate_serial_number
 
@@ -60,10 +62,12 @@ class NfcTagType(models.Model):
         verbose_name_plural = _("nfc tag types")
 
 
+# models.py
+
 class NfcTag(models.Model):
     """
     Model representing an individual NFC tag, which is linked to a physical object.
-    
+
     Attributes:
         uuid (UUID): A unique identifier for the NFC tag.
         serial_number (str): The serial number of the NFC tag.
@@ -72,6 +76,9 @@ class NfcTag(models.Model):
         active (bool): Indicates whether the NFC tag is active.
         created_at (datetime): The date and time when the NFC tag was created.
         last_modified (datetime): The date and time when the NFC tag was last modified.
+        content_type (ContentType): The type of the related memory model.
+        object_id (PositiveIntegerField): The ID of the related memory instance.
+        memory (GenericForeignKey): The generic foreign key to the memory instance.
     """
 
     uuid = models.UUIDField(
@@ -108,6 +115,21 @@ class NfcTag(models.Model):
     last_modified = models.DateTimeField(
         auto_now=True
     )
+    content_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
+    object_id = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        db_index=True
+    )
+    memory = GenericForeignKey(
+        'content_type',
+        'object_id'
+    )
 
     def create_memory(self, ic_type=NTAG213):
         """
@@ -117,7 +139,7 @@ class NfcTag(models.Model):
             ic_type (str): The type of integrated circuit used in the NFC tag.
 
         Returns:
-            NfcTagMemory: The newly created memory object with memory initialized as a 2D array filled with zeros.
+            tuple: (NfcTagMemory, memory_view) The newly created memory object and its memory view.
         """
 
         # Validate the integrated circuit type
@@ -142,8 +164,6 @@ class NfcTag(models.Model):
         )
 
         # Optional Step 4: Create a memoryview for in-memory 2D access
-        # If you need to manipulate the memory as a 2D array immediately,
-        # you can create a memoryview and return it alongside the created object.
         memory_view = memory_2d.view()
 
         return nfc_tag_memory, memory_view

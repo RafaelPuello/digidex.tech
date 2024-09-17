@@ -82,7 +82,6 @@ class BoxItem(Orderable, models.Model):
 
     Attributes:
         box (ForeignKey): The inventory box the item belongs to.
-        nfc_tag (OneToOneField): The NFC tag associated with the item.
         plant (OneToOneField): The plant associated with the item.
         created_at (datetime): The date and time the item was created.
         last_modified (datetime): The date and time the item was last updated.
@@ -92,12 +91,6 @@ class BoxItem(Orderable, models.Model):
         Box,
         on_delete=models.CASCADE,
         related_name='items'
-    )
-    nfc_tag = models.OneToOneField(
-        'nearfieldcommunication.NfcTag',
-        on_delete=models.SET_NULL,
-        related_name='linked_item',
-        null=True
     )
     plant = models.OneToOneField(
         'biodiversity.Plant',
@@ -119,5 +112,5 @@ class BoxItem(Orderable, models.Model):
         verbose_name = _("box item")
         verbose_name_plural = _("box items")
         constraints = [
-            models.UniqueConstraint(fields=['box', 'nfc_tag', 'plant'], name='unique_box_item')
+            models.UniqueConstraint(fields=['box', 'plant'], name='unique_box_item')
         ]

@@ -55,9 +55,17 @@
         "last_modified": {
           "type": "string",
           "format": "date-time"
+        },
+        "content_type": {
+          "type": ["string", "null"],
+          "description": "Content type for GenericForeignKey"
+        },
+        "object_id": {
+          "type": ["integer", "null"],
+          "description": "Object ID for GenericForeignKey"
         }
       },
-      "required": ["uuid", "serial_number", "integrated_circuit", "created_at", "last_modified"]
+      "required": ["uuid", "serial_number", "created_at", "last_modified"]
     },
     "NfcTagScan": {
       "type": "object",
