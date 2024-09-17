@@ -13,6 +13,7 @@ class BoxViewSet(SnippetViewSet):
     menu_name = "boxes"
 
     panels = [
+        FieldPanel("owner"),
         FieldPanel("name"),
         FieldPanel("description"),
     ]
