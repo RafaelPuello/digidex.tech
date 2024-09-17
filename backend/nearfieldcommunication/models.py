@@ -7,6 +7,22 @@ from django.utils.translation import gettext_lazy as _
 from .validators import validate_serial_number
 
 
+NTAG213 = "213"
+NTAG215 = "215"
+NTAG216 = "216"
+
+IC_CHOICES = (
+    (NTAG213, _("NTAG 213")),
+    (NTAG215, _("NTAG 215")),
+    (NTAG216, _("NTAG 216")),
+)
+
+MEMORY_SIZE = {
+    NTAG213: 144,
+    NTAG215: 504,
+    NTAG216: 888,
+}
+
 class NfcTagType(models.Model):
     """
     Model representing the type of NFC tag.
@@ -95,6 +111,30 @@ class NfcTag(models.Model):
     last_modified = models.DateTimeField(
         auto_now=True
     )
+
+    def create_memory(self, ic_type=NTAG213):
+        """
+        Creates a new memory object for the NFC tag.
+
+        Args:
+            ic_type (str): The type of integrated circuit used in the NFC tag.
+            memory (binary): The memory contents of the NFC tag.
+        
+        Returns:
+            NfcTagMemory: The newly created memory object.
+        """
+    
+        if ic_type not in dict(IC_CHOICES).keys():
+            raise ValueError(_("Invalid integrated circuit type."))
+        
+        # Initialize memory with zeros
+        memory = b'\x00' * MEMORY_SIZE[ic_type]
+
+        return NfcTagMemory.objects.create(
+            nfc_tag=self,
+            integrated_circuit=ic_type,
+            memory=memory
+        )
 
     def log_scan(self, user, counter):
         """
@@ -201,14 +241,6 @@ class NfcTagMemory(models.Model):
         created_at (datetime): The date and time when the memory contents were created.
         last_modified (datetime): The date and time when the memory contents were last modified.
     """
-    NTAG213 = "213"
-    NTAG215 = "215"
-    NTAG216 = "216"
-    IC_CHOICES = (
-        (NTAG213, _("NTAG 213")),
-        (NTAG215, _("NTAG 215")),
-        (NTAG216, _("NTAG 216")),
-    )
 
     nfc_tag = models.OneToOneField(
         NfcTag,

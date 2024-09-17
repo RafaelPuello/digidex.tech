@@ -28,7 +28,7 @@ class Trainer(AbstractUser):
         Collection,
         null=True,
         on_delete=models.SET_NULL,
-        related_name='trainers'
+        related_name='+'
     )
     created_at = models.DateTimeField(
         auto_now_add=True
@@ -46,8 +46,7 @@ class Trainer(AbstractUser):
         trainer_page = TrainerPage(
             slug=slugify(self.username),
             title=self.username,
-            owner=self,
-            trainer=self
+            owner=self
         )
         parent_page.add_child(instance=trainer_page)
         trainer_page.save_revision().publish()
@@ -63,8 +62,8 @@ class Trainer(AbstractUser):
         return f"{self.first_name} {self.last_name} ({self.username})"
 
     class Meta:
-        verbose_name = _('user')
-        verbose_name_plural = _('users')
+        verbose_name = _('trainer')
+        verbose_name_plural = _('trainers')
 
 
 class TrainerPage(Page):
@@ -75,12 +74,6 @@ class TrainerPage(Page):
         description (RichTextField): The description of the trainer page.
         inventory (StreamField): The inventory of the trainer page.
     """
-    trainer = models.OneToOneField(
-        Trainer,
-        null=True,
-        on_delete=models.SET_NULL,
-        related_name='page'
-    )
     description = RichTextField(
         blank=True
     )
@@ -99,7 +92,7 @@ class TrainerPage(Page):
         return context
 
     def get_trainer_inventories(self):
-        return self.trainer.get_inventories()
+        return self.owner.get_inventories()
 
     def __str__(self):
         return self.title

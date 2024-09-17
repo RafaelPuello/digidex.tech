@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import NfcTag, NfcTagType, NfcTagScan
+from .models import NfcTag, NfcTagType, NfcTagScan, NfcTagMemory
 
 
 class NfcTagSerializer(serializers.ModelSerializer):
@@ -58,3 +58,25 @@ class NfcTagScanSerializer(serializers.ModelSerializer):
         Create and return a new `NfcTagScan` instance, given the validated data.
         """
         return NfcTagScan.objects.create(**validated_data)
+
+
+class NfcTagMemorySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = NfcTagMemory
+        fields = ['nfc_tag', 'integrated_circuit', 'memory']
+
+    def create(self, validated_data):
+        """
+        Create and return a new `NfcTagMemory` instance, given the validated data.
+        """
+        return NfcTagMemory.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        """
+        Update and return an existing `NfcTagMemory` instance, given the validated data.
+        """
+        instance.integrated_circuit = validated_data.get('integrated_circuit', instance.integrated_circuit)
+        instance.memory = validated_data.get('memory', instance.memory)
+        instance.save()
+        return instance
