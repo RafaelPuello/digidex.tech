@@ -72,11 +72,12 @@ class NfcTag(models.Model):
         user (User): The user who is assigned the NFC tag.
         nfc_tag_type (NfcTagType): The type of NFC tag.
         active (bool): Indicates whether the NFC tag is active.
-        created_at (datetime): The date and time when the NFC tag was created.
-        last_modified (datetime): The date and time when the NFC tag was last modified.
+        limit (Q): The limit for the content_type field to restrict the choices to specific models.
         content_type (ContentType): The type of the related content_object model.
         object_id (PositiveIntegerField): The ID of the related content_object instance.
         content_object (GenericForeignKey): The generic foreign key to the content_object instance.
+        created_at (datetime): The date and time when the NFC tag was created.
+        last_modified (datetime): The date and time when the NFC tag was last modified.
     """
 
     serial_number = models.CharField(
@@ -102,14 +103,14 @@ class NfcTag(models.Model):
     active = models.BooleanField(
         default=True
     )
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
-    last_modified = models.DateTimeField(
-        auto_now=True
+    limit = (
+        models.Q(app_label = 'trainers', model = 'Trainer') | \
+        models.Q(app_label = 'biodiversity', model = 'Plant') | \
+        models.Q(app_label = 'inventory', model = 'Box')
     )
     content_type = models.ForeignKey(
         ContentType,
+        limit_choices_to=limit,
         on_delete=models.CASCADE,
         null=True,
         blank=True
@@ -122,6 +123,12 @@ class NfcTag(models.Model):
     content_object = GenericForeignKey(
         'content_type',
         'object_id'
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+    last_modified = models.DateTimeField(
+        auto_now=True
     )
 
     def create_memory(self, ic_type=NTAG213):

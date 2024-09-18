@@ -43,6 +43,16 @@ def homepage(db):
 
 
 @pytest.fixture
+def user(db):
+    return User.objects.create_user(
+        username="testuser",
+        password="testpassword",
+        first_name="Test",
+        last_name="User",
+    )
+
+
+@pytest.fixture
 def request_factory():
     from django.test import RequestFactory
     return RequestFactory()

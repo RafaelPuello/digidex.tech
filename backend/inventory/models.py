@@ -84,6 +84,7 @@ class BoxItem(Orderable, models.Model):
 
     Attributes:
         box (ForeignKey): The inventory box the item belongs to.
+        limit (Q): The limit for the content_type field to restrict the choices to specific models.
         content_type (ForeignKey): The content type of the item.
         object_id (int): The ID of the item.
         content_object (GenericForeignKey): The item itself.
@@ -96,8 +97,12 @@ class BoxItem(Orderable, models.Model):
         on_delete=models.CASCADE,
         related_name='items'
     )
+    limit = (
+        models.Q(app_label = 'biodiversity', model = 'Plant')
+    )
     content_type = models.ForeignKey(
         ContentType,
+        limit_choices_to=limit,
         on_delete=models.CASCADE,
         null=True,
         blank=True
