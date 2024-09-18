@@ -14,18 +14,8 @@
       "type": "string",
       "description": "A description of the plant",
       "maxLength": 10000
-    },
-    "created_at": {
-      "type": "string",
-      "description": "The date and time the plant was created",
-      "format": "date-time"
-    },
-    "last_modified": {
-      "type": "string",
-      "description": "The date and time the plant was last updated",
-      "format": "date-time"
     }
   },
-  "required": ["name", "created_at", "last_modified"],
+  "required": ["name"],
   "additionalProperties": false
 }

@@ -55,17 +55,9 @@
         "content_object": {
           "type": ["string", "null"],
           "description": "Content object for GenericForeignKey"
-        },
-        "created_at": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "last_modified": {
-          "type": "string",
-          "format": "date-time"
         }
       },
-      "required": ["serial_number", "created_at", "last_modified"]
+      "required": ["serial_number"]
     },
     "NfcTagScan": {
       "type": "object",

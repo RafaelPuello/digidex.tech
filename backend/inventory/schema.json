@@ -31,19 +31,9 @@
           "type": "string",
           "description": "A unique identifier for the inventory",
           "format": "uuid"
-        },
-        "created_at": {
-          "type": "string",
-          "description": "The date and time the inventory was created",
-          "format": "date-time"
-        },
-        "last_modified": {
-          "type": "string",
-          "description": "The date and time the inventory was last updated",
-          "format": "date-time"
         }
       },
-      "required": ["owner", "name", "slug", "uuid", "created_at", "last_updated"],
+      "required": ["owner", "name", "slug", "uuid"],
       "additionalProperties": false
     },
     "BoxItem": {

@@ -36,8 +36,6 @@ class Box(
         description (str): A description of the inventory.
         slug (str): A unique slug for the inventory.
         uuid (uuid): A unique identifier for the inventory.
-        created_at (datetime): The date and time the inventory was created.
-        last_modified (datetime): The date and time the inventory was last updated.
     """
 
     owner = models.ForeignKey(
@@ -63,12 +61,6 @@ class Box(
         editable=False,
         unique=True,
         db_index=True
-    )
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
-    last_modified = models.DateTimeField(
-        auto_now=True
     )
 
     def generate_prompt(self):

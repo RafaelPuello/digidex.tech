@@ -27,8 +27,6 @@ class Plant(
     Attributes:
         name (str): The name of the plant.
         description (str): A description of the plant.
-        created_at (datetime): The date and time the plant was created.
-        last_modified (datetime): The date and time the plant was last updated.
     """
     name = models.CharField(
         max_length=255,
@@ -36,12 +34,6 @@ class Plant(
     )
     description = models.TextField(
         blank=True
-    )
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
-    last_modified = models.DateTimeField(
-        auto_now=True
     )
 
     def __str__(self):

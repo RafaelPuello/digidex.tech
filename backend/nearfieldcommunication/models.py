@@ -53,8 +53,6 @@ class NfcTagType(
     Attributes:
         name (str): The name of the NFC tag type.
         description (str): A description of the NFC tag type.
-        created_at (datetime): The date and time when the tag type was created.
-        last_modified (datetime): The date and time when the tag type was last modified.
     """
 
     name = models.CharField(
@@ -63,12 +61,6 @@ class NfcTagType(
     )
     description = RichTextField(
         null=True
-    )
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
-    last_modified = models.DateTimeField(
-        auto_now=True
     )
 
     def __str__(self):
