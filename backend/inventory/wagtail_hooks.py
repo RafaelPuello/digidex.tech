@@ -15,8 +15,8 @@ class BoxViewSet(SnippetViewSet):
     shared_panels = [
         FieldPanel("name"),
         FieldPanel("description"),
-        InlinePanel("gallery_images", label="Images"),
-        InlinePanel("documents", label="Documents"),
+        InlinePanel("gallery_images", label="Box Images"),
+        InlinePanel("documents", label="Box Documents"),
     ]
 
     private_panels = [

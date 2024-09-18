@@ -16,6 +16,8 @@ from wagtail.models import (
     PreviewableMixin
 )
 from wagtail.fields import RichTextField
+from wagtail.images import get_image_model_string
+from wagtail.documents import get_document_model_string
 
 
 class Box(
@@ -86,6 +88,78 @@ class Box(
         constraints = [
             models.UniqueConstraint(fields=['owner', 'name'], name='unique_owner_inventory')
         ]
+
+
+class BoxGalleryImage(Orderable):
+    """
+    Model representing an image associated with a box.
+
+    Attributes:
+        box (Box): The box associated with the image.
+        image (Image): The image file.
+        caption (str): A caption for the image.
+    """
+
+    box = ParentalKey(
+        Box,
+        on_delete=models.CASCADE,
+        related_name='gallery_images'
+    )
+    image = models.ForeignKey(
+        get_image_model_string(),
+        on_delete=models.CASCADE,
+        related_name='+'
+    )
+    caption = models.CharField(
+        blank=True,
+        max_length=250
+    )
+
+    def __str__(self):
+        """
+        Returns a string representation of the box image.
+        """
+        return f"{self.box.name} image #{self.sort_order}"
+
+    class Meta(Orderable.Meta):
+        verbose_name = _("box image")
+        verbose_name_plural = _("box images")
+
+
+class BoxDocument(Orderable):
+    """
+    Model representing a document associated with a box.
+
+    Attributes:
+        box (Box): The box associated with the document.
+        document (Document): The document file.
+        caption (str): A caption for the document.
+    """
+
+    box = ParentalKey(
+        Box,
+        on_delete=models.CASCADE,
+        related_name='documents'
+    )
+    document = models.ForeignKey(
+        get_document_model_string(),
+        on_delete=models.CASCADE,
+        related_name='+'
+    )
+    caption = models.CharField(
+        blank=True,
+        max_length=250
+    )
+
+    def __str__(self):
+        """
+        Returns a string representation of the box.
+        """
+        return f"{self.box.name} document #{self.sort_order}"
+
+    class Meta(Orderable.Meta):
+        verbose_name = _("box document")
+        verbose_name_plural = _("box documents")
 
 
 class BoxItem(Orderable, models.Model):

@@ -31,8 +31,8 @@ class NfcTagTypeSnippetViewSet(SnippetViewSet):
     shared_panels = [
         FieldPanel("name"),
         FieldPanel("description"),
-        InlinePanel("gallery_images", label="Images"),
-        InlinePanel("documents", label="Documents"),
+        InlinePanel("gallery_images", label="Tag Images"),
+        InlinePanel("documents", label="Tag Documents"),
     ]
 
     private_panels = [
