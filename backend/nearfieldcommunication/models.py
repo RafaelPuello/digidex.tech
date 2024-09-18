@@ -75,7 +75,7 @@ class NfcTagType(
         verbose_name_plural = _("nfc tag types")
 
 
-class NfcTagTypeGalleryImage(Orderable):
+class NfcTagTypeImage(Orderable):
     """
     Model representing an image associated with an NFC tag type.
 
@@ -88,7 +88,7 @@ class NfcTagTypeGalleryImage(Orderable):
     nfc_tag_type = ParentalKey(
         NfcTagType,
         on_delete=models.CASCADE,
-        related_name='gallery_images'
+        related_name='images'
     )
     image = models.ForeignKey(
         get_image_model_string(),

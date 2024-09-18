@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://digidex.tech/assistants.schema.json",
+  "title": "Assistants Application Model Schema",
+  "description": "Model for managing assistants.",
+  "type": "object",
+  "definitions": {
+    "UserAssistant": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "type": "string",
+          "description": "The user of the assistant",
+          "maxLength": 255
+        }
+      },
+      "required": ["user"]
+    }
+  },
+  "properties": {
+    "UserAssistant": { "$ref": "#/definitions/UserAssistant" }
+  }
+}

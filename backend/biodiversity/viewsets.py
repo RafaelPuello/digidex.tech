@@ -13,7 +13,7 @@ class PlantViewSet(SnippetViewSet):
     shared_panels = [
         FieldPanel("name"),
         FieldPanel("description"),
-        InlinePanel("gallery_images", label="Plant Images"),
+        InlinePanel("images", label="Plant Images"),
         InlinePanel("documents", label="Plant Documents"),
     ]
 

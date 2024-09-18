@@ -8,11 +8,6 @@
     "Trainer": {
       "type": "object",
       "properties": {
-        "uuid": {
-          "type": "string",
-          "description": "A unique identifier for the trainer",
-          "format": "uuid"
-        },
         "username": {
           "type": "string",
           "description": "The username of the trainer"
@@ -24,6 +19,15 @@
         "last_name": {
           "type": "string",
           "description": "The last name of the trainer"
+        },
+        "uuid": {
+          "type": "string",
+          "description": "A unique identifier for the trainer",
+          "format": "uuid"
+        },
+        "collection": {
+          "type": "string",
+          "description": "The collection associated with the trainer"
         },
         "created_at": {
           "type": "string",
@@ -56,43 +60,29 @@
     "TrainerPage": {
       "type": "object",
       "properties": {
-        "trainer": {
+        "title": {
           "type": "string",
-          "description": "Reference to the trainer (OneToOneField to Trainer)"
+          "description": "The title of the trainer page"
         },
         "slug": {
           "type": "string",
           "description": "A unique slug for the trainer page"
         },
-        "title": {
+        "owner": {
           "type": "string",
-          "description": "The title of the trainer page"
+          "description": "Reference to the trainer (OneToOneField to Trainer)"
         },
         "description": {
           "type": "string",
           "description": "The body content of the trainer page (RichTextField)"
-        },
-        "parent_page": {
-          "type": "string",
-          "description": "Reference to the parent page (HomePage)"
-        },
-        "created_at": {
-          "type": "string",
-          "description": "The date and time the trainer page was created",
-          "format": "date-time"
-        },
-        "last_updated": {
-          "type": "string",
-          "description": "The date and time the trainer page was last updated",
-          "format": "date-time"
         }
       },
-      "required": ["trainer", "slug", "title", "created_at", "last_updated"],
+      "required": ["title", "slug", "owner", "description"],
       "additionalProperties": false
     }
   },
   "properties": {
-    "trainer": { "$ref": "#/definitions/Trainer" },
-    "trainerPage": { "$ref": "#/definitions/TrainerPage" }
+    "Trainer": { "$ref": "#/definitions/Trainer" },
+    "TrainerPage": { "$ref": "#/definitions/TrainerPage" }
   }
 }

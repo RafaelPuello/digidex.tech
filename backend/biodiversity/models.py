@@ -45,7 +45,7 @@ class Plant(
         verbose_name_plural = 'plants'
 
 
-class PlantGalleryImage(Orderable):
+class PlantImage(Orderable):
     """
     Model representing an image associated with a plant.
 
@@ -58,7 +58,7 @@ class PlantGalleryImage(Orderable):
     plant = ParentalKey(
         Plant,
         on_delete=models.CASCADE,
-        related_name='gallery_images'
+        related_name='images'
     )
     image = models.ForeignKey(
         get_image_model_string(),

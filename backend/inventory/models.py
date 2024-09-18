@@ -90,7 +90,7 @@ class Box(
         ]
 
 
-class BoxGalleryImage(Orderable):
+class BoxImage(Orderable):
     """
     Model representing an image associated with a box.
 
@@ -103,7 +103,7 @@ class BoxGalleryImage(Orderable):
     box = ParentalKey(
         Box,
         on_delete=models.CASCADE,
-        related_name='gallery_images'
+        related_name='images'
     )
     image = models.ForeignKey(
         get_image_model_string(),
