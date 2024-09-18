@@ -11,6 +11,10 @@ def register_icons(icons):
 
 
 class PlantSnippetViewSet(SnippetViewSet):
+    """
+    A snippet view set for the Plant model.
+    """
+
     model = Plant
     icon = "plant"
     menu_label = "Plants"

@@ -129,10 +129,7 @@ class BoxItem(Orderable, models.Model):
         on_delete=models.CASCADE,
         related_name='items'
     )
-    limit = models.Q(
-        app_label='biodiversity',
-        model='Plant'
-    )
+    limit = models.Q(app_label='biodiversity', model='Plant')
     content_type = models.ForeignKey(
         ContentType,
         limit_choices_to=limit,
@@ -165,9 +162,9 @@ class BoxItem(Orderable, models.Model):
     class Meta(Orderable.Meta):
         verbose_name = _("box item")
         verbose_name_plural = _("box items")
-        constraints = [
-            models.UniqueConstraint(fields=["box", "content_type", "object_id"], name='unique_box_item')
-        ]
         indexes = [
             models.Index(fields=["content_type", "object_id"]),
+        ]
+        constraints = [
+            models.UniqueConstraint(fields=["box", "content_type", "object_id"], name='unique_box_item')
         ]

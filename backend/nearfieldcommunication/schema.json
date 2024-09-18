@@ -15,16 +15,20 @@
         "description": {
           "type": ["string", "null"]
         },
-        "created_at": {
+        "uuid": {
           "type": "string",
-          "format": "date-time"
+          "format": "uuid"
         },
-        "last_modified": {
+        "slug": {
           "type": "string",
-          "format": "date-time"
+          "maxLength": 255
+        },
+        "collection": {
+          "type": "string",
+          "maxLength": 255
         }
       },
-      "required": ["name", "created_at", "last_modified"]
+      "required": ["name", "uuid", "slug"]
     },
     "NfcTag": {
       "type": "object",

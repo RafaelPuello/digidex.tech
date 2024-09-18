@@ -7,8 +7,6 @@ class PlantSerializer(serializers.ModelSerializer):
     """
     Main serializer for the Plant model.
     """
-
-
     class Meta:
         model = Plant
         fields = ['id', 'name', 'description', 'collection']

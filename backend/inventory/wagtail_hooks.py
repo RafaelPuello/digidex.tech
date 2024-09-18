@@ -7,6 +7,10 @@ from .models import Box
 
 
 class BoxSnippetViewSet(SnippetViewSet):
+    """
+    A snippet view set for the Box model.
+    """
+
     model = Box
     icon = "folder"
     menu_label = "Boxes"
@@ -29,6 +33,10 @@ class BoxSnippetViewSet(SnippetViewSet):
 
 
 class InventorySnippetViewSetGroup(SnippetViewSetGroup):
+    """
+    A snippet view set group for the Plant and Box models.
+    """
+
     items = [PlantSnippetViewSet, BoxSnippetViewSet]
     menu_icon = "desktop"
     menu_label = "Inventory"

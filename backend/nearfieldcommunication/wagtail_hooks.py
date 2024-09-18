@@ -17,6 +17,10 @@ def register_icons(icons):
 
 
 class NfcTagTypeSnippetViewSet(SnippetViewSet):
+    """
+    A snippetviewset for viewing and editing the types of NFC Tag.    
+    """
+
     model = NfcTagType
     icon = "nfc-types"
     menu_label = "Tag Types"
@@ -45,6 +49,10 @@ class NfcTagTypeSnippetViewSet(SnippetViewSet):
 
 
 class NfcTagSnippetViewSet(SnippetViewSet):
+    """
+    A snippetviewset for viewing and editing NFC Tags.    
+    """
+
     model = NfcTag
     icon = "tag"
     menu_label = "Tags"
@@ -74,6 +82,10 @@ class NfcTagSnippetViewSet(SnippetViewSet):
     )
 
     def get_queryset(self, request):
+        """
+        Filter NFC tags based on user roles:
+        """
+
         qs = super().get_queryset(request)
         if qs is None:
             qs = self.model.objects.all()
@@ -88,6 +100,10 @@ class NfcTagSnippetViewSet(SnippetViewSet):
 
 
 class NfcTagScanSnippetViewSet(SnippetViewSet):
+    """
+    A snippetviewset for viewing and editing NFC Tag scans.
+    """
+
     model = NfcTagScan
     icon = "nfc-scan"
     menu_label = "Tag Scans"
@@ -134,6 +150,10 @@ class NfcTagScanSnippetViewSet(SnippetViewSet):
 
 
 class NfcTagMemorySnippetViewSet(SnippetViewSet):
+    """
+    A snippetviewset for viewing and editing NFC Tag memory.
+    """
+
     model = NfcTagMemory
     icon = "nfc-memory"
     menu_label = "Tag Memory"
@@ -180,6 +200,10 @@ class NfcTagMemorySnippetViewSet(SnippetViewSet):
 
 
 class NfcTagSnippetViewSetGroup(SnippetViewSetGroup):
+    """
+    A snippetviewset group for NFC Tags.
+    """
+
     items = [NfcTagSnippetViewSet, NfcTagTypeSnippetViewSet, NfcTagScanSnippetViewSet, NfcTagMemorySnippetViewSet]
     menu_icon = "nfc-icon"
     menu_label = "NFC Tags"

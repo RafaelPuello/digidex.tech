@@ -54,6 +54,9 @@ class NfcTagType(
     Attributes:
         name (str): The name of the NFC tag type.
         description (str): A description of the NFC tag type.
+        owner (ForeignKey): The user who owns the NFC tag type.
+        uuid (UUID): A unique identifier for the NFC tag type.
+        slug (str): A unique slug for the NFC tag type.
         collection (ForeignKey): The collection associated with the NFC tag type.
     """
 
@@ -64,6 +67,12 @@ class NfcTagType(
     description = RichTextField(
         null=True
     )
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        related_name='nfc_tag_types',
+        null=True
+    )
     uuid = models.UUIDField(
         default=uuid.uuid4,
         editable=False,
@@ -72,7 +81,7 @@ class NfcTagType(
     )
     slug = models.SlugField(
         max_length=255,
-        null=True,
+        unique=True,
         db_index=True
     )
     collection = models.ForeignKey(
@@ -160,7 +169,7 @@ class NfcTag(models.Model):
         blank=True,
         null=True
     )
-    limit = (
+    limit = ( # Not saved in the db, but the limited options for the content_type field
         models.Q(app_label='trainers', model='Trainer') |  # noqa: W504 - used line break for readability
         models.Q(app_label='biodiversity', model='Plant') |  # noqa: W504 - used line break for readability
         models.Q(app_label='inventory', model='Box')

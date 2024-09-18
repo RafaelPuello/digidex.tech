@@ -9,13 +9,20 @@ from .serializers import UserAssistantSerializer
 
 
 class UserAssistantDetail(viewsets.ReadOnlyModelViewSet):
+    """
+    A viewset for viewing and editing the user's chat bot assistant.
+    """
+
     queryset = UserAssistant.objects.all()
     serializer_class = UserAssistantSerializer
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [JWTAuthentication]
 
     def get_queryset(self):
-        return UserAssistant.objects.filter(trainer=self.request.user)
+        """
+        Filter the chat bot assistant based on the user.
+        """
+        return UserAssistant.objects.filter(user=self.request.user)
 
     @action(detail=True, methods=['get'])
     def chat(self, request):

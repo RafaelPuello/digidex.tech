@@ -10,6 +10,10 @@ from wagtail.admin.panels import FieldPanel
 
 
 def get_trainer_group():
+    """
+    Gets the 'Trainers' group if it exists, otherwise creates it.
+    If the group is created, it will also create the necessary permissions for the group.
+    """
     group, created = Group.objects.get_or_create(name='Trainers')
     if created:
         group = create_trainer_group_permissions(group)
@@ -17,6 +21,12 @@ def get_trainer_group():
 
 
 def create_trainer_group_permissions(group):
+    """
+    Creates the necessary permissions for the given group.
+    The permissions include 'add_image', 'change_image', 'choose_image', 'add_document',
+    'change_document', and 'choose_document'.
+    """
+
     PERMISSIONS = [
         "add_plant", "change_plant", "delete_plant",
         "add_box", "change_box", "delete_box",
@@ -62,6 +72,9 @@ class Trainer(AbstractUser):
     )
 
     def get_inventory(self):
+        """
+        Returns all inventory boxes of the trainer.
+        """
         return self.boxes.all()
 
     def setup(self):
@@ -159,6 +172,10 @@ class Trainer(AbstractUser):
         group.save()
 
     def create_trainer_page(self):
+        """
+        Creates a trainer page for the trainer.
+        """
+
         from home.models import HomePage
         parent_page = HomePage.objects.first()
         trainer_page = TrainerPage(
@@ -171,12 +188,18 @@ class Trainer(AbstractUser):
         return trainer_page
 
     def delete(self, *args, **kwargs):
+        """
+        Deletes the trainer and the associated group.
+        """
         with transaction.atomic():
             user_group = Group.objects.get(name=self.uuid)
             user_group.delete()
             super().delete(*args, **kwargs)
 
     def __str__(self):
+        """
+        A string representation of the trainer.
+        """
         return f"{self.first_name} {self.last_name} ({self.username})"
 
     class Meta:
@@ -192,9 +215,8 @@ class TrainerPage(Page):
         description (RichTextField): The description of the trainer page.
         inventory (StreamField): The inventory of the trainer page.
     """
-    description = RichTextField(
-        blank=True
-    )
+
+    description = RichTextField(blank=True)
 
     content_panels = Page.content_panels + [
         FieldPanel('description')
@@ -205,14 +227,23 @@ class TrainerPage(Page):
     child_page_types = []
 
     def get_context(self, request):
+        """
+        Adds the trainer's inventory to the context.
+        """
         context = super().get_context(request)
         context['inventories'] = self.get_trainer_inventories()
         return context
 
     def get_trainer_inventories(self):
+        """
+        Returns the inventory boxes associated with the page owner.
+        """
         return self.owner.get_inventories()
 
     def __str__(self):
+        """
+        A string representation of the trainer page.
+        """
         return self.title
 
     class Meta:

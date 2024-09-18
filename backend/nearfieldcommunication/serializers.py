@@ -11,7 +11,7 @@ class NfcTagTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = NfcTagType
-        fields = ['id', 'name', 'description']
+        fields = ['id', 'name', 'description', 'owner', 'uuid', 'slug', 'collection']
 
 
 class NfcTagScanSerializer(serializers.ModelSerializer):

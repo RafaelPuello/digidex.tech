@@ -10,6 +10,5 @@ def new_user_setup(sender, instance, created, **kwargs):
     """
     Automatically sets up a new user when they are created by calling setup().
     """
-
     if created:
         instance.setup()

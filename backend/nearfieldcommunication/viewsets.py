@@ -7,24 +7,36 @@ from .serializers import NfcTagSerializer, NfcTagTypeSerializer, NfcTagScanSeria
 
 
 class NfcTagTypeViewSet(viewsets.ModelViewSet):
+    """
+    A viewset for viewing and editing the types of NFC Tag.
+    """
+
     queryset = NfcTagType.objects.all().order_by('id')
     serializer_class = NfcTagTypeSerializer
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [JWTAuthentication]
     lookup_field = 'id'
-    body_fields = ['name', 'description']
+    body_fields = ['name', 'description', 'owner']
     meta_fields = ['id']
 
     def create(self, request, *args, **kwargs):
+        """
+        Create a new NFC tag type with the provided name, description, and owner.
+        """
+
         name = request.data.get('name')
         description = request.data.get('description')
+        owner = request.data.get('owner')
 
         if not name:
             return Response({"error": "Name not provided."}, status=status.HTTP_400_BAD_REQUEST)
 
         nfc_tag_type, created = NfcTagType.objects.update_or_create(
             name=name,
-            defaults={'description': description}
+            defaults={
+                'description': description,
+                'owner': owner
+            }
         )
 
         serializer = self.get_serializer(nfc_tag_type, context={'request': request})
@@ -33,8 +45,9 @@ class NfcTagTypeViewSet(viewsets.ModelViewSet):
 
 class NfcTagViewSet(viewsets.ModelViewSet):
     """
-    A viewset for viewing and editing NFC tags.
+    A viewset for viewing and editing NFC Tags.
     """
+
     queryset = NfcTag.objects.all()
     serializer_class = NfcTagSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -47,6 +60,7 @@ class NfcTagViewSet(viewsets.ModelViewSet):
         """
         Filter to only show NFC tags needed for each role.
         """
+
         if self.request.user.is_superuser:
             return NfcTag.objects.all()
         elif self.request.user.groups.filter(name='Trainers').exists():
@@ -55,6 +69,10 @@ class NfcTagViewSet(viewsets.ModelViewSet):
             return NfcTag.objects.none()
 
     def create(self, request, *args, **kwargs):
+        """
+        Create a new NFC tag with the provided serial number and tag type.
+        """
+
         serial_number = request.data.get('serial_number')
         tag_type_id = request.data.get('tag_type_id')
 
@@ -77,8 +95,9 @@ class NfcTagViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         """
-        Just set active to False for now. Will set permissions later.
+        Set active to False for now. Will fix later.
         """
+
         instance = self.get_object()
         instance.active = False
         # self.perform_destroy(instance)
@@ -86,6 +105,10 @@ class NfcTagViewSet(viewsets.ModelViewSet):
 
 
 class NfcTagScanViewSet(viewsets.ModelViewSet):
+    """
+    A viewset for viewing and editing an NFC Tag's Scans.
+    """
+
     queryset = NfcTagScan.objects.all()
     serializer_class = NfcTagScanSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -98,6 +121,7 @@ class NfcTagScanViewSet(viewsets.ModelViewSet):
         """
         Filter to only show NFC tag scans needed for each role.
         """
+
         if self.request.user.is_superuser:
             return NfcTagScan.objects.all()
         elif self.request.user.groups.filter(name='Trainers').exists():
@@ -106,6 +130,10 @@ class NfcTagScanViewSet(viewsets.ModelViewSet):
             return NfcTagScan.objects.none()
 
     def create(self, request, *args, **kwargs):
+        """
+        Create a new NFC tag scan with the provided NFC tag ID and scan time.
+        """
+
         nfc_tag_id = request.data.get('nfc_tag_id')
         scan_time = request.data.get('scan_time')
 
@@ -127,6 +155,10 @@ class NfcTagScanViewSet(viewsets.ModelViewSet):
 
 
 class NfcTagMemoryViewSet(viewsets.ModelViewSet):
+    """
+    A viewset for viewing and editing an NFC Tag's EEPROM.
+    """
+
     queryset = NfcTagMemory.objects.all()
     serializer_class = NfcTagMemorySerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -139,6 +171,7 @@ class NfcTagMemoryViewSet(viewsets.ModelViewSet):
         """
         Filter to only show NFC tag memories needed for each role.
         """
+
         if self.request.user.is_superuser:
             return NfcTagMemory.objects.all()
         elif self.request.user.groups.filter(name='Trainers').exists():
@@ -147,6 +180,10 @@ class NfcTagMemoryViewSet(viewsets.ModelViewSet):
             return NfcTagMemory.objects.none()
 
     def create(self, request, *args, **kwargs):
+        """
+        Create a new NFC tag memory with the provided NFC tag ID and memory contents.        
+        """
+
         nfc_tag_id = request.data.get('nfc_tag_id')
         memory = request.data.get('memory')
 
