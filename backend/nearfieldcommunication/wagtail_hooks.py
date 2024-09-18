@@ -1,5 +1,5 @@
 from wagtail import hooks
-from wagtail.admin.panels import TabbedInterface, FieldPanel, ObjectList
+from wagtail.admin.panels import TabbedInterface, InlinePanel, FieldPanel, ObjectList
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet, SnippetViewSetGroup
 
@@ -14,6 +14,29 @@ def register_icons(icons):
         'nearfieldcommunication/icons/nfc-scan.svg',
         'nearfieldcommunication/icons/nfc-memory.svg',
     ]
+
+
+class NfcTagTypeSnippetViewSet(SnippetViewSet):
+    model = NfcTagType
+    icon = "nfc-types"
+    menu_label = "Tag Types"
+    menu_name = "types"
+
+    shared_panels = [
+        FieldPanel("name"),
+        FieldPanel("description"),
+        InlinePanel("gallery_images", label="Images"),
+    ]
+
+    private_panels = [
+    ]
+
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(shared_panels, heading='Details'),
+            ObjectList(private_panels, heading='Admin only', permission="superuser"),
+        ]
+    )
 
 
 class NfcTagSnippetViewSet(SnippetViewSet):
@@ -51,28 +74,6 @@ class NfcTagSnippetViewSet(SnippetViewSet):
             return qs.filter(user=user)
         else:
             return qs.none()
-
-
-class NfcTagTypeSnippetViewSet(SnippetViewSet):
-    model = NfcTagType
-    icon = "nfc-types"
-    menu_label = "Tag Types"
-    menu_name = "types"
-
-    shared_panels = [
-    ]
-
-    private_panels = [
-        FieldPanel("name"),
-        FieldPanel("description"),
-    ]
-
-    edit_handler = TabbedInterface(
-        [
-            ObjectList(shared_panels, heading='Details'),
-            ObjectList(private_panels, heading='Admin only', permission="superuser"),
-        ]
-    )
 
 
 class NfcTagScanSnippetViewSet(SnippetViewSet):

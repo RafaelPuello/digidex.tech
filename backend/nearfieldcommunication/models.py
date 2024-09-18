@@ -17,6 +17,7 @@ from wagtail.models import (
     TranslatableMixin,
     PreviewableMixin
 )
+from wagtail.fields import RichTextField
 from wagtail.images import get_image_model_string
 
 from .validators import validate_serial_number
@@ -61,7 +62,7 @@ class NfcTagType(
         max_length=255,
         unique=True
     )
-    description = models.TextField(
+    description = RichTextField(
         null=True
     )
     created_at = models.DateTimeField(
