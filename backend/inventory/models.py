@@ -5,10 +5,28 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
 from django.utils.text import slugify
-from wagtail.models import Orderable
+from modelcluster.fields import ParentalKey
+from modelcluster.models import ClusterableModel
+from wagtail.models import (
+    Orderable,
+    RevisionMixin,
+    DraftStateMixin,
+    LockableMixin,
+    TranslatableMixin,
+    PreviewableMixin
+)
+from wagtail.fields import RichTextField
 
 
-class Box(Orderable, models.Model):
+class Box(
+    DraftStateMixin,
+    RevisionMixin,
+    LockableMixin,
+    TranslatableMixin,
+    PreviewableMixin,
+    Orderable,
+    ClusterableModel
+):
     """
     Represents an inventory box in the database.
 
@@ -31,7 +49,7 @@ class Box(Orderable, models.Model):
         max_length=25,
         db_index=True
     )
-    description = models.CharField(
+    description = RichTextField(
         blank=True,
         max_length=255
     )
@@ -67,7 +85,7 @@ class Box(Orderable, models.Model):
     def __str__(self):
         return self.name
 
-    class Meta:
+    class Meta(TranslatableMixin.Meta, Orderable.Meta):
         verbose_name = _("box")
         verbose_name_plural = _("boxes")
         indexes = [
@@ -83,7 +101,7 @@ class BoxItem(Orderable, models.Model):
     Represents an item in an inventory box in the database.
 
     Attributes:
-        box (ForeignKey): The inventory box the item belongs to.
+        box (ParentalKey): The inventory box the item belongs to.
         limit (Q): The limit for the content_type field to restrict the choices to specific models.
         content_type (ForeignKey): The content type of the item.
         object_id (int): The ID of the item.
@@ -92,7 +110,7 @@ class BoxItem(Orderable, models.Model):
         last_modified (datetime): The date and time the item was last updated.
     """
 
-    box = models.ForeignKey(
+    box = ParentalKey(
         Box,
         on_delete=models.CASCADE,
         related_name='items'
@@ -127,7 +145,7 @@ class BoxItem(Orderable, models.Model):
     def __str__(self):
         return f"{self.box.name} item."
 
-    class Meta:
+    class Meta(Orderable.Meta):
         verbose_name = _("box item")
         verbose_name_plural = _("box items")
         constraints = [
