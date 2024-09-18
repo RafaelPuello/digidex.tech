@@ -64,6 +64,8 @@ jiter==0.5.0
 jmespath==1.0.1
 jschema-to-python==1.2.3
 jsonpickle==3.3.0
+jsonschema==4.23.0
+jsonschema-specifications==2023.12.1
 kiwisolver==1.4.5
 l18n==2021.3
 laces==0.1.1
@@ -119,10 +121,12 @@ pytz==2024.1
 PyYAML==6.0.2
 qrcode==7.4.2
 queryish==0.2
+referencing==0.35.1
 requests==2.32.3
 requests-cache==1.2.0
 requests-oauthlib==2.0.0
 rich==13.8.1
+rpds-py==0.20.0
 s3transfer==0.10.1
 sarif-om==1.0.4
 selenium==4.20.0
