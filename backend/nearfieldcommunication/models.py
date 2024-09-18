@@ -261,9 +261,9 @@ class NfcTag(models.Model):
         """
         Returns a string representation of the NFC tag, with the serial number formatted as pairs of characters.
         """
+        if self.label:
+            return self.label
         uid = ':'.join(self.serial_number[i:i + 2] for i in range(0, len(self.serial_number), 2))
-        if self.nfc_tag_type:
-            return str(f"{self.nfc_tag_type}: {uid}")
         return str(uid)
 
     class Meta:
@@ -305,9 +305,7 @@ class NfcTagScan(models.Model):
         """
         Returns a string representation of the NFC tag scan, including the scanning user and timestamp if available.
         """
-        if self.scanned_by:
-            return str(_(f"Scan of {self.nfc_tag} by {self.scanned_by} at {self.scanned_at}"))
-        return str(_(f"Scan of {self.nfc_tag} at {self.scanned_at}"))
+        return (f"Scan #{self.counter} for {self.nfc_tag}")
 
     class Meta:
         verbose_name = _("nfc tag scan")
