@@ -1,34 +1,6 @@
 from rest_framework import serializers
-from wagtail.images.api.fields import ImageRenditionField
-from wagtail.documents.api.v2.serializers import DocumentDownloadUrlField
 
-from .models import NfcTagType, NfcTagTypeImage, NfcTagTypeDocument, NfcTag, NfcTagScan, NfcTagMemory
-
-
-class NfcTagTypeImageSerializer(serializers.ModelSerializer):
-    """
-    Serializer for the NfcTagTypeImage model, representing images associated with an NFC tag type.
-    Uses Wagtail's ImageRenditionField to generate image renditions.
-    """
-
-    image = ImageRenditionField('fill-800x800')
-
-    class Meta:
-        model = NfcTagTypeImage
-        fields = ['id', 'image', 'caption', 'sort_order']
-
-
-class NfcTagTypeDocumentSerializer(serializers.ModelSerializer):
-    """
-    Serializer for the NfcTagTypeDocument model, representing documents associated with an NFC tag type.
-    Uses Wagtail's DocumentDownloadUrlField to generate download links for the documents.
-    """
-
-    document = DocumentDownloadUrlField()
-
-    class Meta:
-        model = NfcTagTypeDocument
-        fields = ['id', 'document', 'caption', 'sort_order']
+from .models import NfcTagType, NfcTag, NfcTagScan, NfcTagMemory
 
 
 class NfcTagTypeSerializer(serializers.ModelSerializer):
@@ -37,12 +9,9 @@ class NfcTagTypeSerializer(serializers.ModelSerializer):
     related to the NFC tag type.
     """
 
-    images = NfcTagTypeImageSerializer(many=True)
-    documents = NfcTagTypeDocumentSerializer(many=True)
-
     class Meta:
         model = NfcTagType
-        fields = ['id', 'name', 'description', 'images', 'documents']
+        fields = ['id', 'name', 'description']
 
 
 class NfcTagScanSerializer(serializers.ModelSerializer):

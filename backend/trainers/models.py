@@ -61,8 +61,8 @@ class Trainer(AbstractUser):
         auto_now=True
     )
 
-    def get_inventories(self):
-        return self.inventories.all()
+    def get_inventory(self):
+        return self.boxes.all()
 
     def setup(self):
         """

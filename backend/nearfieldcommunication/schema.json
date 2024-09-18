@@ -26,48 +26,6 @@
       },
       "required": ["name", "created_at", "last_modified"]
     },
-    "NfcTagTypeImage": {
-      "type": "object",
-      "properties": {
-        "nfc_tag_type": {
-          "type": "string",
-          "description": "Reference to the nfc_tag_type",
-          "maxLength": 255
-        },
-        "image": {
-          "type": "string",
-          "description": "Reference to the image",
-          "maxLength": 10000
-        },
-        "caption": {
-          "type": "string",
-          "description": "Caption for the document",
-          "maxLength": 255
-        }
-      },
-      "required": ["nfc_tag_type", "image"]
-    },
-    "NfcTagTypeDocument": {
-      "type": "object",
-      "properties": {
-        "nfc_tag_type": {
-          "type": "string",
-          "description": "Reference to the nfc_tag_type",
-          "maxLength": 255
-        },
-        "document": {
-          "type": "string",
-          "description": "Reference to the document",
-          "maxLength": 10000
-        },
-        "caption": {
-          "type": "string",
-          "description": "Caption for the document",
-          "maxLength": 255
-        }
-      },
-      "required": ["nfc_tag_type", "document"]
-    },
     "NfcTag": {
       "type": "object",
       "properties": {
@@ -157,9 +115,8 @@
   "properties": {
     "NfcTag": { "$ref": "#/definitions/NfcTag" },
     "NfcTagType": { "$ref": "#/definitions/NfcTagType" },
-    "NfcTagTypeImage": { "$ref": "#/definitions/NfcTagTypeImage" },
-    "NfcTagTypeDocument": { "$ref": "#/definitions/NfcTagTypeDocument" },
-    "NfcTagScan": { "$ref": "#/definitions/NfcTagScan" }
+    "NfcTagScan": { "$ref": "#/definitions/NfcTagScan" },
+    "NfcTagMemory": { "$ref": "#/definitions/NfcTagMemory" }
   }
 }
   

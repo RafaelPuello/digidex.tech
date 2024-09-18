@@ -18,63 +18,15 @@
           "description": "A description of the plant",
           "maxLength": 10000
         },
-        "created_at": {
+        "collection": {
           "type": "string",
-          "format": "date-time"
-        },
-        "last_modified": {
-          "type": "string",
-          "format": "date-time"
+          "description": "The collection of the plant"
         }
       },
       "required": ["name"]
-    },
-    "PlantImage": {
-      "type": "object",
-      "properties": {
-        "plant": {
-          "type": "string",
-          "description": "Reference to the plant",
-          "maxLength": 255
-        },
-        "image": {
-          "type": "string",
-          "description": "Reference to the image",
-          "maxLength": 10000
-        },
-        "caption": {
-          "type": "string",
-          "description": "Caption for the document",
-          "maxLength": 255
-        }
-      },
-      "required": ["plant", "image"]
-    },
-    "PlantDocument": {
-      "type": "object",
-      "properties": {
-        "plant": {
-          "type": "string",
-          "description": "Reference to the plant",
-          "maxLength": 255
-        },
-        "document": {
-          "type": "string",
-          "description": "Reference to the document",
-          "maxLength": 10000
-        },
-        "caption": {
-          "type": "string",
-          "description": "Caption for the document",
-          "maxLength": 255
-        }
-      },
-      "required": ["plant", "document"]
     }
   },
   "properties": {
-    "Plant": { "$ref": "#/definitions/Plant" },
-    "PlantImage": { "$ref": "#/definitions/PlantImage" },
-    "PlantDocument": { "$ref": "#/definitions/PlantDocument" }
+    "Plant": { "$ref": "#/definitions/Plant" }
   }
 }

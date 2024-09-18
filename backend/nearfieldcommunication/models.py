@@ -6,10 +6,9 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
-from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
 from wagtail.models import (
-    Orderable,
+    Collection,
     RevisionMixin,
     DraftStateMixin,
     LockableMixin,
@@ -17,8 +16,8 @@ from wagtail.models import (
     PreviewableMixin
 )
 from wagtail.fields import RichTextField
-from wagtail.images import get_image_model_string
-from wagtail.documents import get_document_model_string
+from wagtail.images import get_image_model
+from wagtail.documents import get_document_model
 
 from .validators import validate_serial_number
 
@@ -54,6 +53,7 @@ class NfcTagType(
     Attributes:
         name (str): The name of the NFC tag type.
         description (str): A description of the NFC tag type.
+        collection (ForeignKey): The collection associated with the NFC tag type.
     """
 
     name = models.CharField(
@@ -63,6 +63,25 @@ class NfcTagType(
     description = RichTextField(
         null=True
     )
+    collection = models.ForeignKey(
+        Collection,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        null=True,
+        blank=True
+    )
+
+    def get_documents(self):
+        """
+        Returns all documents associated with nfc tag type.
+        """
+        return get_document_model().objects.filter(collection=self.collection)
+
+    def get_images(self):
+        """
+        Returns all images associated with nfc tag type.
+        """
+        return get_image_model().objects.filter(collection=self.collection)
 
     def __str__(self):
         """
@@ -73,78 +92,6 @@ class NfcTagType(
     class Meta(TranslatableMixin.Meta):
         verbose_name = _("nfc tag type")
         verbose_name_plural = _("nfc tag types")
-
-
-class NfcTagTypeImage(Orderable):
-    """
-    Model representing an image associated with an NFC tag type.
-
-    Attributes:
-        nfc_tag_type (NfcTagType): The NFC tag type associated with the image.
-        image (Image): The image file.
-        caption (str): A caption for the image.
-    """
-
-    nfc_tag_type = ParentalKey(
-        NfcTagType,
-        on_delete=models.CASCADE,
-        related_name='images'
-    )
-    image = models.ForeignKey(
-        get_image_model_string(),
-        on_delete=models.CASCADE,
-        related_name='+'
-    )
-    caption = models.CharField(
-        blank=True,
-        max_length=250
-    )
-
-    def __str__(self):
-        """
-        Returns a string representation of the NFC tag type.
-        """
-        return f"{self.nfc_tag_type.name} image #{self.sort_order}"
-
-    class Meta:
-        verbose_name = _("nfc tag type image")
-        verbose_name_plural = _("nfc tag types images")
-
-
-class NfcTagTypeDocument(Orderable):
-    """
-    Model representing a document associated with an NFC tag type.
-
-    Attributes:
-        nfc_tag_type (NfcTagType): The NFC tag type associated with the document.
-        document (Document): The document file.
-        caption (str): A caption for the document.
-    """
-
-    nfc_tag_type = ParentalKey(
-        NfcTagType,
-        on_delete=models.CASCADE,
-        related_name='documents'
-    )
-    document = models.ForeignKey(
-        get_document_model_string(),
-        on_delete=models.CASCADE,
-        related_name='+'
-    )
-    caption = models.CharField(
-        blank=True,
-        max_length=250
-    )
-
-    def __str__(self):
-        """
-        Returns a string representation of the NFC tag type.
-        """
-        return f"{self.nfc_tag_type.name} document #{self.sort_order}"
-
-    class Meta:
-        verbose_name = _("nfc tag type document")
-        verbose_name_plural = _("nfc tag types documents")
 
 
 class NfcTag(models.Model):

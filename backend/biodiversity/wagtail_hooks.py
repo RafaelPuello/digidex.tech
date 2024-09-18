@@ -1,5 +1,5 @@
 from wagtail import hooks
-from wagtail.admin.panels import TabbedInterface, InlinePanel, FieldPanel, ObjectList
+from wagtail.admin.panels import TabbedInterface, FieldPanel, ObjectList
 from wagtail.snippets.views.snippets import SnippetViewSet
 
 from .models import Plant
@@ -19,8 +19,7 @@ class PlantSnippetViewSet(SnippetViewSet):
     shared_panels = [
         FieldPanel("name"),
         FieldPanel("description"),
-        InlinePanel("images", label="Plant Images"),
-        InlinePanel("documents", label="Plant Documents"),
+        FieldPanel("collection"),
     ]
 
     private_panels = [

@@ -31,6 +31,10 @@
           "type": "string",
           "description": "A unique identifier for the inventory",
           "format": "uuid"
+        },
+        "collection": {
+          "type": "string",
+          "description": "Reference to the collection (ForeignKey to the collection model)"
         }
       },
       "required": ["owner", "name", "slug", "uuid"],
@@ -66,54 +70,10 @@
           "format": "date-time"
         }
       }
-    },
-    "BoxImage": {
-      "type": "object",
-      "properties": {
-        "box": {
-          "type": "string",
-          "description": "Reference to the box",
-          "maxLength": 255
-        },
-        "image": {
-          "type": "string",
-          "description": "Reference to the image",
-          "maxLength": 10000
-        },
-        "caption": {
-          "type": "string",
-          "description": "Caption for the document",
-          "maxLength": 255
-        }
-      },
-      "required": ["box", "image"]
-    },
-    "BoxDocument": {
-      "type": "object",
-      "properties": {
-        "box": {
-          "type": "string",
-          "description": "Reference to the box",
-          "maxLength": 255
-        },
-        "document": {
-          "type": "string",
-          "description": "Reference to the document",
-          "maxLength": 10000
-        },
-        "caption": {
-          "type": "string",
-          "description": "Caption for the document",
-          "maxLength": 255
-        }
-      },
-      "required": ["box", "document"]
     }
   },
   "properties": {
     "Box": { "$ref": "#/definitions/Box" },
-    "BoxItem": { "$ref": "#/definitions/BoxItem" },
-    "BoxImage": { "$ref": "#/definitions/BoxImage" },
-    "BoxDocument": { "$ref": "#/definitions/BoxDocument" }
+    "BoxItem": { "$ref": "#/definitions/BoxItem" }
   }
 }

@@ -8,6 +8,7 @@ from django.utils.text import slugify
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
 from wagtail.models import (
+    Collection,
     Orderable,
     RevisionMixin,
     DraftStateMixin,
@@ -16,8 +17,8 @@ from wagtail.models import (
     PreviewableMixin
 )
 from wagtail.fields import RichTextField
-from wagtail.images import get_image_model_string
-from wagtail.documents import get_document_model_string
+from wagtail.images import get_image_model
+from wagtail.documents import get_document_model
 
 
 class Box(
@@ -33,17 +34,18 @@ class Box(
     Represents an inventory box in the database.
 
     Attributes:
-        owner (ForeignKey): The trainer that owns the inventory.
-        name (str): The name of the inventory.
-        description (str): A description of the inventory.
-        slug (str): A unique slug for the inventory.
-        uuid (uuid): A unique identifier for the inventory.
+        owner (ForeignKey): The trainer that owns the inventory box.
+        name (str): The name of the inventory box.
+        description (str): A description of the inventory box.
+        slug (str): A unique slug for the inventory box.
+        uuid (uuid): A unique identifier for the inventory box.
+        collection (ForeignKey): The collection associated with the inventory box.
     """
 
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name='inventories'
+        related_name='boxes'
     )
     name = models.CharField(
         max_length=25,
@@ -64,19 +66,38 @@ class Box(
         unique=True,
         db_index=True
     )
+    collection = models.ForeignKey(
+        Collection,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        null=True,
+        blank=True
+    )
 
-    def generate_prompt(self):
-        prompt = f"The inventory box name is {self.name}"
-        if self.description:
-            return f"{prompt} and its description is {self.description}"
-        return prompt
+    def get_documents(self):
+        """
+        Returns all documents associated with the inventory box.
+        """
+        return get_document_model().objects.filter(collection=self.collection)
+
+    def get_images(self):
+        """
+        Returns all images associated with the inventory box.
+        """
+        return get_image_model().objects.filter(collection=self.collection)
 
     def save(self, *args, **kwargs):
+        """
+        Overrides the save method to generate a slug for the inventory box if one is not provided.
+        """
         if not self.slug:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
     def __str__(self):
+        """
+        Returns the name of the inventory box.
+        """
         return self.name
 
     class Meta(TranslatableMixin.Meta, Orderable.Meta):
@@ -88,78 +109,6 @@ class Box(
         constraints = [
             models.UniqueConstraint(fields=['owner', 'name'], name='unique_owner_inventory')
         ]
-
-
-class BoxImage(Orderable):
-    """
-    Model representing an image associated with a box.
-
-    Attributes:
-        box (Box): The box associated with the image.
-        image (Image): The image file.
-        caption (str): A caption for the image.
-    """
-
-    box = ParentalKey(
-        Box,
-        on_delete=models.CASCADE,
-        related_name='images'
-    )
-    image = models.ForeignKey(
-        get_image_model_string(),
-        on_delete=models.CASCADE,
-        related_name='+'
-    )
-    caption = models.CharField(
-        blank=True,
-        max_length=250
-    )
-
-    def __str__(self):
-        """
-        Returns a string representation of the box image.
-        """
-        return f"{self.box.name} image #{self.sort_order}"
-
-    class Meta(Orderable.Meta):
-        verbose_name = _("box image")
-        verbose_name_plural = _("box images")
-
-
-class BoxDocument(Orderable):
-    """
-    Model representing a document associated with a box.
-
-    Attributes:
-        box (Box): The box associated with the document.
-        document (Document): The document file.
-        caption (str): A caption for the document.
-    """
-
-    box = ParentalKey(
-        Box,
-        on_delete=models.CASCADE,
-        related_name='documents'
-    )
-    document = models.ForeignKey(
-        get_document_model_string(),
-        on_delete=models.CASCADE,
-        related_name='+'
-    )
-    caption = models.CharField(
-        blank=True,
-        max_length=250
-    )
-
-    def __str__(self):
-        """
-        Returns a string representation of the box.
-        """
-        return f"{self.box.name} document #{self.sort_order}"
-
-    class Meta(Orderable.Meta):
-        verbose_name = _("box document")
-        verbose_name_plural = _("box documents")
 
 
 class BoxItem(Orderable, models.Model):
@@ -209,6 +158,9 @@ class BoxItem(Orderable, models.Model):
     )
 
     def __str__(self):
+        """
+        Returns a string representation of the box item.
+        """
         return f"{self.box.name} item."
 
     class Meta(Orderable.Meta):

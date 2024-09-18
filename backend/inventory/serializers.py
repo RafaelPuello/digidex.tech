@@ -1,38 +1,8 @@
 from rest_framework import serializers
-from wagtail.images.api.fields import ImageRenditionField
-from wagtail.documents.api.v2.serializers import DocumentDownloadUrlField
 from django.contrib.contenttypes.models import ContentType
 
 from biodiversity.models import Plant
-from .models import Box, BoxImage, BoxDocument, BoxItem
-
-
-class BoxImageSerializer(serializers.ModelSerializer):
-    """
-    Serializer for the BoxImage model. It handles the serialization of the images
-    related to a box, using Wagtail's ImageRenditionField to get a specific rendition
-    of the image.
-    """
-
-    image = ImageRenditionField('fill-800x800')
-
-    class Meta:
-        model = BoxImage
-        fields = ['id', 'image', 'caption', 'sort_order']
-
-
-class BoxDocumentSerializer(serializers.ModelSerializer):
-    """
-    Serializer for the BoxDocument model. It handles the serialization of documents 
-    associated with a box, using Wagtail's DocumentDownloadUrlField to provide the download 
-    URL for the document.
-    """
-
-    document = DocumentDownloadUrlField()
-
-    class Meta:
-        model = BoxDocument
-        fields = ['id', 'document', 'caption', 'sort_order']
+from .models import Box, BoxItem
 
 
 class BoxItemSerializer(serializers.ModelSerializer):
@@ -68,14 +38,11 @@ class BoxItemSerializer(serializers.ModelSerializer):
 class BoxSerializer(serializers.ModelSerializer):
     """
     Main serializer for the Box model. This serializer includes nested serializers for
-    related images (BoxImage), documents (BoxDocument), and items (BoxItem), providing
-    a complete representation of a box with its associated data.
+    related items (BoxItem), providing a complete representation of a box with its associated data.
     """
 
-    images = BoxImageSerializer(many=True)
-    documents = BoxDocumentSerializer(many=True)
     items = BoxItemSerializer(many=True)
 
     class Meta:
         model = Box
-        fields = ['id', 'owner', 'name', 'description', 'slug', 'uuid', 'images', 'documents', 'items']
+        fields = ['id', 'owner', 'name', 'description', 'slug', 'uuid', 'collection', 'items']

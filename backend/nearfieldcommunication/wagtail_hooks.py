@@ -1,5 +1,5 @@
 from wagtail import hooks
-from wagtail.admin.panels import TabbedInterface, InlinePanel, FieldPanel, ObjectList
+from wagtail.admin.panels import TabbedInterface, FieldPanel, ObjectList
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet, SnippetViewSetGroup
 
@@ -31,8 +31,6 @@ class NfcTagTypeSnippetViewSet(SnippetViewSet):
     shared_panels = [
         FieldPanel("name"),
         FieldPanel("description"),
-        InlinePanel("images", label="Tag Images"),
-        InlinePanel("documents", label="Tag Documents"),
     ]
 
     private_panels = [
