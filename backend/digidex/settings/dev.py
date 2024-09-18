@@ -1,8 +1,8 @@
-from .base import *
+from .base import *  # noqa: F403 - imported for gunicorn deployment
 
 DEBUG = True
 
-ALLOWED_HOSTS += [
+ALLOWED_HOSTS += [  # noqa: F405 - imported from base
     'localhost',
     'www.localhost',
 ]

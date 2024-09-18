@@ -1,10 +1,8 @@
 import os
 
-from .base import *
+from .base import *  # noqa: F401,F403 - imported for gunicorn deployment
 
 DEBUG = False
-
-INSTALLED_APPS.append("storages")
 
 WAGTAIL_SITE_NAME = "DigiDex"
 

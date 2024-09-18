@@ -70,7 +70,7 @@ class Trainer(AbstractUser):
         """
 
         user_group = self.setup_group()
-        collection = self.setup_collection(user_group)
+        collection = self.setup_collection(user_group)  # noqa: F841 - assigned for future use
         trainer_group = get_trainer_group()
         self.groups.add(trainer_group)
 
