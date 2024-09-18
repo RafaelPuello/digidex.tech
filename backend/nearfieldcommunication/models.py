@@ -13,7 +13,6 @@ from wagtail.models import (
     RevisionMixin,
     DraftStateMixin,
     LockableMixin,
-    BootstrapTranslatableMixin,
     TranslatableMixin,
     PreviewableMixin
 )
@@ -92,6 +91,7 @@ class NfcTagTypeGalleryImage(Orderable):
         image (Image): The image file.
         caption (str): A caption for the image.
     """
+
     nfc_tag_type = ParentalKey(
         NfcTagType,
         on_delete=models.CASCADE,

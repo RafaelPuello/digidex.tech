@@ -1,8 +1,26 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from modelcluster.fields import ParentalKey
+from modelcluster.models import ClusterableModel
+from wagtail.models import (
+    Orderable,
+    RevisionMixin,
+    DraftStateMixin,
+    LockableMixin,
+    TranslatableMixin,
+    PreviewableMixin
+)
+from wagtail.images import get_image_model_string
 
 
-class Plant(models.Model):
+class Plant(
+    DraftStateMixin,
+    RevisionMixin,
+    LockableMixin,
+    TranslatableMixin,
+    PreviewableMixin,
+    ClusterableModel
+):
     """
     Represents a plant in the database.
 
@@ -29,6 +47,42 @@ class Plant(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta(TranslatableMixin.Meta):
+        verbose_name = 'plant'
+        verbose_name_plural = 'plants'
+
+
+class PlantGalleryImage(Orderable):
+    """
+    Model representing an image associated with a plant.
+
+    Attributes:
+        plant (Plant): The plant associated with the image.
+        image (Image): The image file.
+        caption (str): A caption for the image.
+    """
+
+    plant = ParentalKey(
+        Plant,
+        on_delete=models.CASCADE,
+        related_name='gallery_images'
+    )
+    image = models.ForeignKey(
+        get_image_model_string(),
+        on_delete=models.CASCADE,
+        related_name='+'
+    )
+    caption = models.CharField(
+        blank=True,
+        max_length=250
+    )
+
+    def __str__(self):
+        """
+        Returns a string representation of the plant image.
+        """
+        return f"{self.plant.name} image #{self.sort_order}"
+
     class Meta:
-        verbose_name = _('plant')
-        verbose_name_plural = _('plants')
+        verbose_name = _("plant image")
+        verbose_name_plural = _("plant images")
