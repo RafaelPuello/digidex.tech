@@ -12,30 +12,6 @@ class LocaleFactory(factory.django.DjangoModelFactory):
     language_code = 'en'
 
 
-class SiteFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = Site
-
-    hostname = "testserver"
-    root_page = Page.get_first_root_node()
-    is_default_site = True
-    site_name = "Test Site"
-
-    @classmethod
-    def _create(cls, model_class, *args, **kwargs):
-        """
-        Override the default _create method to ensure pages
-        are added to the Wagtail page tree correctly.
-        """
-        root = Page.get_first_root_node()
-        return Site.objects.create(
-            hostname=kwargs['hostname'],
-            root_page=root,
-            is_default_site=kwargs['is_default_site'],
-            site_name=kwargs['site_name'],
-        )
-
-
 class HomePageFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = HomePage
@@ -52,8 +28,18 @@ class HomePageFactory(factory.django.DjangoModelFactory):
         """
         home = model_class(**kwargs)
         
-        site = factory.SubFactory(SiteFactory())
-        site.root.add_child(instance=home)
-
+        root = Page.get_first_root_node()
+        if root:
+            home = root.add_child(instance=home)
+        else:
+            home = Page.add_root(instance=home)
         home.save_revision().publish()
+
+        Site.objects.create(
+            hostname='testsite',
+            port=80,
+            root_page=home,
+            is_default_site=True,
+            site_name='Test Site'
+        )
         return home

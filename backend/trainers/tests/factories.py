@@ -4,7 +4,6 @@ from django.contrib.auth.models import Group
 from wagtail.models import Collection
 
 from home.models import HomePage
-from home.tests.factories import HomePageFactory
 from trainers.models import Trainer, TrainerPage
 
 
@@ -12,14 +11,14 @@ class TrainerCollectionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Collection
 
-    name = factory.LazyAttribute(lambda obj: f"Trainer Collection {obj.trainer_uuid}")
-    parent = factory.SubFactory(HomePageFactory)
-    trainer_uuid = factory.SelfAttribute('trainer.uuid')
+    name = factory.Faker("uuid4")
 
 
 class TrainerGroupFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Group
+
+    name = factory.Faker("uuid4")
 
 
 class TrainerFactory(factory.django.DjangoModelFactory):
@@ -36,12 +35,10 @@ class TrainerFactory(factory.django.DjangoModelFactory):
 
     # Pass the trainer's UUID to the collection and group factories
     collection = factory.SubFactory(
-        TrainerCollectionFactory,
-        trainer_uuid=factory.SelfAttribute('uuid')
+        TrainerCollectionFactory
     )
     group = factory.SubFactory(
-        TrainerGroupFactory,
-        trainer_uuid=factory.SelfAttribute('uuid')
+        TrainerGroupFactory
     )
 
 
