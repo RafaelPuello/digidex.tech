@@ -6,6 +6,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
+from django.utils.text import slugify
 from modelcluster.models import ClusterableModel
 from wagtail.models import (
     Collection,
@@ -63,6 +64,17 @@ class NfcTagType(
     description = RichTextField(
         null=True
     )
+    uuid = models.UUIDField(
+        default=uuid.uuid4,
+        editable=False,
+        unique=True,
+        db_index=True
+    )
+    slug = models.SlugField(
+        max_length=255,
+        null=True,
+        db_index=True
+    )
     collection = models.ForeignKey(
         Collection,
         on_delete=models.SET_NULL,
@@ -82,6 +94,14 @@ class NfcTagType(
         Returns all images associated with nfc tag type.
         """
         return get_image_model().objects.filter(collection=self.collection)
+
+    def save(self, *args, **kwargs):
+        """
+        Overrides the save method to generate a slug for the nfc tag type if one is not provided.
+        """
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         """
