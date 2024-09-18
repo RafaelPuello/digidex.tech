@@ -1,15 +1,9 @@
 import pytest
 from selenium import webdriver
 from django.contrib.auth import get_user_model
+from wagtail.models import Page, Site
 
-from home.tests.factories import (
-    LocaleFactory,
-    HomePageFactory
-)
-from trainers.tests.factories import (
-    TrainerFactory,
-    TrainerPageFactory
-)
+from home.models import HomePage
 
 User = get_user_model()
 
@@ -32,43 +26,20 @@ def browser():
 
 
 @pytest.fixture
-def locale(db):
-    return LocaleFactory()
+def homepage(db):
+    home = HomePage(title="Home")
 
+    root = Page.get_first_root_node()
+    root.add_child(instance=home)
 
-@pytest.fixture
-def home_page(db, locale):
-    return HomePageFactory(locale=locale)
-
-
-@pytest.fixture
-def trainer(db, home_page):
-    """
-    Creates a Trainer instance along with its associated Collection.
-    The Collection is automatically created with the Trainer's UUID.
-    """
-    return TrainerFactory(home_page=home_page)
-
-
-@pytest.fixture
-def trainer_collection(db, trainer):
-    """
-    Returns the Collection associated with the given Trainer.
-    """
-    return trainer.collection
-
-
-@pytest.fixture
-def trainer_group(db, trainer):
-    """
-    Returns the Group associated with the given Trainer.
-    """
-    return trainer.group
-
-
-@pytest.fixture
-def trainer_page(db, trainer, home_page):
-    return TrainerPageFactory(owner=trainer, locale=home_page.locale)
+    home.save_revision().publish()
+    Site.objects.create(
+        hostname="testserver",
+        root_page=home,
+        is_default_site=True,
+        site_name="testserver",
+    )
+    return home
 
 
 @pytest.fixture
