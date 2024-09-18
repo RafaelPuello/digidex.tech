@@ -11,6 +11,7 @@ from wagtail.models import (
     PreviewableMixin
 )
 from wagtail.images import get_image_model_string
+from wagtail.documents import get_document_model_string
 
 
 class Plant(
@@ -78,3 +79,39 @@ class PlantGalleryImage(Orderable):
     class Meta:
         verbose_name = _("plant image")
         verbose_name_plural = _("plant images")
+
+
+class PlantDocument(Orderable):
+    """
+    Model representing a document associated with a plant.
+
+    Attributes:
+        plant (Plant): The plant associated with the document.
+        document (Document): The document file.
+        caption (str): A caption for the document.
+    """
+
+    plant = ParentalKey(
+        Plant,
+        on_delete=models.CASCADE,
+        related_name='documents'
+    )
+    document = models.ForeignKey(
+        get_document_model_string(),
+        on_delete=models.CASCADE,
+        related_name='+'
+    )
+    caption = models.CharField(
+        blank=True,
+        max_length=250
+    )
+
+    def __str__(self):
+        """
+        Returns a string representation of the Plant.
+        """
+        return f"{self.plant.name} document #{self.sort_order}"
+
+    class Meta:
+        verbose_name = _("plant document")
+        verbose_name_plural = _("plant documents")

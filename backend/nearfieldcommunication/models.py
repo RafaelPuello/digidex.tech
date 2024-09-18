@@ -18,6 +18,7 @@ from wagtail.models import (
 )
 from wagtail.fields import RichTextField
 from wagtail.images import get_image_model_string
+from wagtail.documents import get_document_model_string
 
 from .validators import validate_serial_number
 
@@ -108,6 +109,42 @@ class NfcTagTypeGalleryImage(Orderable):
     class Meta:
         verbose_name = _("nfc tag type image")
         verbose_name_plural = _("nfc tag types images")
+
+
+class NfcTagTypeDocument(Orderable):
+    """
+    Model representing a document associated with an NFC tag type.
+
+    Attributes:
+        nfc_tag_type (NfcTagType): The NFC tag type associated with the document.
+        document (Document): The document file.
+        caption (str): A caption for the document.
+    """
+
+    nfc_tag_type = ParentalKey(
+        NfcTagType,
+        on_delete=models.CASCADE,
+        related_name='documents'
+    )
+    document = models.ForeignKey(
+        get_document_model_string(),
+        on_delete=models.CASCADE,
+        related_name='+'
+    )
+    caption = models.CharField(
+        blank=True,
+        max_length=250
+    )
+
+    def __str__(self):
+        """
+        Returns a string representation of the NFC tag type.
+        """
+        return f"{self.nfc_tag_type.name} document #{self.sort_order}"
+
+    class Meta:
+        verbose_name = _("nfc tag type document")
+        verbose_name_plural = _("nfc tag types documents")
 
 
 class NfcTag(models.Model):

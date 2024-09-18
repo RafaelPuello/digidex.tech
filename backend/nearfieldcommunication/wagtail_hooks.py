@@ -22,7 +22,6 @@ class NfcTagTypeSnippetViewSet(SnippetViewSet):
     menu_label = "Tag Types"
     menu_name = "types"
     copy_view_enabled = False
-    inspect_view_enabled = True
     list_filter = {"name": ["exact"], "description": ["icontains"]}
     list_display = ["name"]
     list_per_page = 25
@@ -33,6 +32,7 @@ class NfcTagTypeSnippetViewSet(SnippetViewSet):
         FieldPanel("name"),
         FieldPanel("description"),
         InlinePanel("gallery_images", label="Images"),
+        InlinePanel("documents", label="Documents"),
     ]
 
     private_panels = [
@@ -52,7 +52,6 @@ class NfcTagSnippetViewSet(SnippetViewSet):
     menu_label = "Tags"
     menu_name = "tags"
     copy_view_enabled = False
-    inspect_view_enabled = True
     list_filter = {"nfc_tag_type": ["exact"], "label": ["icontains"]}
     list_display = ["label", "nfc_tag_type", "serial_number"]
     list_per_page = 25
@@ -96,7 +95,6 @@ class NfcTagScanSnippetViewSet(SnippetViewSet):
     menu_label = "Tag Scans"
     menu_name = "scans"
     copy_view_enabled = False
-    inspect_view_enabled = True
     # list_filter = {"nfc_tag": ["exact"], "scanned_by": ["exact"], "scanned_at": ["date"]}
     list_display = ["nfc_tag", "counter", "scanned_by", "scanned_at"]
     list_per_page = 25
@@ -143,7 +141,6 @@ class NfcTagMemorySnippetViewSet(SnippetViewSet):
     menu_label = "Tag Memory"
     menu_name = "memory"
     copy_view_enabled = False
-    inspect_view_enabled = True
     # list_filter = {"nfc_tag": ["exact"]}
     list_display = ["nfc_tag", "last_modified"]
     list_per_page = 25

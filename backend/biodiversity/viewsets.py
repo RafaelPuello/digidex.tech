@@ -1,4 +1,4 @@
-from wagtail.admin.panels import FieldPanel
+from wagtail.admin.panels import FieldPanel, InlinePanel
 from wagtail.snippets.views.snippets import SnippetViewSet
 
 from .models import Plant
@@ -13,4 +13,6 @@ class PlantViewSet(SnippetViewSet):
     panels = [
         FieldPanel("name"),
         FieldPanel("description"),
+        InlinePanel("gallery_images", label="Images"),
+        InlinePanel("documents", label="Documents"),
     ]
