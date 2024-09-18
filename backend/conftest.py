@@ -14,19 +14,12 @@ def django_db_setup():
     settings.DATABASES['default']['NAME'] = settings.DB_TEST_NAME
 
 
-@pytest.fixture(scope="class")
-def browser():
-    # Set up the browser once for all tests in this class
-    options = webdriver.FirefoxOptions()
-    options.headless = True  # Run in headless mode for faster tests and no UI
-    driver = webdriver.Firefox(options=options)
-    yield driver
-    # Quit the browser after all tests have run
-    driver.quit()
-
-
 @pytest.fixture
 def homepage(db):
+    """
+    Fixture to create a homepage for Wagtail tests.
+    """
+
     home = HomePage(title="Home")
 
     root = Page.get_first_root_node()
@@ -44,6 +37,10 @@ def homepage(db):
 
 @pytest.fixture
 def user(db):
+    """
+    Fixture to create a User for testing.
+    """
+
     return User.objects.create_user(
         username="testuser",
         password="testpassword",
@@ -52,7 +49,14 @@ def user(db):
     )
 
 
-@pytest.fixture
-def request_factory():
-    from django.test import RequestFactory
-    return RequestFactory()
+@pytest.fixture(scope="class")
+def browser():
+    """
+    Fixture to set up a browser for Selenium tests.
+    """
+
+    options = webdriver.FirefoxOptions()
+    options.headless = True
+    driver = webdriver.Firefox(options=options)
+    yield driver
+    driver.quit()

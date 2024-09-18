@@ -2,11 +2,11 @@ from wagtail.admin.panels import TabbedInterface, InlinePanel, FieldPanel, Objec
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet, SnippetViewSetGroup
 
-from biodiversity.viewsets import PlantViewSet
+from biodiversity.wagtail_hooks import PlantSnippetViewSet
 from .models import Box
 
 
-class BoxViewSet(SnippetViewSet):
+class BoxSnippetViewSet(SnippetViewSet):
     model = Box
     icon = "folder"
     menu_label = "Boxes"
@@ -30,12 +30,12 @@ class BoxViewSet(SnippetViewSet):
     )
 
 
-class InventoryViewSetGroup(SnippetViewSetGroup):
-    items = [PlantViewSet, BoxViewSet]
+class InventorySnippetViewSetGroup(SnippetViewSetGroup):
+    items = [PlantSnippetViewSet, BoxSnippetViewSet]
     menu_icon = "desktop"
     menu_label = "Inventory"
     menu_name = "inventory"
     add_to_admin_menu = True
 
 
-register_snippet(InventoryViewSetGroup)
+register_snippet(InventorySnippetViewSetGroup)
