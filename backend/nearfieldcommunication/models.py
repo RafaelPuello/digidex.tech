@@ -62,8 +62,6 @@ class NfcTagType(models.Model):
         verbose_name_plural = _("nfc tag types")
 
 
-# models.py
-
 class NfcTag(models.Model):
     """
     Model representing an individual NFC tag, which is linked to a physical object.
@@ -75,9 +73,9 @@ class NfcTag(models.Model):
         active (bool): Indicates whether the NFC tag is active.
         created_at (datetime): The date and time when the NFC tag was created.
         last_modified (datetime): The date and time when the NFC tag was last modified.
-        content_type (ContentType): The type of the related memory model.
-        object_id (PositiveIntegerField): The ID of the related memory instance.
-        memory (GenericForeignKey): The generic foreign key to the memory instance.
+        content_type (ContentType): The type of the related content_object model.
+        object_id (PositiveIntegerField): The ID of the related content_object instance.
+        content_object (GenericForeignKey): The generic foreign key to the content_object instance.
     """
 
     serial_number = models.CharField(
@@ -120,7 +118,7 @@ class NfcTag(models.Model):
         blank=True,
         db_index=True
     )
-    memory = GenericForeignKey(
+    content_object = GenericForeignKey(
         'content_type',
         'object_id'
     )

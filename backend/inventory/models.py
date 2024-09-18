@@ -1,6 +1,8 @@
 from uuid import uuid4
 from django.db import models
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
 from django.utils.text import slugify
 from wagtail.models import Orderable
@@ -82,7 +84,9 @@ class BoxItem(Orderable, models.Model):
 
     Attributes:
         box (ForeignKey): The inventory box the item belongs to.
-        plant (OneToOneField): The plant associated with the item.
+        content_type (ForeignKey): The content type of the item.
+        object_id (int): The ID of the item.
+        content_object (GenericForeignKey): The item itself.
         created_at (datetime): The date and time the item was created.
         last_modified (datetime): The date and time the item was last updated.
     """
@@ -92,11 +96,20 @@ class BoxItem(Orderable, models.Model):
         on_delete=models.CASCADE,
         related_name='items'
     )
-    plant = models.OneToOneField(
-        'biodiversity.Plant',
-        on_delete=models.SET_NULL,
-        related_name='+',
-        null=True
+    content_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
+    object_id = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        db_index=True
+    )
+    content_object = GenericForeignKey(
+        'content_type',
+        'object_id'
     )
     created_at = models.DateTimeField(
         auto_now_add=True
@@ -112,5 +125,8 @@ class BoxItem(Orderable, models.Model):
         verbose_name = _("box item")
         verbose_name_plural = _("box items")
         constraints = [
-            models.UniqueConstraint(fields=['box', 'plant'], name='unique_box_item')
+            models.UniqueConstraint(fields=["box", "content_type", "object_id"], name='unique_box_item')
+        ]
+        indexes = [
+            models.Index(fields=["content_type", "object_id"]),
         ]

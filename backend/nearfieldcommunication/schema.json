@@ -44,14 +44,6 @@
         "active": {
           "type": "boolean"
         },
-        "created_at": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "last_modified": {
-          "type": "string",
-          "format": "date-time"
-        },
         "content_type": {
           "type": ["string", "null"],
           "description": "Content type for GenericForeignKey"
@@ -59,6 +51,18 @@
         "object_id": {
           "type": ["integer", "null"],
           "description": "Object ID for GenericForeignKey"
+        },
+        "content_object": {
+          "type": ["string", "null"],
+          "description": "Content object for GenericForeignKey"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "last_modified": {
+          "type": "string",
+          "format": "date-time"
         }
       },
       "required": ["serial_number", "created_at", "last_modified"]
