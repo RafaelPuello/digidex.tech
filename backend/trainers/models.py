@@ -238,7 +238,7 @@ class TrainerPage(Page):
         """
         Returns the inventory boxes associated with the page owner.
         """
-        return self.owner.get_inventories()
+        return None
 
     def __str__(self):
         """
