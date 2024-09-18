@@ -97,8 +97,9 @@ class BoxItem(Orderable, models.Model):
         on_delete=models.CASCADE,
         related_name='items'
     )
-    limit = (
-        models.Q(app_label = 'biodiversity', model = 'Plant')
+    limit = models.Q(
+        app_label='biodiversity',
+        model='Plant'
     )
     content_type = models.ForeignKey(
         ContentType,

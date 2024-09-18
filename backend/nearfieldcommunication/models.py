@@ -104,9 +104,9 @@ class NfcTag(models.Model):
         default=True
     )
     limit = (
-        models.Q(app_label = 'trainers', model = 'Trainer') | \
-        models.Q(app_label = 'biodiversity', model = 'Plant') | \
-        models.Q(app_label = 'inventory', model = 'Box')
+        models.Q(app_label='trainers', model='Trainer') |  # noqa: W504 - used line break for readability
+        models.Q(app_label='biodiversity', model='Plant') |  # noqa: W504 - used line break for readability
+        models.Q(app_label='inventory', model='Box')
     )
     content_type = models.ForeignKey(
         ContentType,
