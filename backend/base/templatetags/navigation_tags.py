@@ -7,9 +7,11 @@ from base.models import FooterSection
 
 register = template.Library()
 
+
 @register.simple_tag(takes_context=True)
 def get_site_root(context):
     return Site.find_for_request(context["request"]).root_page
+
 
 @register.inclusion_tag("base/includes/footer.html", takes_context=True)
 def get_footer_section(context):
@@ -24,6 +26,7 @@ def get_footer_section(context):
         "footer_body": footer_body,
         "footer_copyright": footer_copyright
     }
+
 
 @register.inclusion_tag("base/includes/navigation.html", takes_context=True)
 def get_navigation_buttons(context):

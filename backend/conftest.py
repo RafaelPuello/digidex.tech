@@ -8,9 +8,7 @@ from home.tests.factories import (
 )
 from trainers.tests.factories import (
     TrainerFactory,
-    TrainerPageFactory,
-    TrainerCollectionFactory,
-    TrainerGroupFactory
+    TrainerPageFactory
 )
 
 User = get_user_model()
@@ -50,6 +48,7 @@ def trainer(db, home_page):
     The Collection is automatically created with the Trainer's UUID.
     """
     return TrainerFactory(home_page=home_page)
+
 
 @pytest.fixture
 def trainer_collection(db, trainer):

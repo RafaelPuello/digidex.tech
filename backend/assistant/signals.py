@@ -6,6 +6,7 @@ from .models import UserAssistant
 
 User = get_user_model()
 
+
 @receiver(post_save, sender=User)
 def create_user_assistant(sender, instance, created, **kwargs):
     """

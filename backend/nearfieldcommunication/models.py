@@ -26,10 +26,11 @@ MEMORY_SIZE = {
     NTAG216: 924,
 }
 
+
 class NfcTagType(models.Model):
     """
     Model representing the type of NFC tag.
-    
+
     Attributes:
         name (str): The name of the NFC tag type.
         description (str): A description of the NFC tag type.
@@ -200,7 +201,7 @@ class NfcTag(models.Model):
         """
         Returns a string representation of the NFC tag, with the serial number formatted as pairs of characters.
         """
-        uid = ':'.join(self.serial_number[i:i+2] for i in range(0, len(self.serial_number), 2))
+        uid = ':'.join(self.serial_number[i:i + 2] for i in range(0, len(self.serial_number), 2))
         if self.nfc_tag_type:
             return str(f"{self.nfc_tag_type}: {uid}")
         return str(uid)
@@ -213,7 +214,7 @@ class NfcTag(models.Model):
 class NfcTagScan(models.Model):
     """
     Model representing a scan of an NFC tag.
-    
+
     Attributes:
         nfc_tag (NfcTag): The NFC tag that was scanned.
         counter (int): The scan counter value.
@@ -256,7 +257,7 @@ class NfcTagScan(models.Model):
 class NfcTagMemory(models.Model):
     """
     Model representing the memory contents of an NFC tag.
-    
+
     Attributes:
         uuid (UUID): A unique identifier for the NFC tag.
         nfc_tag (NfcTag): The NFC tag whose memory contents are stored.

@@ -37,7 +37,7 @@ class Box(Orderable, models.Model):
     )
     slug = models.SlugField(
         max_length=255,
-        unique=True, # Only within constraints specified in the Meta class
+        unique=True,  # Only within constraints specified in the Meta class
         db_index=True
     )
     uuid = models.UUIDField(

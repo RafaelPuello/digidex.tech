@@ -8,7 +8,7 @@ INSTALLED_APPS.append("storages")
 
 WAGTAIL_SITE_NAME = "DigiDex"
 
-WAGTAILADMIN_BASE_URL = f"https://digidex.tech"
+WAGTAILADMIN_BASE_URL = "https://digidex.tech"
 
 SESSION_COOKIE_SECURE = True
 

@@ -1,9 +1,6 @@
 from wagtail import hooks
 from wagtail.admin.wagtail_hooks import (
-    ExplorerMenuItem,
     CollectionsMenuItem,
-    WorkflowsMenuItem,
-    WorkflowTasksMenuItem,
     LockedPagesMenuItem,
 )
 from wagtail.admin.site_summary import PagesSummaryItem
@@ -16,6 +13,7 @@ from wagtail.admin.wagtail_hooks import (
     AgingPagesReportMenuItem,
     PageTypesReportMenuItem,
 )
+
 
 @hooks.register('construct_explorer_page_queryset')
 def show_relevant_pages_only(parent_page, pages, request):
@@ -39,16 +37,17 @@ def construct_main_menu_items(request, menu_items):
         modified_menu_items = []
         for item in menu_items:
             if isinstance(item, HIDDEN_MAIN_MENU_ITEMS):
-                continue            
+                continue
             modified_menu_items.append(item)
         menu_items[:] = modified_menu_items
+
 
 @hooks.register('construct_reports_menu')
 def hide_report_menu_items(request, menu_items):
     user = request.user
     if not user.is_superuser:
         menu_items[:] = [
-            item for item in menu_items 
+            item for item in menu_items
             if not isinstance(item, (
                 SiteHistoryReportMenuItem,
                 AgingPagesReportMenuItem,
@@ -57,6 +56,7 @@ def hide_report_menu_items(request, menu_items):
                 LockedPagesMenuItem,
             ))
         ]
+
 
 @hooks.register("construct_homepage_summary_items", order=1)
 def hide_summary_items(request, summary_items):

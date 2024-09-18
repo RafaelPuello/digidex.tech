@@ -22,14 +22,14 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Run Code Linting
+    - name: Check for Formatting with Flake8
       run: |
         flake8 .
 
-    - name: Run Code Security Check
+    - name: Check for Security Issues with Bandit
       run: |
         bandit .
   
-    - name: Run Tests
+    - name: Test with Pytest
       run: |
         pytest

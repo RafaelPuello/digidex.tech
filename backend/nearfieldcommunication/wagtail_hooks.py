@@ -1,11 +1,10 @@
-from django.contrib.auth.models import Group
-from django.db.models import Q
 from wagtail import hooks
 from wagtail.admin.panels import TabbedInterface, FieldPanel, ObjectList
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet, SnippetViewSetGroup
 
 from .models import NfcTag, NfcTagType, NfcTagScan, NfcTagMemory
+
 
 @hooks.register("register_icons")
 def register_icons(icons):
@@ -15,6 +14,7 @@ def register_icons(icons):
         'nearfieldcommunication/icons/nfc-scan.svg',
         'nearfieldcommunication/icons/nfc-memory.svg',
     ]
+
 
 class NfcTagSnippetViewSet(SnippetViewSet):
     model = NfcTag
@@ -43,13 +43,14 @@ class NfcTagSnippetViewSet(SnippetViewSet):
         if qs is None:
             qs = self.model.objects.all()
         user = request.user
-        
+
         if user.is_superuser:
             return qs
         elif user.groups.filter(name='Trainers').exists():
             return qs.filter(user=user)
         else:
             return qs.none()
+
 
 class NfcTagTypeSnippetViewSet(SnippetViewSet):
     model = NfcTagType
@@ -59,7 +60,7 @@ class NfcTagTypeSnippetViewSet(SnippetViewSet):
 
     shared_panels = [
         FieldPanel("name"),
-        FieldPanel("description"),   
+        FieldPanel("description"),
     ]
 
     private_panels = [
@@ -71,6 +72,7 @@ class NfcTagTypeSnippetViewSet(SnippetViewSet):
             ObjectList(private_panels, heading='Admin only', permission="superuser"),
         ]
     )
+
 
 class NfcTagScanSnippetViewSet(SnippetViewSet):
     model = NfcTagScan
@@ -103,7 +105,7 @@ class NfcTagScanSnippetViewSet(SnippetViewSet):
         if qs is None:
             qs = self.model.objects.all()
         user = request.user
-        
+
         if user.is_superuser:
             return qs
         elif user.groups.filter(name='Trainers').exists():
@@ -143,7 +145,7 @@ class NfcTagMemorySnippetViewSet(SnippetViewSet):
         if qs is None:
             qs = self.model.objects.all()
         user = request.user
-        
+
         if user.is_superuser:
             return qs
         elif user.groups.filter(name='Trainers').exists():
@@ -158,5 +160,6 @@ class NfcTagSnippetViewSetGroup(SnippetViewSetGroup):
     menu_label = "NFC Tags"
     menu_name = "nfc_tags"
     add_to_admin_menu = True
+
 
 register_snippet(NfcTagSnippetViewSetGroup)

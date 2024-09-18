@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 
 from .models import UserAssistant
 
+
 @login_required()
 def chat(request):
     question = request.GET.get('question')

@@ -1,5 +1,3 @@
-from django.shortcuts import render
-from pygbif import species, occurrences
 from wagtail.admin.panels import FieldPanel
 from wagtail.snippets.views.snippets import SnippetViewSet
 

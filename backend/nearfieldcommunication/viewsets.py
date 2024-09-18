@@ -165,4 +165,3 @@ class NfcTagMemoryViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(nfc_tag_memory, context={'request': request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-        

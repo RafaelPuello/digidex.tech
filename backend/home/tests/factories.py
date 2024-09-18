@@ -27,7 +27,7 @@ class HomePageFactory(factory.django.DjangoModelFactory):
         is added to the Wagtail page tree correctly.
         """
         home = model_class(**kwargs)
-        
+
         root = Page.get_first_root_node()
         if root:
             home = root.add_child(instance=home)

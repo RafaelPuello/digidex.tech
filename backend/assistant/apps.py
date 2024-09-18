@@ -6,4 +6,4 @@ class AssistantConfig(AppConfig):
     name = 'assistant'
 
     def ready(self):
-        import assistant.signals
+        import assistant.signals  # noqa: F401 - imported for signal registration
