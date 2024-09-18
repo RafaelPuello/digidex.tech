@@ -1,4 +1,4 @@
-from wagtail.admin.panels import FieldPanel
+from wagtail.admin.panels import TabbedInterface, InlinePanel, FieldPanel, ObjectList
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet, SnippetViewSetGroup
 
@@ -12,11 +12,22 @@ class BoxViewSet(SnippetViewSet):
     menu_label = "Boxes"
     menu_name = "boxes"
 
-    panels = [
-        FieldPanel("owner"),
+    shared_panels = [
         FieldPanel("name"),
         FieldPanel("description"),
+        InlinePanel("gallery_images", label="Images"),
+        InlinePanel("documents", label="Documents"),
     ]
+
+    private_panels = [
+    ]
+
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(shared_panels, heading='Details'),
+            ObjectList(private_panels, heading='Admin only', permission="superuser"),
+        ]
+    )
 
 
 class InventoryViewSetGroup(SnippetViewSetGroup):
@@ -25,11 +36,6 @@ class InventoryViewSetGroup(SnippetViewSetGroup):
     menu_label = "Inventory"
     menu_name = "inventory"
     add_to_admin_menu = True
-
-    panels = [
-        FieldPanel("name"),
-        FieldPanel("description"),
-    ]
 
 
 register_snippet(InventoryViewSetGroup)
