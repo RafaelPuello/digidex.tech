@@ -108,16 +108,25 @@ AUTHENTICATION_BACKENDS = [
 
 WSGI_APPLICATION = "digidex.wsgi.application"
 
+# Database configuration
+
+DB_NAME = os.getenv('DB_NAME', 'defaultdb')
+DB_USERNAME = os.getenv('DB_USERNAME')
+DB_PASSWORD = os.getenv('DB_PASSWORD')
+DB_HOST = os.getenv('DB_HOST')
+DB_PORT = os.getenv('DB_PORT')
+DB_TEST_NAME = os.getenv('TEST_DB_NAME', 'test_defaultdb')
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'defaultdb'),
-        'USER': os.getenv('DB_USERNAME'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
+        'NAME': DB_NAME,
+        'USER': DB_USERNAME,
+        'PASSWORD': DB_PASSWORD,
+        'HOST': DB_HOST,
+        'PORT': DB_PORT,
         'TEST': {
-            'NAME': os.getenv('TEST_DB_NAME', 'test_defaultdb'),
+            'NAME': DB_TEST_NAME,
             'SERIALIZE': False,
         },
     }

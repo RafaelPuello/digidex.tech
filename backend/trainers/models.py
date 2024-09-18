@@ -2,9 +2,9 @@ import uuid
 from django.db import models, transaction
 from django.utils.translation import gettext_lazy as _
 from django.utils.text import slugify
-from django.contrib.auth.models import AbstractUser, Group, Permission
-from wagtail.models import Page, Collection, GroupPagePermission, GroupCollectionPermission
-from wagtail.fields import RichTextField, StreamField
+from django.contrib.auth.models import AbstractUser, Group
+from wagtail.models import Page, Collection
+from wagtail.fields import RichTextField
 from wagtail.admin.panels import FieldPanel
 
 

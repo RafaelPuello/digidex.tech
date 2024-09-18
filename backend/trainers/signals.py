@@ -6,6 +6,7 @@ from .utils import setup_new_trainer
 
 User = settings.AUTH_USER_MODEL
 
+
 @receiver(post_save, sender=User)
 def new_user_setup(sender, instance, created, **kwargs):
     if created:

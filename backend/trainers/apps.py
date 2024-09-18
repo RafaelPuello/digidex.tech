@@ -6,4 +6,4 @@ class TrainersConfig(AppConfig):
     name = 'trainers'
 
     def ready(self):
-        import trainers.signals
+        import trainers.signals  # noqa: F401 - imported for signal registration

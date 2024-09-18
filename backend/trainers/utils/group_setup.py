@@ -1,10 +1,12 @@
 from django.contrib.auth.models import Permission, Group
 
+
 def get_trainer_group():
     group, created = Group.objects.get_or_create(name='Trainers')
     if created:
         group = create_trainer_group_permissions(group)
     return group
+
 
 def create_trainer_group_permissions(group):
     PERMISSIONS = [
@@ -13,7 +15,7 @@ def create_trainer_group_permissions(group):
         "view_nfctag", "view_nfctagtype", "view_nfctagscan", "view_nfctagmemory",
         "access_admin",
     ]
-    
+
     permissions = Permission.objects.filter(
         codename__in=PERMISSIONS
     )

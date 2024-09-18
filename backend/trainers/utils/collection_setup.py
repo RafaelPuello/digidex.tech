@@ -1,6 +1,7 @@
-from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.models import Permission
 from django.core.exceptions import ObjectDoesNotExist
 from wagtail.models import Collection, GroupCollectionPermission
+
 
 def setup_user_collection(user, group):
     collection = create_user_collection(user)
@@ -9,14 +10,15 @@ def setup_user_collection(user, group):
     except Exception as e:
         raise e
 
+
 def create_user_collection(user):
     """
     Creates a collection for the given user if it does not already exist.
     The collection path will be: root -> trainer collection -> [user_uuid].
-    
+
     Args:
         user (User): An instance of the User model.
-        
+
     Returns:
         Collection: The created or retrieved collection instance.
     """
@@ -24,28 +26,30 @@ def create_user_collection(user):
     if user.collection:
         return user.collection
 
-    # Get or create the root collection
+    # Get the root collection
     try:
         root_collection = Collection.get_first_root_node()
     except ObjectDoesNotExist:
         raise Exception("Root collection not found. Please ensure a root collection exists.")
 
-    # Get or create the 'User Collection' under the root
-    user_collection = Collection(
+    # Create the 'User Collection' under the root and save it
+    root_user_collection = Collection(
         name="User Collections"
     )
-    root_collection.add_child(instance=user_collection)
+    root_collection.add_child(instance=root_user_collection)
+    root_user_collection.save()
 
-    # Create or get the user's specific collection under the 'User Collections'
+    # Create the user's specific collection under the root 'User Collections'
     user_collection = Collection(
         name=user.uuid
     )
-    user_collection.add_child(instance=user_collection)
+    root_user_collection.add_child(instance=user_collection)
 
     # Assign the collection to the user
     user.collection = user_collection
     user.save()
     return user_collection
+
 
 def create_collection_permissions(collection, group):
     """

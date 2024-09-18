@@ -14,7 +14,7 @@ class TrainerAccountAdapter(DefaultAccountAdapter):
         if user.is_superuser:
             return "/dashboard/"
         user_slug = slugify(request.user.username)
-        return f"/{user_slug}/" 
+        return f"/{user_slug}/"
 
     def is_open_for_signup(self, request):
         """
