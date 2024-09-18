@@ -6,6 +6,18 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
+from modelcluster.fields import ParentalKey
+from modelcluster.models import ClusterableModel
+from wagtail.models import (
+    Orderable,
+    RevisionMixin,
+    DraftStateMixin,
+    LockableMixin,
+    BootstrapTranslatableMixin,
+    TranslatableMixin,
+    PreviewableMixin
+)
+from wagtail.images import get_image_model_string
 
 from .validators import validate_serial_number
 
@@ -27,7 +39,14 @@ MEMORY_SIZE = {
 }
 
 
-class NfcTagType(models.Model):
+class NfcTagType(
+    DraftStateMixin,
+    RevisionMixin,
+    LockableMixin,
+    TranslatableMixin,
+    PreviewableMixin,
+    ClusterableModel
+):
     """
     Model representing the type of NFC tag.
 
@@ -58,9 +77,44 @@ class NfcTagType(models.Model):
         """
         return self.name
 
-    class Meta:
+    class Meta(TranslatableMixin.Meta):
         verbose_name = _("nfc tag type")
         verbose_name_plural = _("nfc tag types")
+
+
+class NfcTagTypeGalleryImage(Orderable):
+    """
+    Model representing an image associated with an NFC tag type.
+
+    Attributes:
+        nfc_tag_type (NfcTagType): The NFC tag type associated with the image.
+        image (Image): The image file.
+        caption (str): A caption for the image.
+    """
+    nfc_tag_type = ParentalKey(
+        NfcTagType,
+        on_delete=models.CASCADE,
+        related_name='gallery_images'
+    )
+    image = models.ForeignKey(
+        get_image_model_string(),
+        on_delete=models.CASCADE,
+        related_name='+'
+    )
+    caption = models.CharField(
+        blank=True,
+        max_length=250
+    )
+
+    def __str__(self):
+        """
+        Returns a string representation of the NFC tag type.
+        """
+        return f"{self.nfc_tag_type.name} image #{self.sort_order}"
+
+    class Meta:
+        verbose_name = _("nfc tag type image")
+        verbose_name_plural = _("nfc tag types images")
 
 
 class NfcTag(models.Model):
@@ -72,6 +126,7 @@ class NfcTag(models.Model):
         user (User): The user who is assigned the NFC tag.
         nfc_tag_type (NfcTagType): The type of NFC tag.
         active (bool): Indicates whether the NFC tag is active.
+        label (str): A label for the NFC tag.
         limit (Q): The limit for the content_type field to restrict the choices to specific models.
         content_type (ContentType): The type of the related content_object model.
         object_id (PositiveIntegerField): The ID of the related content_object instance.
@@ -102,6 +157,11 @@ class NfcTag(models.Model):
     )
     active = models.BooleanField(
         default=True
+    )
+    label = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True
     )
     limit = (
         models.Q(app_label='trainers', model='Trainer') |  # noqa: W504 - used line break for readability

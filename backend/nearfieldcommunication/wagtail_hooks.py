@@ -23,6 +23,7 @@ class NfcTagSnippetViewSet(SnippetViewSet):
     menu_name = "tags"
 
     shared_panels = [
+        FieldPanel("label")
     ]
 
     private_panels = [
@@ -59,11 +60,11 @@ class NfcTagTypeSnippetViewSet(SnippetViewSet):
     menu_name = "types"
 
     shared_panels = [
-        FieldPanel("name"),
-        FieldPanel("description"),
     ]
 
     private_panels = [
+        FieldPanel("name"),
+        FieldPanel("description"),
     ]
 
     edit_handler = TabbedInterface(
