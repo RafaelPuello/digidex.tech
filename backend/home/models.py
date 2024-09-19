@@ -2,10 +2,9 @@ from django.utils.translation import gettext_lazy as _
 from wagtail.models import Page
 from wagtail.fields import RichTextField
 from wagtail.admin.panels import FieldPanel
-from wagtail.contrib.routable_page.models import RoutablePageMixin
 
 
-class HomePage(RoutablePageMixin, Page):
+class HomePage(Page):
     """
     Represents the homepage of the website.
     """
