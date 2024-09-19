@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "$id": "https://digidex.tech/ntags.schema.json",
+  "title": "NFC-Tags Application Model Schema",
+  "description": "Models for managing NFC-Tags.",
+  "type": "object",
+  "definitions": {
+    "NFCTagDesign": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "description": {
+          "type": ["string", "null"]
+        },
+        "designer": {
+          "type": ["string", "null"],
+          "description": "Foreign key reference to User"
+        },
+        "uuid": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "slug": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "collection": {
+          "type": "string",
+          "maxLength": 255
+        }
+      },
+      "required": ["name", "uuid", "slug"]
+    },
+    "NFCTag": {
+      "type": "object",
+      "properties": {
+        "serial_number": {
+          "type": "string",
+          "maxLength": 32
+        },
+        "user": {
+          "type": ["string", "null"],
+          "description": "Foreign key reference to User"
+        },
+        "design": {
+          "type": "string",
+          "description": "Foreign key reference to NFCTagDesign"
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "content_type": {
+          "type": ["string", "null"],
+          "description": "Content type for GenericForeignKey"
+        },
+        "object_id": {
+          "type": ["integer", "null"],
+          "description": "Object ID for GenericForeignKey"
+        },
+        "content_object": {
+          "type": ["string", "null"],
+          "description": "Content object for GenericForeignKey"
+        }
+      },
+      "required": ["serial_number"]
+    },
+    "NFCTagScan": {
+      "type": "object",
+      "properties": {
+        "ntag": {
+          "type": "string",
+          "description": "Foreign key reference to NFCTag"
+        },
+        "counter": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "scanned_by": {
+          "type": ["string", "null"],
+          "description": "Foreign key reference to User"
+        },
+        "scanned_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["ntag", "counter", "scanned_at"]
+    },
+    "NFCTagMemory": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "ntag": {
+          "type": "string",
+          "description": "Foreign key reference to NFCTag"
+        },
+        "integrated_circuit": {
+          "type": "string",
+          "enum": ["213", "215", "216"]
+        },
+        "memory": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "last_modified": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["uuid", "ntag", "memory", "created_at", "last_modified"]
+    }
+  },
+  "properties": {
+    "NFCTag": { "$ref": "#/definitions/NFCTag" },
+    "NFCTagDesign": { "$ref": "#/definitions/NFCTagDesign" },
+    "NFCTagScan": { "$ref": "#/definitions/NFCTagScan" },
+    "NFCTagMemory": { "$ref": "#/definitions/NFCTagMemory" }
+  }
+}
+  

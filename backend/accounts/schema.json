@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://digidex.tech/accounts.schema.json",
+  "title": "User Application Models Schema",
+  "description": "Models for managing users and their pages.",
+  "type": "object",
+  "definitions": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "The username of the user"
+        },
+        "first_name": {
+          "type": "string",
+          "description": "The first name of the user"
+        },
+        "last_name": {
+          "type": "string",
+          "description": "The last name of the user"
+        },
+        "uuid": {
+          "type": "string",
+          "description": "A unique identifier for the user",
+          "format": "uuid"
+        },
+        "collection": {
+          "type": "string",
+          "description": "The collection associated with the user"
+        },
+        "created_at": {
+          "type": "string",
+          "description": "The date and time the user was created",
+          "format": "date-time"
+        },
+        "last_modified": {
+          "type": "string",
+          "description": "The date and time the user was last updated",
+          "format": "date-time"
+        },
+        "permissions": {
+          "type": "array",
+          "description": "Permissions assigned to the user",
+          "items": {
+            "type": "string"
+          }
+        },
+        "groups": {
+          "type": "array",
+          "description": "Groups associated with the user",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["uuid", "username", "created_at", "last_modified"],
+      "additionalProperties": false
+    },
+    "UserPage": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "The title of the user page"
+        },
+        "slug": {
+          "type": "string",
+          "description": "A unique slug for the user page"
+        },
+        "owner": {
+          "type": "string",
+          "description": "Reference to the user (OneToOneField to User)"
+        },
+        "description": {
+          "type": "string",
+          "description": "The body content of the user page (RichTextField)"
+        }
+      },
+      "required": ["title", "slug", "owner", "description"],
+      "additionalProperties": false
+    }
+  },
+  "properties": {
+    "User": { "$ref": "#/definitions/User" },
+    "UserPage": { "$ref": "#/definitions/UserPage" }
+  }
+}

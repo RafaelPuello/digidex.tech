@@ -30,10 +30,10 @@ INSTALLED_APPS = [
     "queryish",
 
     "base",
-    "trainers",
-    "nearfieldcommunication",
-    "biodiversity",
-    "assistant",
+    "trainers", #  "accounts",
+    "nearfieldcommunication", #  "ntags",
+    "biodiversity", #  "biology",
+    "assistant", #  "assistants",
     "inventory",
     "home",
     "search",
@@ -159,9 +159,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = 'trainers.Trainer'
+AUTH_USER_MODEL = 'trainers.Trainer' #  'accounts.User'
 
-ACCOUNT_ADAPTER = 'trainers.adapter.TrainerAccountAdapter'
+ACCOUNT_ADAPTER = 'trainers.adapter.TrainerAccountAdapter' #  'accounts.adapter.UserAccountAdapter'
 
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 

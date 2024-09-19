@@ -1,8 +1,11 @@
 from rest_framework import routers
 
 from trainers.viewsets import TrainerViewSet
+# from accounts.viewsets import UserAssistantDetail
 from nearfieldcommunication.viewsets import NFCTagViewSet, NFCTagDesignViewSet
+# from biology.viewsets import UserAssistantDetail
 from assistant.viewsets import UserAssistantDetail
+# from assistants.viewsets import UserAssistantDetail
 from inventory.viewsets import BoxViewSet
 
 router = routers.DefaultRouter()
