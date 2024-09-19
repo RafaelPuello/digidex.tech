@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://digidex.tech/biology.schema.json",
   "title": "Biology Application Model Schema",
-  "description": "Models for managing plants.",
+  "description": "Models for managing biology.",
   "type": "object",
   "definitions": {
     "Plant": {

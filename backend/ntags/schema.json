@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft-07/schema",
   "$id": "https://digidex.tech/ntags.schema.json",
-  "title": "NFC-Tags Application Model Schema",
-  "description": "Models for managing NFC-Tags.",
+  "title": "NFC Tags Application Model Schema",
+  "description": "Models for managing NFC Tags.",
   "type": "object",
   "definitions": {
     "NFCTagDesign": {

@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://digidex.tech/home.schema.json",
   "title": "Home Application Model Schema",
-  "description": "Model for managing home app.",
+  "description": "Model for managing pages.",
   "type": "object",
   "definitions": {
     "HomePage": {

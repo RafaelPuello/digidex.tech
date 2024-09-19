@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://digidex.tech/inventory.schema.json",
-  "title": "Inventory Models Schema",
-  "description": "Models for managing plant inventories.",
+  "title": "Inventory Application Model Schema",
+  "description": "Models for managing a user's inventory.",
   "type": "object",
   "definitions": {
     "Box": {
