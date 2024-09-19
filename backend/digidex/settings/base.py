@@ -15,30 +15,34 @@ PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 
-BASE_HOST = "digidex.tech"
+# ------------------------------------------------------------------------
+# Site Configuration (BASE)
+# ------------------------------------------------------------------------
+BASE_SITE_NAME = "DigiDex"
 
-ALLOWED_HOSTS = [
-    BASE_HOST,
-    f"www.{BASE_HOST}",
-]
+BASE_SITE_HOSTNAME = "digidex.tech"
 
+# ------------------------------------------------------------------------
+# App Configuration (BASE)
+# ------------------------------------------------------------------------
 INSTALLED_APPS = [
     "modelcluster",
     "taggit",
     "queryish",
 
     "base",
-    "accounts",
-    "search",
+    "trainers",
     "nearfieldcommunication",
-    "inventory",
+    "biodiversity",
     "assistant",
+    "inventory",
+    "home",
+    "search",
     "api",
 
     "wagtail.contrib.settings",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
-    "wagtail.contrib.routable_page",
     "wagtail.embeds",
     "wagtail.sites",
     "wagtail.users",
@@ -49,9 +53,7 @@ INSTALLED_APPS = [
     "wagtail.admin",
     "wagtail",
     'wagtail.api.v2',
-    # "wagtail_ai",
 
-    "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -63,9 +65,11 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.mfa",
-    "allauth.headless",
 ]
 
+# ------------------------------------------------------------------------
+# Middleware Configuration (BASE)
+# ------------------------------------------------------------------------
 MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -78,8 +82,9 @@ MIDDLEWARE = [
     "allauth.account.middleware.AccountMiddleware",
 ]
 
-ROOT_URLCONF = "digidex.urls"
-
+# ------------------------------------------------------------------------
+# Template Configuration (BASE)
+# ------------------------------------------------------------------------
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -99,152 +104,24 @@ TEMPLATES = [
     },
 ]
 
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
-]
+# ------------------------------------------------------------------------
+# Web-App Configuration (BASE)
+# ------------------------------------------------------------------------
+ROOT_URLCONF = "digidex.urls"
 
 WSGI_APPLICATION = "digidex.wsgi.application"
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'defaultdb'),
-        'USER': os.getenv('DB_USERNAME'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
-        'TEST': {
-            'NAME': os.getenv('TEST_DB_NAME', 'test_defaultdb'),
-            'SERIALIZE': False,
-        },
-    }
-}
-
-# Common S3 settings
-AWS_ACCESS_KEY_ID = os.getenv("SPACES_ACCESS_KEY")
-AWS_SECRET_ACCESS_KEY = os.getenv("SPACES_SECRET_KEY")
-AWS_S3_REGION_NAME = os.getenv("SPACES_REGION_NAME")
-AWS_S3_ENDPOINT_URL = f'https://{AWS_S3_REGION_NAME}.digitaloceanspaces.com'
-AWS_S3_FILE_OVERWRITE = False
-
-# Media Files S3 Configuration
-AWS_STORAGE_BUCKET_NAME_MEDIA = os.getenv("MEDIA_SPACES_BUCKET_NAME")
-
-# Static Files S3 Configuration
-AWS_STORAGE_BUCKET_NAME_STATIC = os.getenv("STATIC_SPACES_BUCKET_NAME")
-
-STORAGES = {
-    'default': {
-        'BACKEND': 'storages.backends.s3boto3.S3Boto3Storage',
-        'OPTIONS': {
-            'access_key': AWS_ACCESS_KEY_ID,
-            'secret_key': AWS_SECRET_ACCESS_KEY,
-            'region_name': AWS_S3_REGION_NAME,
-            'bucket_name': AWS_STORAGE_BUCKET_NAME_MEDIA,
-            'endpoint_url': AWS_S3_ENDPOINT_URL,
-            'default_acl': 'private',
-            'querystring_auth': True,
-            'file_overwrite': AWS_S3_FILE_OVERWRITE,
-            'object_parameters': {
-                'CacheControl': 'max-age=86400',
-            },
-        }
-    },
-    'staticfiles': {
-        'BACKEND': 'storages.backends.s3boto3.S3Boto3Storage',
-        'OPTIONS': {
-            'access_key': AWS_ACCESS_KEY_ID,
-            'secret_key': AWS_SECRET_ACCESS_KEY,
-            'region_name': AWS_S3_REGION_NAME,
-            'bucket_name': AWS_STORAGE_BUCKET_NAME_STATIC,
-            'endpoint_url': AWS_S3_ENDPOINT_URL,
-            'default_acl': 'public-read',
-            'querystring_auth': False,
-            'file_overwrite': AWS_S3_FILE_OVERWRITE,
-            'object_parameters': {
-                'CacheControl': 'max-age=86400',
-            },
-        }
-    }
-}
-
-MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME_MEDIA}.{AWS_S3_ENDPOINT_URL}/'
-
-STATIC_URL = 'cdn.digidex.tech/'
-
-STATIC_ROOT = 'static/'
-
-STATICFILES_FINDERS = [
-    "django.contrib.staticfiles.finders.FileSystemFinder",
-    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
-]
-
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-        },
-    },
-    "loggers": {
-        "django": {
-            "handlers": ["console"],
-            "level": os.getenv("DJANGO_LOG_LEVEL", "INFO"),
-        },
-    },
-}
-
-# Password validation
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
-    },
-]
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# Internationalization
-LANGUAGE_CODE = "en-us"
-
-LANGUAGES = [
-    ('en', _("English (United Kingdom)")),
-    ('en-us', _("English (United States)")),
-    ('es', _("Spanish (Spain)")),
-    ('es-mx', _("Spanish (Mexico)")),
-]
-
-TIME_ZONE = "UTC"
-
-USE_L10N = True
-
-USE_I18N = True
-
-USE_TZ = True
-
-WAGTAIL_I18N_ENABLED = True
-
+# ------------------------------------------------------------------------
+# Django REST Framework (DRF) Configuration (BASE)
+# ------------------------------------------------------------------------
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTStatelessUserAuthentication',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 25,
 }
 
-OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-
-# JWT settings
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
@@ -260,24 +137,38 @@ SIMPLE_JWT = {
     'TOKEN_TYPE_CLAIM': 'token_type',
 }
 
-# These are the URLs to be implemented by your single-page application.
-HEADLESS_FRONTEND_URLS = {
-    "account_confirm_email": "https://digidex.tech/account/verify-email/{key}",
-    "account_reset_password_from_key": "https://digidex.tech/account/password/reset/key/{key}",
-    "account_signup": "https://digidex.tech/account/signup",
-    "account_confirm_email": "https://digidex.tech/account/verify-email/{key}",
-    "account_reset_password": "https://digidex.tech/account/password/reset",
-    "account_reset_password_from_key": "https://digidex.tech/account/password/reset/key/{key}",
-    "account_signup": "https://digidex.tech/account/signup",
-}
+# ------------------------------------------------------------------------
+# Authentication Configuration (BASE)
+# ------------------------------------------------------------------------
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 
-# HEADLESS_ONLY = True
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    },
+]
 
-# allauth settings
-AUTH_USER_MODEL = 'accounts.DigiDexUser'
+AUTH_USER_MODEL = 'trainers.Trainer'
 
-ACCOUNT_ADAPTER = 'accounts.adapter.DigidexAccountAdapter'
+ACCOUNT_ADAPTER = 'trainers.adapter.TrainerAccountAdapter'
 
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+
+# ------------------------------------------------------------------------
+# Authentication-Username Configuration (BASE)
+# ------------------------------------------------------------------------
 ACCOUNT_PRESERVE_USERNAME_CASING = False
 
 ACCOUNT_USERNAME_MIN_LENGTH = 3
@@ -306,20 +197,22 @@ ACCOUNT_USERNAME_BLACKLIST = [
     'django-admin',
 ]
 
-ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3
-
-ACCOUNT_EMAIL_NOTIFICATIONS = True
+# ------------------------------------------------------------------------
+# Authentication-Email Configuration (BASE)
+# ------------------------------------------------------------------------
+ACCOUNT_EMAIL_UNKNOWN_ACCOUNTS = False
 
 ACCOUNT_EMAIL_REQUIRED = True
 
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 
-ACCOUNT_EMAIL_SUBJECT_PREFIX = "[DigiDex] "
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3
 
-ACCOUNT_EMAIL_UNKNOWN_ACCOUNTS = False
+ACCOUNT_EMAIL_NOTIFICATIONS = True
 
-ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
-
+# ------------------------------------------------------------------------
+# Authentication-URL Configuration (BASE)
+# ------------------------------------------------------------------------
 LOGIN_URL = '/accounts/login/'
 
 SIGNUP_URL = '/accounts/signup/'
@@ -328,32 +221,12 @@ LOGOUT_URL = '/accounts/logout/'
 
 LOGIN_REDIRECT_URL = '/'
 
-if "EMAIL_HOST" in os.environ:
-    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-    EMAIL_HOST = os.getenv("EMAIL_HOST")
-    EMAIL_PORT = os.getenv("EMAIL_PORT")
-    EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS")
-    EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-    EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-    DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-else:
-    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-
-# Wagtail settings
-WAGTAIL_CONTENT_LANGUAGES = [
-    ('en', _("English")),
-    ('es', _("Spanish")),
-]
-
+# ------------------------------------------------------------------------
+# Wagtail settings (BASE)
+# ------------------------------------------------------------------------
 WAGTAILIMAGES_IMAGE_MODEL = 'base.BaseImage'
 
 WAGTAILIMAGES_EXTENSIONS = ['gif', 'jpg', 'jpeg', 'png', 'webp']
-
-WAGTAILSEARCH_BACKENDS = {
-    "default": {
-        "BACKEND": "wagtail.search.backends.database",
-    }
-}
 
 WAGTAIL_ALLOW_UNICODE_SLUGS = False
 

@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://digidex.tech/home.schema.json",
+  "title": "Home Application Model Schema",
+  "description": "Model for managing home app.",
+  "type": "object",
+  "definitions": {
+    "HomePage": {
+      "type": "object",
+      "properties": {
+        "body": {
+          "type": "string",
+          "description": "The body of the home page",
+          "maxLength": 255
+        }
+      },
+      "required": ["body"]
+    }
+  },
+  "properties": {
+    "HomePage": { "$ref": "#/definitions/HomePage" }
+  }
+}

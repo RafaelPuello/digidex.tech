@@ -1,17 +1,214 @@
 from wagtail import hooks
-from django.contrib.auth.models import Permission
+from wagtail.admin.panels import TabbedInterface, FieldPanel, ObjectList
 from wagtail.snippets.models import register_snippet
+from wagtail.snippets.views.snippets import SnippetViewSet, SnippetViewSetGroup
 
-from .viewsets import NfcViewSetGroup
+from .models import NfcTag, NfcTagType, NfcTagScan, NfcTagMemory
 
 
-@hooks.register("register_permissions")
-def register_permissions():
-    app = "nearfieldcommunication"
-    model = "nfctagentitylink"
+@hooks.register("register_icons")
+def register_icons(icons):
+    return icons + [
+        'nearfieldcommunication/icons/nfc-icon.svg',
+        'nearfieldcommunication/icons/nfc-types.svg',
+        'nearfieldcommunication/icons/nfc-scan.svg',
+        'nearfieldcommunication/icons/nfc-memory.svg',
+    ]
 
-    return Permission.objects.filter(content_type__app_label=app, codename__in=[
-        f"view_{model}", f"add_{model}", f"change_{model}", f"delete_{model}"
-    ])
 
-register_snippet(NfcViewSetGroup)
+class NfcTagTypeSnippetViewSet(SnippetViewSet):
+    """
+    A snippetviewset for viewing and editing the types of NFC Tag.
+    """
+
+    model = NfcTagType
+    icon = "nfc-types"
+    menu_label = "Tag Types"
+    menu_name = "types"
+    copy_view_enabled = False
+    list_filter = {"name": ["exact"], "description": ["icontains"]}
+    list_display = ["name"]
+    list_per_page = 25
+    admin_url_namespace = "nfc_types"
+    base_url_path = "nfc-types"
+
+    shared_panels = [
+        FieldPanel("name"),
+        FieldPanel("description"),
+    ]
+
+    private_panels = [
+    ]
+
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(shared_panels, heading='Details'),
+            ObjectList(private_panels, heading='Admin only', permission="superuser"),
+        ]
+    )
+
+
+class NfcTagSnippetViewSet(SnippetViewSet):
+    """
+    A snippetviewset for viewing and editing NFC Tags.
+    """
+
+    model = NfcTag
+    icon = "tag"
+    menu_label = "Tags"
+    menu_name = "tags"
+    copy_view_enabled = False
+    list_filter = {"nfc_tag_type": ["exact"], "label": ["icontains"]}
+    list_display = ["label", "nfc_tag_type", "serial_number"]
+    list_per_page = 25
+    admin_url_namespace = "nfc_tags"
+    base_url_path = "nfc-tags"
+
+    shared_panels = [
+        FieldPanel("label")
+    ]
+
+    private_panels = [
+        FieldPanel("user"),
+        FieldPanel("nfc_tag_type"),
+        FieldPanel("active"),
+    ]
+
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(shared_panels, heading='Details'),
+            ObjectList(private_panels, heading='Admin only', permission="superuser"),
+        ]
+    )
+
+    def get_queryset(self, request):
+        """
+        Filter NFC tags based on user roles:
+        """
+
+        qs = super().get_queryset(request)
+        if qs is None:
+            qs = self.model.objects.all()
+        user = request.user
+
+        if user.is_superuser:
+            return qs
+        elif user.groups.filter(name='Trainers').exists():
+            return qs.filter(user=user)
+        else:
+            return qs.none()
+
+
+class NfcTagScanSnippetViewSet(SnippetViewSet):
+    """
+    A snippetviewset for viewing and editing NFC Tag scans.
+    """
+
+    model = NfcTagScan
+    icon = "nfc-scan"
+    menu_label = "Tag Scans"
+    menu_name = "scans"
+    copy_view_enabled = False
+    # list_filter = {"nfc_tag": ["exact"], "scanned_by": ["exact"], "scanned_at": ["date"]}
+    list_display = ["nfc_tag", "counter", "scanned_by", "scanned_at"]
+    list_per_page = 25
+    admin_url_namespace = "nfc_scans"
+    base_url_path = "nfc/scans"
+
+    shared_panels = [
+    ]
+
+    private_panels = [
+    ]
+
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(shared_panels, heading='Details'),
+            ObjectList(private_panels, heading='Admin only', permission="superuser"),
+        ]
+    )
+
+    def get_queryset(self, request):
+        """
+        Filter NFC tag scans based on user roles:
+        - Superusers see all tag scans.
+        - Trainers see tag scans associated with their tags.
+        - Others see no tag scans.
+        """
+
+        qs = super().get_queryset(request)
+        if qs is None:
+            qs = self.model.objects.all()
+        user = request.user
+
+        if user.is_superuser:
+            return qs
+        elif user.groups.filter(name='Trainers').exists():
+            return qs.filter(nfc_tag__user=user)
+        else:
+            return qs.none()
+
+
+class NfcTagMemorySnippetViewSet(SnippetViewSet):
+    """
+    A snippetviewset for viewing and editing NFC Tag memory.
+    """
+
+    model = NfcTagMemory
+    icon = "nfc-memory"
+    menu_label = "Tag Memory"
+    menu_name = "memory"
+    copy_view_enabled = False
+    # list_filter = {"nfc_tag": ["exact"]}
+    list_display = ["nfc_tag", "last_modified"]
+    list_per_page = 25
+    admin_url_namespace = "nfc_memory"
+    base_url_path = "nfc/memory"
+
+    shared_panels = [
+    ]
+
+    private_panels = [
+    ]
+
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(shared_panels, heading='Details'),
+            ObjectList(private_panels, heading='Admin only', permission="superuser"),
+        ]
+    )
+
+    def get_queryset(self, request):
+        """
+        Filter NFC tag memory based on user roles:
+        - Superusers see all tag memories.
+        - Trainers see tag memories associated with their tags.
+        - Others see no tag memories.
+        """
+
+        qs = super().get_queryset(request)
+        if qs is None:
+            qs = self.model.objects.all()
+        user = request.user
+
+        if user.is_superuser:
+            return qs
+        elif user.groups.filter(name='Trainers').exists():
+            return qs.filter(nfc_tag__user=user)
+        else:
+            return qs.none()
+
+
+class NfcTagSnippetViewSetGroup(SnippetViewSetGroup):
+    """
+    A snippetviewset group for NFC Tags.
+    """
+
+    items = [NfcTagSnippetViewSet, NfcTagTypeSnippetViewSet, NfcTagScanSnippetViewSet, NfcTagMemorySnippetViewSet]
+    menu_icon = "nfc-icon"
+    menu_label = "NFC Tags"
+    menu_name = "nfc_tags"
+    add_to_admin_menu = True
+
+
+register_snippet(NfcTagSnippetViewSetGroup)

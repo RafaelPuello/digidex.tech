@@ -1,10 +1,10 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$schema": "https://json-schema.org/draft-07/schema",
   "$id": "https://digidex.tech/nfc.schema.json",
   "title": "Near Field Communication",
   "description": "An NFC-Tag used for mapping a physical-object to an external system like a CMS.",
   "type": "object",
-  "properties": {
+  "definitions": {
     "NfcTagType": {
       "type": "object",
       "properties": {
@@ -15,63 +15,53 @@
         "description": {
           "type": ["string", "null"]
         },
-        "integrated_circuit": {
-          "type": "string",
-          "enum": ["213", "215", "216"],
-          "default": "213"
-        },
-        "created_at": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "last_modified": {
-          "type": "string",
-          "format": "date-time"
-        }
-      },
-      "required": ["name", "integrated_circuit", "created_at", "last_modified"]
-    },
-    "NfcTag": {
-      "type": "object",
-      "properties": {
         "uuid": {
           "type": "string",
           "format": "uuid"
         },
+        "slug": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "collection": {
+          "type": "string",
+          "maxLength": 255
+        }
+      },
+      "required": ["name", "uuid", "slug"]
+    },
+    "NfcTag": {
+      "type": "object",
+      "properties": {
         "serial_number": {
           "type": "string",
           "maxLength": 32
-        },
-        "nfc_tag_type": {
-          "type": "string",
-          "description": "Foreign key reference to NfcTagType"
         },
         "user": {
           "type": ["string", "null"],
           "description": "Foreign key reference to User"
         },
-        "url": {
-          "type": ["string", "null"],
-          "format": "uri"
-        },
-        "content": {
-          "type": ["object", "null"],
-          "description": "JSON field for storing arbitrary structured data"
+        "nfc_tag_type": {
+          "type": "string",
+          "description": "Foreign key reference to NfcTagType"
         },
         "active": {
-          "type": "boolean",
-          "default": true
+          "type": "boolean"
         },
-        "created_at": {
-          "type": "string",
-          "format": "date-time"
+        "content_type": {
+          "type": ["string", "null"],
+          "description": "Content type for GenericForeignKey"
         },
-        "last_modified": {
-          "type": "string",
-          "format": "date-time"
+        "object_id": {
+          "type": ["integer", "null"],
+          "description": "Object ID for GenericForeignKey"
+        },
+        "content_object": {
+          "type": ["string", "null"],
+          "description": "Content object for GenericForeignKey"
         }
       },
-      "required": ["uuid", "serial_number", "created_at", "last_modified"]
+      "required": ["serial_number"]
     },
     "NfcTagScan": {
       "type": "object",
@@ -94,7 +84,43 @@
         }
       },
       "required": ["nfc_tag", "counter", "scanned_at"]
+    },
+    "NfcTagMemory": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "nfc_tag": {
+          "type": "string",
+          "description": "Foreign key reference to NfcTag"
+        },
+        "integrated_circuit": {
+          "type": "string",
+          "enum": ["213", "215", "216"]
+        },
+        "memory": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "last_modified": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["uuid", "nfc_tag", "memory", "created_at", "last_modified"]
     }
+  },
+  "properties": {
+    "NfcTag": { "$ref": "#/definitions/NfcTag" },
+    "NfcTagType": { "$ref": "#/definitions/NfcTagType" },
+    "NfcTagScan": { "$ref": "#/definitions/NfcTagScan" },
+    "NfcTagMemory": { "$ref": "#/definitions/NfcTagMemory" }
   }
 }
   

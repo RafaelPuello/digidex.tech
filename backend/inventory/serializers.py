@@ -1,68 +1,48 @@
 from rest_framework import serializers
-from django.templatetags.static import static
+from django.contrib.contenttypes.models import ContentType
 
-from .models import UserInventory, Entity, EntityGalleryImage
-
-
-class EntityGalleryImageSerializer(serializers.ModelSerializer):
-    title = serializers.SerializerMethodField()
-    featured = serializers.SerializerMethodField()
-    thumbnail = serializers.SerializerMethodField()
-    detailed =serializers.SerializerMethodField()
-    alt = serializers.SerializerMethodField()
-
-    class Meta:
-        model = EntityGalleryImage
-        fields = ['title', 'featured', 'thumbnail', 'detailed', 'alt', 'caption', 'sort_order']
-
-    def get_title(self, obj):
-        return obj.image.title
-
-    def get_featured(self, obj):
-        return obj.image.get_rendition('max-600x600').url
-
-    def get_thumbnail(self, obj):
-        return obj.image.get_rendition('max-300x300').url
-
-    def get_detailed(self, obj):
-        return obj.image.get_rendition('max-1024x882').url
-
-    def get_alt(self, obj):
-        return obj.image.alt if obj.image.alt else obj.image.title
+from biodiversity.models import Plant
+from .models import Box, BoxItem
 
 
-class InventoryEntitySerializer(serializers.ModelSerializer):
-    date = serializers.SerializerMethodField()
-    image = serializers.SerializerMethodField()
+class BoxItemSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the BoxItem model. It handles items stored in a box, which can be of various
+    types. The content_type and object_id fields are used to represent a GenericForeignKey, and
+    content_object is dynamically serialized depending on the object type (currently limited to Plant).
+    """
+
+    content_type = serializers.SlugRelatedField(
+        slug_field='model',
+        queryset=ContentType.objects.all(),
+        required=False
+    )
+    content_object = serializers.SerializerMethodField()
+
+    def get_content_object(self, obj):
+        """
+        Dynamically retrieves the object represented by the GenericForeignKey. In this case,
+        it serializes the object if it is a Plant. The logic can be extended to handle other types.
+        """
+
+        if isinstance(obj.content_object, Plant):
+            from biodiversity.serializers import PlantSerializer
+            return PlantSerializer(obj.content_object).data
+        return None
 
     class Meta:
-        model = Entity
-        fields = ['uuid', 'slug', 'date', 'title', 'description', 'body', 'url', 'image']
-
-    def get_image(self, obj):
-        image = obj.get_main_image()
-        if not image:
-            return {
-                'title': 'Placeholder',
-                'thumbnail': static("inventory/images/placeholder.svg"),
-                'alt': 'Placeholder',
-                'caption': '',
-                'sort_order': 0
-            }
-           
-        return EntityGalleryImageSerializer(image).data
-
-    def get_date(self, obj):
-        return obj.get_date()
+        model = BoxItem
+        fields = ['id', 'content_type', 'object_id', 'content_object', 'created_at', 'last_modified']
 
 
-class UserInventorySerializer(serializers.ModelSerializer):
-    entities = serializers.SerializerMethodField()
+class BoxSerializer(serializers.ModelSerializer):
+    """
+    Main serializer for the Box model. This serializer includes nested serializers for
+    related items (BoxItem), providing a complete representation of a box with its associated data.
+    """
+
+    items = BoxItemSerializer(many=True)
 
     class Meta:
-        model = UserInventory
-        fields = ['uuid', 'slug', 'title', 'description', 'body', 'url', 'entities']
-
-    def get_entities(self, obj):
-        entities = obj.get_entities()
-        return InventoryEntitySerializer(entities, many=True).data
+        model = Box
+        fields = ['id', 'owner', 'name', 'description', 'slug', 'uuid', 'collection', 'items']

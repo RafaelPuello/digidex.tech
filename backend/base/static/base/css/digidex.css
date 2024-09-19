@@ -724,6 +724,69 @@ figcaption {
   height: 1em;
 }
 
+.grid-numbers {
+  grid-column-gap: .87em;
+  grid-row-gap: .87em;
+  grid-template-rows: auto;
+  grid-template-columns: 1fr 1fr 1fr;
+  align-items: start;
+}
+
+.numbers {
+  grid-column-gap: .5em;
+  grid-row-gap: .5em;
+  background-color: var(--accent-b1);
+  border-radius: .64em;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 1.2em 1.4em 1.4em;
+  display: flex;
+}
+
+.numbers.red {
+  background-color: var(--accent-b2);
+}
+
+.numbers.blue {
+  background-color: var(--accent-b3);
+}
+
+.icon-numbers {
+  width: 2em;
+  height: 2em;
+}
+
+.heading-numbers {
+  color: var(--accent-a1);
+  font-weight: 500;
+}
+
+.heading-numbers.red {
+  color: var(--accent-a2);
+}
+
+.heading-numbers.blue {
+  color: var(--accent-a3);
+}
+
+.text-numbers {
+  max-width: 11em;
+  color: var(--accent-a1);
+  letter-spacing: -.02em;
+  font-size: .87em;
+  font-weight: 500;
+  line-height: 130%;
+}
+
+.text-numbers.red {
+  color: var(--accent-a2);
+}
+
+.text-numbers.blue {
+  color: var(--accent-a3);
+}
+
 .lottie {
   position: relative;
 }
@@ -863,7 +926,24 @@ figcaption {
   height: 1.5em;
 }
 
+@media screen and (max-width: 991px) {
+  .grid-numbers {
+    font-size: .9em;
+  }
+}
+
+@media screen and (max-width: 767px) {
+ .grid-numbers {
+    width: 100%;
+    font-size: 1em;
+  }
+}
+
 @media screen and (max-width: 479px) {
+  .grid-numbers {
+    grid-template-columns: 1fr;
+  }
+
   .features-lottie {
     grid-row-gap: 1.5em;
   }

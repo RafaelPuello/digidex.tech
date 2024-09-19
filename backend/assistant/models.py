@@ -1,25 +1,31 @@
 from django.db import models
-from django.contrib.auth import get_user_model
+from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 from .utils import generate_chat
 
-User = get_user_model()
-
 
 class UserAssistant(models.Model):
+    """
+    A model to store the user's chat bot assistant.
+    """
+
     user = models.OneToOneField(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='assistant'
     )
 
     def chat(self, question):
-        if not question:
-            return _('Missing question parameter.')
-        return generate_chat(question)
+        """
+        Chat with the user's chat bot assistant.
+        """
+        return generate_chat(question) if question else _('Missing question parameter.')
 
     def __str__(self):
+        """
+        A string representation of the user's chat bot assistant.
+        """
         return f"{self.user.username}'s Assistant"
 
     class Meta:

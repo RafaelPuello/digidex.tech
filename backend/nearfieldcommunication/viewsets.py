@@ -1,93 +1,204 @@
-from django.utils.translation import gettext_lazy as _
-from wagtail.snippets.views.snippets import SnippetViewSet, SnippetViewSetGroup
-from wagtail.admin.panels import FieldPanel, TabbedInterface, ObjectList
+from rest_framework import status, viewsets, permissions
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.response import Response
 
-from .models import NfcTag, NfcTagType
+from .models import NfcTag, NfcTagType, NfcTagScan, NfcTagMemory
+from .serializers import NfcTagSerializer, NfcTagTypeSerializer, NfcTagScanSerializer, NfcTagMemorySerializer
 
 
-class NfcTagViewSet(SnippetViewSet):
-    model = NfcTag
-    icon = "tag"
-    menu_label = "Your NFC Tags"
-    menu_name = "nfc-tags"
-    menu_order = 300
-    name = "user-nfc-tags"
-    admin_url_namespace = "user_nfc_tags"
-    base_url_path = "nfc-tag/tags"
-    ordering = ["last_modified"]
-    list_per_page = 50
-    list_display = ("nfc_tag_type", "last_modified")
-    list_filter = {
-        "nfc_tag_type": ["exact"]
-    }
+class NfcTagTypeViewSet(viewsets.ModelViewSet):
+    """
+    A viewset for viewing and editing the types of NFC Tag.
+    """
 
-    shared_panels = [
-    ]
+    queryset = NfcTagType.objects.all().order_by('id')
+    serializer_class = NfcTagTypeSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+    lookup_field = 'id'
+    body_fields = ['name', 'description', 'owner']
+    meta_fields = ['id']
 
-    private_panels = [
-        FieldPanel("nfc_tag_type"),
-        FieldPanel("user"),
-        FieldPanel("active"),
-    ]
-
-    edit_handler = TabbedInterface([
-        ObjectList(private_panels, heading='Admin', permission="superuser"),
-        ObjectList(shared_panels, heading='Details'),
-    ])
-
-    def get_queryset(self, request):
+    def create(self, request, *args, **kwargs):
         """
-        Filter the queryset to only show instances where the owner is the current user.
+        Create a new NFC tag type with the provided name, description, and owner.
         """
-        qs = super().get_queryset(request)
-        if qs is None:
-            user = request.user
-            if user.is_superuser:
-                qs = self.model.objects.all()
-            else:
-                qs = self.model.objects.filter(user=request.user)
-        return qs
+
+        name = request.data.get('name')
+        description = request.data.get('description')
+        owner = request.data.get('owner')
+
+        if not name:
+            return Response({"error": "Name not provided."}, status=status.HTTP_400_BAD_REQUEST)
+
+        nfc_tag_type, created = NfcTagType.objects.update_or_create(
+            name=name,
+            defaults={
+                'description': description,
+                'owner': owner
+            }
+        )
+
+        serializer = self.get_serializer(nfc_tag_type, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
 
 
-class NfcTagTypeViewSet(SnippetViewSet):
-    model = NfcTagType
-    icon = "tag"
-    add_to_settings_menu = True
-    menu_label = "NFC Tag Types"
-    menu_name = "nfc-tag-types"
-    menu_order = 301
-    name = "nfc-tag-types"
-    copy_view_enabled = False
-    inspect_view_enabled = True
-    admin_url_namespace = "nfc_tag_types"
-    base_url_path = "nfc-tag/types"
-    ordering = ["name"]
-    list_per_page = 50
-    list_display = ("name", "description", "last_modified")
-    list_filter = {
-        "name": ["icontains"],
-        "description": ["icontains"]
-    }
+class NfcTagViewSet(viewsets.ModelViewSet):
+    """
+    A viewset for viewing and editing NFC Tags.
+    """
 
-    shared_panels = [
-    ]
+    queryset = NfcTag.objects.all()
+    serializer_class = NfcTagSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    authentication_classes = [JWTAuthentication]
+    lookup_field = 'serial_number'
+    body_fields = ['serial_number', 'nfc_tag_type']
+    meta_fields = ['id']
 
-    private_panels = [
-        FieldPanel("name"),
-        FieldPanel("description"),
-        FieldPanel("integrated_circuit"),
-    ]
+    def get_queryset(self):
+        """
+        Filter to only show NFC tags needed for each role.
+        """
 
-    edit_handler = TabbedInterface([
-        ObjectList(private_panels, heading='Admin', permission="superuser"),
-        ObjectList(shared_panels, heading='Details'),
-    ])
+        if self.request.user.is_superuser:
+            return NfcTag.objects.all()
+        elif self.request.user.groups.filter(name='Trainers').exists():
+            return NfcTag.objects.filter(user=self.request.user)
+        else:
+            return NfcTag.objects.none()
+
+    def create(self, request, *args, **kwargs):
+        """
+        Create a new NFC tag with the provided serial number and tag type.
+        """
+
+        serial_number = request.data.get('serial_number')
+        tag_type_id = request.data.get('tag_type_id')
+
+        if not serial_number:
+            return Response({"error": "Serial Number not provided."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if tag_type_id:
+            try:
+                nfc_tag_type = NfcTagType.objects.get(pk=tag_type_id)
+            except NfcTagType.DoesNotExist:
+                return Response({"error": "Invalid Tag Type ID."}, status=status.HTTP_400_BAD_REQUEST)
+
+        nfc_tag, created = NfcTag.objects.update_or_create(
+            serial_number=serial_number,
+            defaults={'nfc_tag_type': nfc_tag_type}
+        )
+
+        serializer = self.get_serializer(nfc_tag, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+
+    def destroy(self, request, *args, **kwargs):
+        """
+        Set active to False for now. Will fix later.
+        """
+
+        instance = self.get_object()
+        instance.active = False
+        # self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class NfcViewSetGroup(SnippetViewSetGroup):
-    items = (NfcTagTypeViewSet, NfcTagViewSet)
-    add_to_admin_menu = True
-    menu_icon = "tag"
-    menu_label = "Nfc Tags"
-    menu_name = "nfc tags"
-    menu_order = 250
+class NfcTagScanViewSet(viewsets.ModelViewSet):
+    """
+    A viewset for viewing and editing an NFC Tag's Scans.
+    """
+
+    queryset = NfcTagScan.objects.all()
+    serializer_class = NfcTagScanSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+    lookup_field = 'id'
+    body_fields = ['nfc_tag', 'scan_time']
+    meta_fields = ['id']
+
+    def get_queryset(self):
+        """
+        Filter to only show NFC tag scans needed for each role.
+        """
+
+        if self.request.user.is_superuser:
+            return NfcTagScan.objects.all()
+        elif self.request.user.groups.filter(name='Trainers').exists():
+            return NfcTagScan.objects.filter(nfc_tag__user=self.request.user)
+        else:
+            return NfcTagScan.objects.none()
+
+    def create(self, request, *args, **kwargs):
+        """
+        Create a new NFC tag scan with the provided NFC tag ID and scan time.
+        """
+
+        nfc_tag_id = request.data.get('nfc_tag_id')
+        scan_time = request.data.get('scan_time')
+
+        if not nfc_tag_id:
+            return Response({"error": "NFC Tag ID not provided."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            nfc_tag = NfcTag.objects.get(pk=nfc_tag_id)
+        except NfcTag.DoesNotExist:
+            return Response({"error": "Invalid NFC Tag ID."}, status=status.HTTP_400_BAD_REQUEST)
+
+        nfc_tag_scan = NfcTagScan.objects.create(
+            nfc_tag=nfc_tag,
+            scan_time=scan_time
+        )
+
+        serializer = self.get_serializer(nfc_tag_scan, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class NfcTagMemoryViewSet(viewsets.ModelViewSet):
+    """
+    A viewset for viewing and editing an NFC Tag's EEPROM.
+    """
+
+    queryset = NfcTagMemory.objects.all()
+    serializer_class = NfcTagMemorySerializer
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+    lookup_field = 'uuid'
+    body_fields = ['nfc_tag', 'memory']
+    meta_fields = ['uuid']
+
+    def get_queryset(self):
+        """
+        Filter to only show NFC tag memories needed for each role.
+        """
+
+        if self.request.user.is_superuser:
+            return NfcTagMemory.objects.all()
+        elif self.request.user.groups.filter(name='Trainers').exists():
+            return NfcTagMemory.objects.filter(nfc_tag__user=self.request.user)
+        else:
+            return NfcTagMemory.objects.none()
+
+    def create(self, request, *args, **kwargs):
+        """
+        Create a new NFC tag memory with the provided NFC tag ID and memory contents.
+        """
+
+        nfc_tag_id = request.data.get('nfc_tag_id')
+        memory = request.data.get('memory')
+
+        if not nfc_tag_id:
+            return Response({"error": "NFC Tag ID not provided."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            nfc_tag = NfcTag.objects.get(pk=nfc_tag_id)
+        except NfcTag.DoesNotExist:
+            return Response({"error": "Invalid NFC Tag ID."}, status=status.HTTP_400_BAD_REQUEST)
+
+        nfc_tag_memory = NfcTagMemory.objects.create(
+            nfc_tag=nfc_tag,
+            memory=memory
+        )
+
+        serializer = self.get_serializer(nfc_tag_memory, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

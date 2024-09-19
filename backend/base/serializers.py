@@ -1,9 +1,4 @@
 from rest_framework.fields import Field
-from rest_framework import serializers
-from wagtail.images.api.v2.serializers import BaseSerializer, ImageDownloadUrlField, ImageSerializer
-from wagtail.images.api.fields import ImageRenditionField
-
-from .models import BaseImage
 
 
 class MainImageField(Field):
@@ -49,5 +44,3 @@ class ThumbnailImageField(Field):
 
     def to_representation(self, image):
         return image.get_rendition('max-300x300').url
-
-

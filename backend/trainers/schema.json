@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://digidex.tech/trainers.schema.json",
+  "title": "Trainer and TrainerPage Models Schema",
+  "description": "Models for managing trainers and their pages.",
+  "type": "object",
+  "definitions": {
+    "Trainer": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "The username of the trainer"
+        },
+        "first_name": {
+          "type": "string",
+          "description": "The first name of the trainer"
+        },
+        "last_name": {
+          "type": "string",
+          "description": "The last name of the trainer"
+        },
+        "uuid": {
+          "type": "string",
+          "description": "A unique identifier for the trainer",
+          "format": "uuid"
+        },
+        "collection": {
+          "type": "string",
+          "description": "The collection associated with the trainer"
+        },
+        "created_at": {
+          "type": "string",
+          "description": "The date and time the trainer was created",
+          "format": "date-time"
+        },
+        "last_modified": {
+          "type": "string",
+          "description": "The date and time the trainer was last updated",
+          "format": "date-time"
+        },
+        "permissions": {
+          "type": "array",
+          "description": "Permissions assigned to the trainer",
+          "items": {
+            "type": "string"
+          }
+        },
+        "groups": {
+          "type": "array",
+          "description": "Groups associated with the trainer",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["uuid", "username", "created_at", "last_modified"],
+      "additionalProperties": false
+    },
+    "TrainerPage": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "The title of the trainer page"
+        },
+        "slug": {
+          "type": "string",
+          "description": "A unique slug for the trainer page"
+        },
+        "owner": {
+          "type": "string",
+          "description": "Reference to the trainer (OneToOneField to Trainer)"
+        },
+        "description": {
+          "type": "string",
+          "description": "The body content of the trainer page (RichTextField)"
+        }
+      },
+      "required": ["title", "slug", "owner", "description"],
+      "additionalProperties": false
+    }
+  },
+  "properties": {
+    "Trainer": { "$ref": "#/definitions/Trainer" },
+    "TrainerPage": { "$ref": "#/definitions/TrainerPage" }
+  }
+}

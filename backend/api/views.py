@@ -1,12 +1,13 @@
-from wagtail.api.v2.router import WagtailAPIRouter
+from rest_framework import routers
 
-from nearfieldcommunication.api import NfcTagAPIViewSet
-from inventory.api import UserInventoryAPIViewSet, InventoryEntityAPIViewSet, EntityGalleryImageAPIViewSet
-from assistant.api import UserAssistantDetail
+from trainers.viewsets import TrainerViewSet
+from nearfieldcommunication.viewsets import NfcTagViewSet, NfcTagTypeViewSet
+from assistant.viewsets import UserAssistantDetail
+from inventory.viewsets import BoxViewSet
 
-api_router = WagtailAPIRouter('wagtailapi')
-api_router.register_endpoint('ntags', NfcTagAPIViewSet)
-api_router.register_endpoint("inventories", UserInventoryAPIViewSet)
-api_router.register_endpoint("entities", InventoryEntityAPIViewSet)
-api_router.register_endpoint("images", EntityGalleryImageAPIViewSet)
-api_router.register_endpoint('assistants', UserAssistantDetail)
+router = routers.DefaultRouter()
+router.register(r'trainers', TrainerViewSet)
+router.register(r'ntags', NfcTagViewSet)
+router.register(r'ntag-types', NfcTagTypeViewSet)
+router.register(r'assistants', UserAssistantDetail)
+router.register(r'boxes', BoxViewSet)

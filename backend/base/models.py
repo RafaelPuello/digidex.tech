@@ -13,9 +13,14 @@ class BaseImage(AbstractImage):
         null=True,
         max_length=75
     )
+    caption = models.CharField(
+        blank=True,
+        max_length=250
+    )
 
     admin_form_fields = Image.admin_form_fields + (
         'alt',
+        'caption'
     )
 
 

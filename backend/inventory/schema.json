@@ -1,0 +1,79 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://digidex.tech/inventory.schema.json",
+  "title": "Inventory Models Schema",
+  "description": "Models for managing plant inventories.",
+  "type": "object",
+  "definitions": {
+    "Box": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "string",
+          "description": "Reference to the owner (ForeignKey to the user model)"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the inventory",
+          "maxLength": 25
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the inventory",
+          "maxLength": 255
+        },
+        "slug": {
+          "type": "string",
+          "description": "A unique slug for the inventory",
+          "maxLength": 255
+        },
+        "uuid": {
+          "type": "string",
+          "description": "A unique identifier for the inventory",
+          "format": "uuid"
+        },
+        "collection": {
+          "type": "string",
+          "description": "Reference to the collection (ForeignKey to the collection model)"
+        }
+      },
+      "required": ["owner", "name", "slug", "uuid"],
+      "additionalProperties": false
+    },
+    "BoxItem": {
+      "type": "object",
+      "properties": {
+        "box": {
+          "type": "string",
+          "description": "Reference to the box (ForeignKey to the box model)"
+        },
+        "content_type": {
+          "type": "string",
+          "description": "Reference to the box item object type"
+        },
+        "object_id": {
+          "type": "string",
+          "description": "Reference to the box item object id"
+        },
+        "content_object": {
+          "type": "string",
+          "description": "Reference to the box item object"
+        },
+        "created_at": {
+          "type": "string",
+          "description": "The date and time the item was created",
+          "format": "date-time"
+        },
+        "last_modified": {
+          "type": "string",
+          "description": "The date and time the item was last updated",
+          "format": "date-time"
+        }
+      }
+    }
+  },
+  "properties": {
+    "Box": { "$ref": "#/definitions/Box" },
+    "BoxItem": { "$ref": "#/definitions/BoxItem" }
+  }
+}
