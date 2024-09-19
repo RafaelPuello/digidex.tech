@@ -148,7 +148,7 @@ EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS")
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-EMAIL_SUBJECT_PREFIX = ACCOUNT_EMAIL_SUBJECT_PREFIX = f"[{SITE_NAME}] " 
+EMAIL_SUBJECT_PREFIX = ACCOUNT_EMAIL_SUBJECT_PREFIX = f"[{SITE_NAME}] "
 
 # ------------------------------------------------------------------------
 # Language Configuration (PROD)
