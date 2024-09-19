@@ -3,6 +3,7 @@ Django settings for digidex project.
 """
 import os
 from datetime import timedelta
+from django.utils.translation import gettext_lazy as _
 
 from dotenv import load_dotenv
 
@@ -39,7 +40,6 @@ INSTALLED_APPS = [
     "search",
     "api",
 
-    "wagtail.contrib.settings",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
     "wagtail.embeds",
@@ -221,12 +221,131 @@ LOGOUT_URL = '/accounts/logout/'
 LOGIN_REDIRECT_URL = '/'
 
 # ------------------------------------------------------------------------
-# Wagtail settings (BASE)
+# Wagtail-Dashboard Configuration (BASE)
+# ------------------------------------------------------------------------
+WAGTAILADMIN_RECENT_EDITS_LIMIT = 5
+
+WAGTAILADMIN_RICH_TEXT_EDITORS = {
+    'default': {
+        'WIDGET': 'wagtail.admin.rich_text.DraftailRichTextArea',
+        'OPTIONS': {
+            'features': ['h2', 'bold', 'italic', 'link', 'document-link']
+        }
+    },
+    'secondary': {
+        'WIDGET': 'some.external.RichTextEditor',
+    }
+}
+
+WAGTAILADMIN_EXTERNAL_LINK_CONVERSION = 'exact'
+
+# WAGTAIL_DATE_FORMAT = '%d.%m.%Y.'
+
+# WAGTAIL_DATETIME_FORMAT = '%d.%m.%Y. %H:%M'
+
+# WAGTAIL_TIME_FORMAT = '%H:%M'
+
+# ------------------------------------------------------------------------
+# Language Configuration (BASE)
+# ------------------------------------------------------------------------
+LANGUAGE_CODE = "en-us"
+
+LANGUAGES = [
+    ('en', _("English (United Kingdom)")),
+    ('en-us', _("English (United States)")),
+    ('es', _("Spanish (Spain)")),
+    ('es-mx', _("Spanish (Mexico)")),
+]
+
+USE_L10N = True
+
+USE_I18N = True
+
+# ------------------------------------------------------------------------
+# Timezone Configuration (BASE)
+# ------------------------------------------------------------------------
+TIME_ZONE = "UTC"
+
+USE_TZ = True
+
+# ------------------------------------------------------------------------
+# Wagtail-Internationalization Configuration (BASE)
+# ------------------------------------------------------------------------
+WAGTAIL_I18N_ENABLED = True
+
+WAGTAIL_CONTENT_LANGUAGES = [
+    ('en', _("English")),
+    ('es', _("Spanish")),
+]
+
+# ------------------------------------------------------------------------
+# Wagtail-Image Configuration (BASE)
 # ------------------------------------------------------------------------
 WAGTAILIMAGES_IMAGE_MODEL = 'base.BaseImage'
 
+# WAGTAILIMAGES_IMAGE_FORM_BASE = 'base.forms.ImageBaseForm'
+
+WAGTAILIMAGES_MAX_UPLOAD_SIZE = 10 * 1024 * 1024  # 10MB
+
+WAGTAILIMAGES_MAX_IMAGE_PIXELS = 128000000  # 128 megapixels
+
+WAGTAILIMAGES_FEATURE_DETECTION_ENABLED = True
+
+WAGTAILIMAGES_INDEX_PAGE_SIZE = 30
+
+WAGTAILIMAGES_USAGE_PAGE_SIZE = 20
+
+WAGTAILIMAGES_CHOOSER_PAGE_SIZE = 12
+
+# WAGTAILIMAGES_RENDITION_STORAGE = 'my_custom_storage'
+
 WAGTAILIMAGES_EXTENSIONS = ['gif', 'jpg', 'jpeg', 'png', 'webp']
+# ------------------------------------------------------------------------
+# Wagtail-Document Configuration (BASE)
+# ------------------------------------------------------------------------
+WAGTAILDOCS_DOCUMENT_MODEL = 'base.BaseDocument'
+
+# WAGTAILDOCS_DOCUMENT_FORM_BASE = 'base.forms.DocumentBaseForm'
+
+WAGTAILDOCS_SERVE_METHOD = 'redirect'
+
+WAGTAILDOCS_CONTENT_TYPES = {
+    'pdf': 'application/pdf',
+    'txt': 'text/plain',
+}
+
+WAGTAILDOCS_INLINE_CONTENT_TYPES = [
+    'application/pdf',
+    'text/plain'
+]
+
+WAGTAILDOCS_EXTENSIONS = ['pdf', 'docx']
+
+# ------------------------------------------------------------------------
+# Wagtail-Page Configuration (BASE)
+# ------------------------------------------------------------------------
+WAGTAILADMIN_COMMENTS_ENABLED = True
 
 WAGTAIL_ALLOW_UNICODE_SLUGS = False
 
+WAGTAIL_AUTO_UPDATE_PREVIEW = True
+
+WAGTAIL_AUTO_UPDATE_PREVIEW_INTERVAL = 500
+
+WAGTAIL_EDITING_SESSION_PING_INTERVAL = 10000
+
+WAGTAILADMIN_UNSAFE_PAGE_DELETION_LIMIT = 20
+
 TAGGIT_CASE_INSENSITIVE = True
+
+# ------------------------------------------------------------------------
+# Wagtail-Search Configuration (BASE)
+# ------------------------------------------------------------------------
+WAGTAILSEARCH_BACKENDS = {
+    'default': {
+        'BACKEND': 'wagtail.search.backends.elasticsearch8',
+        'INDEX': 'myapp'
+    }
+}
+
+WAGTAILSEARCH_HITS_MAX_AGE = 14

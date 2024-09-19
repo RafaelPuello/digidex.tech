@@ -123,15 +123,6 @@ STATICFILES_FINDERS = [
 ]
 
 # ------------------------------------------------------------------------
-# Search Configuration (PROD)
-# ------------------------------------------------------------------------
-WAGTAILSEARCH_BACKENDS = {
-    "default": {
-        "BACKEND": "wagtail.search.backends.database",
-    }
-}
-
-# ------------------------------------------------------------------------
 # Email Configuration (PROD)
 # ------------------------------------------------------------------------
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
@@ -149,31 +140,6 @@ EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 EMAIL_SUBJECT_PREFIX = ACCOUNT_EMAIL_SUBJECT_PREFIX = f"[{SITE_NAME}] "
-
-# ------------------------------------------------------------------------
-# Language Configuration (PROD)
-# ------------------------------------------------------------------------
-LANGUAGE_CODE = "en-us"
-
-WAGTAIL_CONTENT_LANGUAGES = LANGUAGES = [
-    ('en', "English (United Kingdom)"),
-    ('en-us', "English (United States)"),
-    ('es', "Spanish (Spain)"),
-    ('es-mx', "Spanish (Mexico)"),
-]
-
-WAGTAIL_I18N_ENABLED = True
-
-USE_L10N = True
-
-USE_I18N = True
-
-# ------------------------------------------------------------------------
-# Timezone Configuration (PROD)
-# ------------------------------------------------------------------------
-TIME_ZONE = "UTC"
-
-USE_TZ = True
 
 # ------------------------------------------------------------------------
 # Security Configuration (PROD)

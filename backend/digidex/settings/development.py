@@ -132,28 +132,6 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 EMAIL_SUBJECT_PREFIX = ACCOUNT_EMAIL_SUBJECT_PREFIX = f"[{SITE_NAME}] "
 
 # ------------------------------------------------------------------------
-# Language Configuration (DEV)
-# ------------------------------------------------------------------------
-LANGUAGE_CODE = "en-us"
-
-WAGTAIL_CONTENT_LANGUAGES = LANGUAGES = [
-    ('en-us', "English (United States)"),
-]
-
-WAGTAIL_I18N_ENABLED = True
-
-USE_L10N = True
-
-USE_I18N = True
-
-# ------------------------------------------------------------------------
-# Timezone Configuration (DEV)
-# ------------------------------------------------------------------------
-TIME_ZONE = "UTC"
-
-USE_TZ = True
-
-# ------------------------------------------------------------------------
 # Security Configuration (DEV)
 # ------------------------------------------------------------------------
 SECURE_PROXY_SSL_HEADER = None

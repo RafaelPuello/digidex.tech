@@ -137,29 +137,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
 ACCOUNT_EMAIL_SUBJECT_PREFIX = f"[{SITE_NAME}] "
 
 # ------------------------------------------------------------------------
-# Language Configuration (TEST)
-# ------------------------------------------------------------------------
-LANGUAGE_CODE = "en-us"
-
-WAGTAIL_CONTENT_LANGUAGES = LANGUAGES = [
-    ('en-us', "English (United States)"),
-    ('es-mx', "Spanish (Mexico)"),
-]
-
-WAGTAIL_I18N_ENABLED = True
-
-USE_L10N = True
-
-USE_I18N = True
-
-# ------------------------------------------------------------------------
-# Timezone Configuration (TEST)
-# ------------------------------------------------------------------------
-TIME_ZONE = "UTC"
-
-USE_TZ = True
-
-# ------------------------------------------------------------------------
 # Security Configuration (TEST)
 # ------------------------------------------------------------------------
 SECURE_PROXY_SSL_HEADER = None
