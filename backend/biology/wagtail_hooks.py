@@ -7,7 +7,7 @@ from .models import Plant
 
 @hooks.register("register_icons")
 def register_icons(icons):
-    return icons + ['biodiversity/icons/plant.svg']
+    return icons + ['biology/icons/plant.svg']
 
 
 class PlantSnippetViewSet(SnippetViewSet):
