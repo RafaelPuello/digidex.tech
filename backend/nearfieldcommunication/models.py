@@ -40,7 +40,7 @@ MEMORY_SIZE = {
 }
 
 
-class NfcTagType(
+class NFCTagDesign(
     DraftStateMixin,
     RevisionMixin,
     LockableMixin,
@@ -49,15 +49,15 @@ class NfcTagType(
     ClusterableModel
 ):
     """
-    Model representing the type of NFC tag.
+    Model representing the design of an ntag.
 
     Attributes:
-        name (str): The name of the NFC tag type.
-        description (str): A description of the NFC tag type.
-        owner (ForeignKey): The user who owns the NFC tag type.
-        uuid (UUID): A unique identifier for the NFC tag type.
-        slug (str): A unique slug for the NFC tag type.
-        collection (ForeignKey): The collection associated with the NFC tag type.
+        name (str): The name of the ntag design.
+        description (str): A description of the ntag design.
+        designer (ForeignKey): The user who designed the ntag.
+        uuid (UUID): A unique identifier for the ntag design.
+        slug (str): A unique slug for the ntag design.
+        collection (ForeignKey): The collection associated with the ntag design.
     """
 
     name = models.CharField(
@@ -67,10 +67,10 @@ class NfcTagType(
     description = RichTextField(
         null=True
     )
-    owner = models.ForeignKey(
+    designer = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
-        related_name='nfc_tag_types',
+        related_name='ntag_designs',
         null=True
     )
     uuid = models.UUIDField(
@@ -94,19 +94,19 @@ class NfcTagType(
 
     def get_documents(self):
         """
-        Returns all documents associated with nfc tag type.
+        Returns all documents associated with ntag design.
         """
         return get_document_model().objects.filter(collection=self.collection)
 
     def get_images(self):
         """
-        Returns all images associated with nfc tag type.
+        Returns all images associated with ntag design.
         """
         return get_image_model().objects.filter(collection=self.collection)
 
     def save(self, *args, **kwargs):
         """
-        Overrides the save method to generate a slug for the nfc tag type if one is not provided.
+        Overrides the save method to generate a slug for the ntag design if one is not provided.
         """
         if not self.slug:
             self.slug = slugify(self.name)
@@ -114,23 +114,23 @@ class NfcTagType(
 
     def __str__(self):
         """
-        Returns a string representation of the NFC tag type.
+        Returns a string representation of the ntag design.
         """
         return self.name
 
     class Meta(TranslatableMixin.Meta):
-        verbose_name = _("nfc tag type")
-        verbose_name_plural = _("nfc tag types")
+        verbose_name = _("ntag design")
+        verbose_name_plural = _("ntag designs")
 
 
-class NfcTag(models.Model):
+class NFCTag(models.Model):
     """
-    Model representing an individual NFC tag, which is linked to a physical object.
+    Model representing an individual ntag, which is linked to a physical object.
 
     Attributes:
         serial_number (str): The serial number of the NFC tag.
         user (User): The user who is assigned the NFC tag.
-        nfc_tag_type (NfcTagType): The type of NFC tag.
+        design (NfcTagDesign): The design of NFC tag.
         active (bool): Indicates whether the NFC tag is active.
         label (str): A label for the NFC tag.
         limit (Q): The limit for the content_type field to restrict the choices to specific models.
@@ -154,8 +154,8 @@ class NfcTag(models.Model):
         null=True,
         related_name='tags'
     )
-    nfc_tag_type = models.ForeignKey(
-        NfcTagType,
+    design = models.ForeignKey(
+        NFCTagDesign,
         on_delete=models.PROTECT,
         blank=True,
         null=True,
@@ -205,7 +205,7 @@ class NfcTag(models.Model):
             ic_type (str): The type of integrated circuit used in the NFC tag.
 
         Returns:
-            tuple: (NfcTagMemory, memory_view) The newly created memory object and its memory view.
+            tuple: (NFCTagMemory, memory_view) The newly created memory object and its memory view.
         """
 
         # Validate the integrated circuit type
@@ -221,8 +221,8 @@ class NfcTag(models.Model):
         # Step 2: Serialize the 2D array to bytes for storage
         memory_bytes = memory_2d.tobytes()
 
-        # Step 3: Create the NfcTagMemory object in the database
-        nfc_tag_memory = NfcTagMemory.objects.create(
+        # Step 3: Create the NFCTagMemory object in the database
+        nfc_tag_memory = NFCTagMemory.objects.create(
             nfc_tag=self,
             integrated_circuit=ic_type,
             memory=memory_bytes
@@ -246,7 +246,7 @@ class NfcTag(models.Model):
         """
         try:
             cnt = int(counter, 16) if isinstance(counter, str) else int(counter)
-            NfcTagScan.objects.create(
+            NFCTagScan.objects.create(
                 nfc_tag=self,
                 counter=cnt,
                 scanned_by=user
@@ -280,23 +280,23 @@ class NfcTag(models.Model):
         return str(uid)
 
     class Meta:
-        verbose_name = _("nfc tag")
-        verbose_name_plural = _("nfc tags")
+        verbose_name = _("ntag")
+        verbose_name_plural = _("ntags")
 
 
-class NfcTagScan(models.Model):
+class NFCTagScan(models.Model):
     """
     Model representing a scan of an NFC tag.
 
     Attributes:
-        nfc_tag (NfcTag): The NFC tag that was scanned.
+        ntag (NfcTag): The NFC tag that was scanned.
         counter (int): The scan counter value.
         scanned_by (User): The user who scanned the NFC tag.
         scanned_at (datetime): The date and time when the NFC tag was scanned.
     """
 
-    nfc_tag = models.ForeignKey(
-        NfcTag,
+    ntag = models.ForeignKey(
+        NFCTag,
         on_delete=models.CASCADE,
         related_name='scans'
     )
@@ -316,38 +316,38 @@ class NfcTagScan(models.Model):
 
     def __str__(self):
         """
-        Returns a string representation of the NFC tag scan, including the scanning user and timestamp if available.
+        Returns a string representation of the ntag scan, including the scanning user and timestamp if available.
         """
-        return (f"Scan #{self.counter} for {self.nfc_tag}")
+        return (f"Scan #{self.counter} for {self.ntag}")
 
     class Meta:
-        verbose_name = _("nfc tag scan")
-        verbose_name_plural = _("nfc tag scans")
+        verbose_name = _("ntag scan")
+        verbose_name_plural = _("ntag scans")
 
 
-class NfcTagMemory(models.Model):
+class NFCTagMemory(models.Model):
     """
     Model representing the memory contents of an NFC tag.
 
     Attributes:
+        ntag (NfcTag): The NFC tag whose memory contents are stored.
         uuid (UUID): A unique identifier for the NFC tag.
-        nfc_tag (NfcTag): The NFC tag whose memory contents are stored.
         integrated_circuit (str): The type of integrated circuit used in the NFC tag.
         memory (binary): The memory contents of the NFC tag.
         created_at (datetime): The date and time when the memory contents were created.
         last_modified (datetime): The date and time when the memory contents were last modified.
     """
 
+    ntag = models.OneToOneField(
+        NFCTag,
+        on_delete=models.CASCADE,
+        related_name='memory'
+    )
     uuid = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
-        editable=False
-
-    )
-    nfc_tag = models.OneToOneField(
-        NfcTag,
-        on_delete=models.CASCADE,
-        related_name='memory'
+        editable=False,
+        unique=True,
     )
     integrated_circuit = models.CharField(
         max_length=5,
@@ -368,8 +368,8 @@ class NfcTagMemory(models.Model):
         """
         Returns a string representation of the NFC tag memory contents.
         """
-        return str(self.nfc_tag)
+        return str(self.ntag)
 
     class Meta:
-        verbose_name = _("nfc tag memory")
-        verbose_name_plural = _("nfc tag memory")
+        verbose_name = _("ntag memory")
+        verbose_name_plural = _("ntag memory")

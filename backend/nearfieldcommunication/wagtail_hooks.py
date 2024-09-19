@@ -3,34 +3,34 @@ from wagtail.admin.panels import TabbedInterface, FieldPanel, ObjectList
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet, SnippetViewSetGroup
 
-from .models import NfcTag, NfcTagType, NfcTagScan, NfcTagMemory
+from .models import NFCTag, NFCTagDesign, NFCTagScan, NFCTagMemory
 
 
 @hooks.register("register_icons")
 def register_icons(icons):
     return icons + [
-        'nearfieldcommunication/icons/nfc-icon.svg',
-        'nearfieldcommunication/icons/nfc-types.svg',
-        'nearfieldcommunication/icons/nfc-scan.svg',
-        'nearfieldcommunication/icons/nfc-memory.svg',
+        'nearfieldcommunication/icons/ntag-icon.svg',
+        'nearfieldcommunication/icons/ntag-designs.svg',
+        'nearfieldcommunication/icons/ntag-scan.svg',
+        'nearfieldcommunication/icons/ntag-memory.svg',
     ]
 
 
-class NfcTagTypeSnippetViewSet(SnippetViewSet):
+class NFCTagDesignSnippetViewSet(SnippetViewSet):
     """
-    A snippetviewset for viewing and editing the types of NFC Tag.
+    A snippetviewset for viewing and editing the designs of NFC Tags.
     """
 
-    model = NfcTagType
-    icon = "nfc-types"
-    menu_label = "Tag Types"
-    menu_name = "types"
+    model = NFCTagDesign
+    icon = "nfc-designs"
+    menu_label = "Tag Designs"
+    menu_name = "designs"
     copy_view_enabled = False
     list_filter = {"name": ["exact"], "description": ["icontains"]}
     list_display = ["name"]
     list_per_page = 25
-    admin_url_namespace = "nfc_types"
-    base_url_path = "nfc-types"
+    admin_url_namespace = "ntag_designs"
+    base_url_path = "ntags/designs"
 
     shared_panels = [
         FieldPanel("name"),
@@ -48,21 +48,21 @@ class NfcTagTypeSnippetViewSet(SnippetViewSet):
     )
 
 
-class NfcTagSnippetViewSet(SnippetViewSet):
+class NFCTagSnippetViewSet(SnippetViewSet):
     """
     A snippetviewset for viewing and editing NFC Tags.
     """
 
-    model = NfcTag
+    model = NFCTag
     icon = "tag"
     menu_label = "Tags"
     menu_name = "tags"
     copy_view_enabled = False
-    list_filter = {"nfc_tag_type": ["exact"], "label": ["icontains"]}
-    list_display = ["label", "nfc_tag_type", "serial_number"]
+    list_filter = {"design": ["exact"], "label": ["icontains"]}
+    list_display = ["label", "design", "serial_number"]
     list_per_page = 25
-    admin_url_namespace = "nfc_tags"
-    base_url_path = "nfc-tags"
+    admin_url_namespace = "ntags"
+    base_url_path = "ntags/tags"
 
     shared_panels = [
         FieldPanel("label")
@@ -70,7 +70,7 @@ class NfcTagSnippetViewSet(SnippetViewSet):
 
     private_panels = [
         FieldPanel("user"),
-        FieldPanel("nfc_tag_type"),
+        FieldPanel("design"),
         FieldPanel("active"),
     ]
 
@@ -99,21 +99,21 @@ class NfcTagSnippetViewSet(SnippetViewSet):
             return qs.none()
 
 
-class NfcTagScanSnippetViewSet(SnippetViewSet):
+class NFCTagScanSnippetViewSet(SnippetViewSet):
     """
     A snippetviewset for viewing and editing NFC Tag scans.
     """
 
-    model = NfcTagScan
+    model = NFCTagScan
     icon = "nfc-scan"
     menu_label = "Tag Scans"
     menu_name = "scans"
     copy_view_enabled = False
-    # list_filter = {"nfc_tag": ["exact"], "scanned_by": ["exact"], "scanned_at": ["date"]}
-    list_display = ["nfc_tag", "counter", "scanned_by", "scanned_at"]
+    # list_filter = {"ntag": ["exact"], "scanned_by": ["exact"], "scanned_at": ["date"]}
+    list_display = ["ntag", "counter", "scanned_by", "scanned_at"]
     list_per_page = 25
-    admin_url_namespace = "nfc_scans"
-    base_url_path = "nfc/scans"
+    admin_url_namespace = "ntag_scans"
+    base_url_path = "ntags/scans"
 
     shared_panels = [
     ]
@@ -149,12 +149,12 @@ class NfcTagScanSnippetViewSet(SnippetViewSet):
             return qs.none()
 
 
-class NfcTagMemorySnippetViewSet(SnippetViewSet):
+class NFCTagMemorySnippetViewSet(SnippetViewSet):
     """
     A snippetviewset for viewing and editing NFC Tag memory.
     """
 
-    model = NfcTagMemory
+    model = NFCTagMemory
     icon = "nfc-memory"
     menu_label = "Tag Memory"
     menu_name = "memory"
@@ -162,8 +162,8 @@ class NfcTagMemorySnippetViewSet(SnippetViewSet):
     # list_filter = {"nfc_tag": ["exact"]}
     list_display = ["nfc_tag", "last_modified"]
     list_per_page = 25
-    admin_url_namespace = "nfc_memory"
-    base_url_path = "nfc/memory"
+    admin_url_namespace = "ntag_memory"
+    base_url_path = "ntags/memory"
 
     shared_panels = [
     ]
@@ -194,7 +194,7 @@ class NfcTagMemorySnippetViewSet(SnippetViewSet):
         if user.is_superuser:
             return qs
         elif user.groups.filter(name='Trainers').exists():
-            return qs.filter(nfc_tag__user=user)
+            return qs.filter(ntag__user=user)
         else:
             return qs.none()
 
@@ -204,7 +204,7 @@ class NfcTagSnippetViewSetGroup(SnippetViewSetGroup):
     A snippetviewset group for NFC Tags.
     """
 
-    items = [NfcTagSnippetViewSet, NfcTagTypeSnippetViewSet, NfcTagScanSnippetViewSet, NfcTagMemorySnippetViewSet]
+    items = [NFCTagSnippetViewSet, NFCTagDesignSnippetViewSet, NFCTagScanSnippetViewSet, NFCTagMemorySnippetViewSet]
     menu_icon = "nfc-icon"
     menu_label = "NFC Tags"
     menu_name = "nfc_tags"

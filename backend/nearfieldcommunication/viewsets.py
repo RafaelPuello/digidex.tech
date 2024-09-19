@@ -2,17 +2,17 @@ from rest_framework import status, viewsets, permissions
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 
-from .models import NfcTag, NfcTagType, NfcTagScan, NfcTagMemory
-from .serializers import NfcTagSerializer, NfcTagTypeSerializer, NfcTagScanSerializer, NfcTagMemorySerializer
+from .models import NFCTag, NFCTagDesign, NFCTagScan, NFCTagMemory
+from .serializers import NFCTagSerializer, NFCTagDesignSerializer, NFCTagScanSerializer, NFCTagMemorySerializer
 
 
-class NfcTagTypeViewSet(viewsets.ModelViewSet):
+class NFCTagDesignViewSet(viewsets.ModelViewSet):
     """
     A viewset for viewing and editing the types of NFC Tag.
     """
 
-    queryset = NfcTagType.objects.all().order_by('id')
-    serializer_class = NfcTagTypeSerializer
+    queryset = NFCTagDesign.objects.all().order_by('id')
+    serializer_class = NFCTagDesignSerializer
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [JWTAuthentication]
     lookup_field = 'id'
@@ -21,7 +21,7 @@ class NfcTagTypeViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         """
-        Create a new NFC tag type with the provided name, description, and owner.
+        Create a new ntag design with the provided name, description, and owner.
         """
 
         name = request.data.get('name')
@@ -31,7 +31,7 @@ class NfcTagTypeViewSet(viewsets.ModelViewSet):
         if not name:
             return Response({"error": "Name not provided."}, status=status.HTTP_400_BAD_REQUEST)
 
-        nfc_tag_type, created = NfcTagType.objects.update_or_create(
+        design, created = NFCTagDesign.objects.update_or_create(
             name=name,
             defaults={
                 'description': description,
@@ -39,21 +39,21 @@ class NfcTagTypeViewSet(viewsets.ModelViewSet):
             }
         )
 
-        serializer = self.get_serializer(nfc_tag_type, context={'request': request})
+        serializer = self.get_serializer(design, context={'request': request})
         return Response(serializer.data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
 
 
-class NfcTagViewSet(viewsets.ModelViewSet):
+class NFCTagViewSet(viewsets.ModelViewSet):
     """
     A viewset for viewing and editing NFC Tags.
     """
 
-    queryset = NfcTag.objects.all()
-    serializer_class = NfcTagSerializer
+    queryset = NFCTag.objects.all()
+    serializer_class = NFCTagSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     authentication_classes = [JWTAuthentication]
     lookup_field = 'serial_number'
-    body_fields = ['serial_number', 'nfc_tag_type']
+    body_fields = ['serial_number', 'design']
     meta_fields = ['id']
 
     def get_queryset(self):
@@ -62,11 +62,11 @@ class NfcTagViewSet(viewsets.ModelViewSet):
         """
 
         if self.request.user.is_superuser:
-            return NfcTag.objects.all()
+            return NFCTag.objects.all()
         elif self.request.user.groups.filter(name='Trainers').exists():
-            return NfcTag.objects.filter(user=self.request.user)
+            return NFCTag.objects.filter(user=self.request.user)
         else:
-            return NfcTag.objects.none()
+            return NFCTag.objects.none()
 
     def create(self, request, *args, **kwargs):
         """
@@ -81,16 +81,16 @@ class NfcTagViewSet(viewsets.ModelViewSet):
 
         if tag_type_id:
             try:
-                nfc_tag_type = NfcTagType.objects.get(pk=tag_type_id)
-            except NfcTagType.DoesNotExist:
+                design = NFCTagDesign.objects.get(pk=tag_type_id)
+            except NFCTagDesign.DoesNotExist:
                 return Response({"error": "Invalid Tag Type ID."}, status=status.HTTP_400_BAD_REQUEST)
 
-        nfc_tag, created = NfcTag.objects.update_or_create(
+        ntag, created = NFCTag.objects.update_or_create(
             serial_number=serial_number,
-            defaults={'nfc_tag_type': nfc_tag_type}
+            defaults={'design': design}
         )
 
-        serializer = self.get_serializer(nfc_tag, context={'request': request})
+        serializer = self.get_serializer(ntag, context={'request': request})
         return Response(serializer.data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
@@ -104,17 +104,17 @@ class NfcTagViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class NfcTagScanViewSet(viewsets.ModelViewSet):
+class NFCTagScanViewSet(viewsets.ModelViewSet):
     """
     A viewset for viewing and editing an NFC Tag's Scans.
     """
 
-    queryset = NfcTagScan.objects.all()
-    serializer_class = NfcTagScanSerializer
+    queryset = NFCTagScan.objects.all()
+    serializer_class = NFCTagScanSerializer
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [JWTAuthentication]
     lookup_field = 'id'
-    body_fields = ['nfc_tag', 'scan_time']
+    body_fields = ['ntag', 'scan_time']
     meta_fields = ['id']
 
     def get_queryset(self):
@@ -123,48 +123,48 @@ class NfcTagScanViewSet(viewsets.ModelViewSet):
         """
 
         if self.request.user.is_superuser:
-            return NfcTagScan.objects.all()
+            return NFCTagScan.objects.all()
         elif self.request.user.groups.filter(name='Trainers').exists():
-            return NfcTagScan.objects.filter(nfc_tag__user=self.request.user)
+            return NFCTagScan.objects.filter(ntag__user=self.request.user)
         else:
-            return NfcTagScan.objects.none()
+            return NFCTagScan.objects.none()
 
     def create(self, request, *args, **kwargs):
         """
         Create a new NFC tag scan with the provided NFC tag ID and scan time.
         """
 
-        nfc_tag_id = request.data.get('nfc_tag_id')
+        ntag_id = request.data.get('ntag_id')
         scan_time = request.data.get('scan_time')
 
-        if not nfc_tag_id:
+        if not ntag_id:
             return Response({"error": "NFC Tag ID not provided."}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            nfc_tag = NfcTag.objects.get(pk=nfc_tag_id)
-        except NfcTag.DoesNotExist:
+            ntag = NFCTag.objects.get(pk=ntag_id)
+        except NFCTag.DoesNotExist:
             return Response({"error": "Invalid NFC Tag ID."}, status=status.HTTP_400_BAD_REQUEST)
 
-        nfc_tag_scan = NfcTagScan.objects.create(
-            nfc_tag=nfc_tag,
+        ntag_scan = NFCTagScan.objects.create(
+            ntag=ntag,
             scan_time=scan_time
         )
 
-        serializer = self.get_serializer(nfc_tag_scan, context={'request': request})
+        serializer = self.get_serializer(ntag_scan, context={'request': request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class NfcTagMemoryViewSet(viewsets.ModelViewSet):
+class NFCTagMemoryViewSet(viewsets.ModelViewSet):
     """
     A viewset for viewing and editing an NFC Tag's EEPROM.
     """
 
-    queryset = NfcTagMemory.objects.all()
-    serializer_class = NfcTagMemorySerializer
+    queryset = NFCTagMemory.objects.all()
+    serializer_class = NFCTagMemorySerializer
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [JWTAuthentication]
     lookup_field = 'uuid'
-    body_fields = ['nfc_tag', 'memory']
+    body_fields = ['ntag', 'memory']
     meta_fields = ['uuid']
 
     def get_queryset(self):
@@ -173,32 +173,32 @@ class NfcTagMemoryViewSet(viewsets.ModelViewSet):
         """
 
         if self.request.user.is_superuser:
-            return NfcTagMemory.objects.all()
+            return NFCTagMemory.objects.all()
         elif self.request.user.groups.filter(name='Trainers').exists():
-            return NfcTagMemory.objects.filter(nfc_tag__user=self.request.user)
+            return NFCTagMemory.objects.filter(ntag__user=self.request.user)
         else:
-            return NfcTagMemory.objects.none()
+            return NFCTagMemory.objects.none()
 
     def create(self, request, *args, **kwargs):
         """
         Create a new NFC tag memory with the provided NFC tag ID and memory contents.
         """
 
-        nfc_tag_id = request.data.get('nfc_tag_id')
+        ntag_id = request.data.get('ntag_id')
         memory = request.data.get('memory')
 
-        if not nfc_tag_id:
+        if not ntag_id:
             return Response({"error": "NFC Tag ID not provided."}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            nfc_tag = NfcTag.objects.get(pk=nfc_tag_id)
-        except NfcTag.DoesNotExist:
+            ntag = NFCTag.objects.get(pk=ntag_id)
+        except NFCTag.DoesNotExist:
             return Response({"error": "Invalid NFC Tag ID."}, status=status.HTTP_400_BAD_REQUEST)
 
-        nfc_tag_memory = NfcTagMemory.objects.create(
-            nfc_tag=nfc_tag,
+        ntag_memory = NFCTagMemory.objects.create(
+            ntag=ntag,
             memory=memory
         )
 
-        serializer = self.get_serializer(nfc_tag_memory, context={'request': request})
+        serializer = self.get_serializer(ntag_memory, context={'request': request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)

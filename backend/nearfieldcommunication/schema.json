@@ -5,7 +5,7 @@
   "description": "An NFC-Tag used for mapping a physical-object to an external system like a CMS.",
   "type": "object",
   "definitions": {
-    "NfcTagType": {
+    "NFCTagDesign": {
       "type": "object",
       "properties": {
         "name": {
@@ -14,6 +14,10 @@
         },
         "description": {
           "type": ["string", "null"]
+        },
+        "designer": {
+          "type": ["string", "null"],
+          "description": "Foreign key reference to User"
         },
         "uuid": {
           "type": "string",
@@ -30,7 +34,7 @@
       },
       "required": ["name", "uuid", "slug"]
     },
-    "NfcTag": {
+    "NFCTag": {
       "type": "object",
       "properties": {
         "serial_number": {
@@ -41,9 +45,9 @@
           "type": ["string", "null"],
           "description": "Foreign key reference to User"
         },
-        "nfc_tag_type": {
+        "design": {
           "type": "string",
-          "description": "Foreign key reference to NfcTagType"
+          "description": "Foreign key reference to NFCTagDesign"
         },
         "active": {
           "type": "boolean"
@@ -63,12 +67,12 @@
       },
       "required": ["serial_number"]
     },
-    "NfcTagScan": {
+    "NFCTagScan": {
       "type": "object",
       "properties": {
-        "nfc_tag": {
+        "ntag": {
           "type": "string",
-          "description": "Foreign key reference to NfcTag"
+          "description": "Foreign key reference to NFCTag"
         },
         "counter": {
           "type": "integer",
@@ -83,18 +87,18 @@
           "format": "date-time"
         }
       },
-      "required": ["nfc_tag", "counter", "scanned_at"]
+      "required": ["ntag", "counter", "scanned_at"]
     },
-    "NfcTagMemory": {
+    "NFCTagMemory": {
       "type": "object",
       "properties": {
         "uuid": {
           "type": "string",
           "format": "uuid"
         },
-        "nfc_tag": {
+        "ntag": {
           "type": "string",
-          "description": "Foreign key reference to NfcTag"
+          "description": "Foreign key reference to NFCTag"
         },
         "integrated_circuit": {
           "type": "string",
@@ -113,14 +117,14 @@
           "format": "date-time"
         }
       },
-      "required": ["uuid", "nfc_tag", "memory", "created_at", "last_modified"]
+      "required": ["uuid", "ntag", "memory", "created_at", "last_modified"]
     }
   },
   "properties": {
-    "NfcTag": { "$ref": "#/definitions/NfcTag" },
-    "NfcTagType": { "$ref": "#/definitions/NfcTagType" },
-    "NfcTagScan": { "$ref": "#/definitions/NfcTagScan" },
-    "NfcTagMemory": { "$ref": "#/definitions/NfcTagMemory" }
+    "NFCTag": { "$ref": "#/definitions/NFCTag" },
+    "NFCTagDesign": { "$ref": "#/definitions/NFCTagDesign" },
+    "NFCTagScan": { "$ref": "#/definitions/NFCTagScan" },
+    "NFCTagMemory": { "$ref": "#/definitions/NFCTagMemory" }
   }
 }
   
