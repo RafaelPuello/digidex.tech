@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://digidex.tech/inventory.schema.json",
+  "title": "Base Application Model Schema",
+  "description": "Models for managing app-wide content.",
+  "type": "object",
+  "definitions": {
+    "BaseImage": {
+      "type": "object",
+      "properties": {
+        "src": {
+          "type": "string",
+          "format": "uri"
+        },
+        "alt": {
+          "type": "string"
+        }
+      },
+      "required": ["src", "alt"]
+    },
+    "BaseRendition": {
+      "type": "object",
+      "properties": {
+        "src": {
+          "type": "string",
+          "format": "uri"
+        },
+        "alt": {
+          "type": "string"
+        },
+        "width": {
+          "type": "integer"
+        },
+        "height": {
+          "type": "integer"
+        }
+      },
+      "required": ["src", "alt", "width", "height"]
+    },
+    "BaseDocument": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        }
+      },
+      "required": ["title", "description", "content"]
+    }
+  },
+  "images": { "$ref": "#/definitions/BaseImage" },
+  "renditions": { "$ref": "#/definitions/BaseRendition" },
+  "documents": { "$ref": "#/definitions/BaseDocument" }
+}

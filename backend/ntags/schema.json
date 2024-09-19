@@ -121,10 +121,10 @@
     }
   },
   "properties": {
-    "NFCTag": { "$ref": "#/definitions/NFCTag" },
-    "NFCTagDesign": { "$ref": "#/definitions/NFCTagDesign" },
-    "NFCTagScan": { "$ref": "#/definitions/NFCTagScan" },
-    "NFCTagMemory": { "$ref": "#/definitions/NFCTagMemory" }
+    "ntags": { "$ref": "#/definitions/NFCTag" },
+    "designs": { "$ref": "#/definitions/NFCTagDesign" },
+    "scans": { "$ref": "#/definitions/NFCTagScan" },
+    "memories": { "$ref": "#/definitions/NFCTagMemory" }
   }
 }
   

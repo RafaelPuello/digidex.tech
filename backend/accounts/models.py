@@ -4,17 +4,6 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import AbstractUser, Group, Permission
 
 
-def get_user_group():
-    """
-    Gets the 'Users' group if it exists, otherwise creates it.
-    If the group is created, it will also create the necessary permissions for the group.
-    """
-    group, created = Group.objects.get_or_create(name='Users')
-    if created:
-        group = create_user_group_permissions(group)
-    return group
-
-
 def create_user_group_permissions(group):
     """
     Creates the necessary permissions for the given group.
@@ -65,27 +54,6 @@ class User(AbstractUser):
         Returns all inventory boxes of the user.
         """
         return self.boxes.all()
-
-    def setup(self):
-        """
-        Sets up the user by creating a group for them.
-        """
-
-        user_group = self.setup_group()
-        user_group = get_user_group()
-        self.groups.add(user_group)
-
-    def setup_group(self):
-        """
-        Creates a group for the user if it does not already exist.
-
-        Returns:
-            Group: The created or retrieved group instance.
-        """
-
-        group = Group.objects.create(name=self.uuid)
-        self.groups.add(group)
-        return group
 
     def delete(self, *args, **kwargs):
         """

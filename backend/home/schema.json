@@ -18,6 +18,6 @@
     }
   },
   "properties": {
-    "HomePage": { "$ref": "#/definitions/HomePage" }
+    "home": { "$ref": "#/definitions/HomePage" }
   }
 }

@@ -27,6 +27,6 @@
     }
   },
   "properties": {
-    "Plant": { "$ref": "#/definitions/Plant" }
+    "plants": { "$ref": "#/definitions/Plant" }
   }
 }

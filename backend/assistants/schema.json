@@ -18,6 +18,6 @@
     }
   },
   "properties": {
-    "UserAssistant": { "$ref": "#/definitions/UserAssistant" }
+    "assistants": { "$ref": "#/definitions/UserAssistant" }
   }
 }
