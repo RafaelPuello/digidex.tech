@@ -181,7 +181,7 @@ class NfcTagMemoryViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         """
-        Create a new NFC tag memory with the provided NFC tag ID and memory contents.        
+        Create a new NFC tag memory with the provided NFC tag ID and memory contents.
         """
 
         nfc_tag_id = request.data.get('nfc_tag_id')

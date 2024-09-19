@@ -18,7 +18,7 @@ def register_icons(icons):
 
 class NfcTagTypeSnippetViewSet(SnippetViewSet):
     """
-    A snippetviewset for viewing and editing the types of NFC Tag.    
+    A snippetviewset for viewing and editing the types of NFC Tag.
     """
 
     model = NfcTagType
@@ -50,7 +50,7 @@ class NfcTagTypeSnippetViewSet(SnippetViewSet):
 
 class NfcTagSnippetViewSet(SnippetViewSet):
     """
-    A snippetviewset for viewing and editing NFC Tags.    
+    A snippetviewset for viewing and editing NFC Tags.
     """
 
     model = NfcTag

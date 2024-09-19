@@ -6,6 +6,10 @@ from wagtail.contrib.routable_page.models import RoutablePageMixin
 
 
 class HomePage(RoutablePageMixin, Page):
+    """
+    Represents the homepage of the website.
+    """
+
     body = RichTextField(
         blank=True
     )
@@ -19,6 +23,9 @@ class HomePage(RoutablePageMixin, Page):
     child_page_types = ['trainers.TrainerPage']
 
     def __str__(self):
+        """
+        Represents the string representation of the homepage by its title.
+        """
         return self.title
 
     class Meta:

@@ -1,62 +1,32 @@
 import pytest
-from selenium import webdriver
-from django.contrib.auth import get_user_model
 from wagtail.models import Page, Site
-
-from home.models import HomePage
-
-User = get_user_model()
 
 
 @pytest.fixture(scope='session')
-def django_db_setup():
+def django_db_modify_db_settings():
+    """
+    Modifies the DATABASES settings to use the predefined test database.
+    """
     from django.conf import settings
     settings.DATABASES['default']['NAME'] = settings.DB_TEST_NAME
 
 
 @pytest.fixture
-def homepage(db):
+def site(db):
     """
-    Fixture to create a homepage for Wagtail tests.
+    Fixture to create a site.
     """
-
-    home = HomePage(title="Home")
-
+    # Get or create the root page
     root = Page.get_first_root_node()
-    root.add_child(instance=home)
+    if not root:
+        root = Page(title="Root", slug="root")
+        root.save_revision().publish()
 
-    home.save_revision().publish()
-    Site.objects.create(
+    # Create a site
+    site = Site.objects.create(
         hostname="testserver",
-        root_page=home,
+        root_page=root,
         is_default_site=True,
         site_name="testserver",
     )
-    return home
-
-
-@pytest.fixture
-def user(db):
-    """
-    Fixture to create a User for testing.
-    """
-
-    return User.objects.create_user(
-        username="testuser",
-        password="testpassword",
-        first_name="Test",
-        last_name="User",
-    )
-
-
-@pytest.fixture(scope="class")
-def browser():
-    """
-    Fixture to set up a browser for Selenium tests.
-    """
-
-    options = webdriver.FirefoxOptions()
-    options.headless = True
-    driver = webdriver.Firefox(options=options)
-    yield driver
-    driver.quit()
+    return site

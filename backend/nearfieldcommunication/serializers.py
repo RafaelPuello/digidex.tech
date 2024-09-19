@@ -5,7 +5,7 @@ from .models import NfcTagType, NfcTag, NfcTagScan, NfcTagMemory
 
 class NfcTagTypeSerializer(serializers.ModelSerializer):
     """
-    Serializer for the NfcTagType model. It includes nested serializers for images and documents 
+    Serializer for the NfcTagType model. It includes nested serializers for images and documents
     related to the NFC tag type.
     """
 
@@ -40,7 +40,7 @@ class NfcTagMemorySerializer(serializers.ModelSerializer):
 
 class NfcTagSerializer(serializers.ModelSerializer):
     """
-    Main serializer for the NfcTag model. It includes related scans and memory contents, 
+    Main serializer for the NfcTag model. It includes related scans and memory contents,
     as well as information about the associated content object through the GenericForeignKey.
     """
 
@@ -50,10 +50,10 @@ class NfcTagSerializer(serializers.ModelSerializer):
 
     def get_content_object(self, obj):
         """
-        Dynamically retrieves the object represented by the GenericForeignKey. This function can 
+        Dynamically retrieves the object represented by the GenericForeignKey. This function can
         be extended to handle various content types such as Plant or Trainer.
         """
-    
+
         if obj.content_object:
             content_type = obj.content_type.model
             if content_type == 'plant':
@@ -67,6 +67,6 @@ class NfcTagSerializer(serializers.ModelSerializer):
     class Meta:
         model = NfcTag
         fields = [
-            'id', 'serial_number', 'user', 'nfc_tag_type', 'active', 'label', 'content_type', 
+            'id', 'serial_number', 'user', 'nfc_tag_type', 'active', 'label', 'content_type',
             'object_id', 'content_object', 'created_at', 'last_modified', 'scans', 'memory'
         ]

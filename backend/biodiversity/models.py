@@ -1,9 +1,7 @@
 import uuid
 from django.db import models
 from django.conf import settings
-from django.utils.translation import gettext_lazy as _
 from django.utils.text import slugify
-from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
 from wagtail.models import (
     Collection,

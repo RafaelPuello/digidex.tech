@@ -108,14 +108,12 @@ AUTHENTICATION_BACKENDS = [
 
 WSGI_APPLICATION = "digidex.wsgi.application"
 
-# Database configuration
-
-DB_NAME = os.getenv('DB_NAME', 'defaultdb')
+DB_NAME = os.getenv('DB_NAME')
 DB_USERNAME = os.getenv('DB_USERNAME')
 DB_PASSWORD = os.getenv('DB_PASSWORD')
 DB_HOST = os.getenv('DB_HOST')
 DB_PORT = os.getenv('DB_PORT')
-DB_TEST_NAME = os.getenv('TEST_DB_NAME', 'test_defaultdb')
+DB_TEST_NAME = os.getenv('TEST_DB_NAME')
 
 DATABASES = {
     'default': {
@@ -270,8 +268,6 @@ SIMPLE_JWT = {
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     'TOKEN_TYPE_CLAIM': 'token_type',
 }
-
-# HEADLESS_ONLY = True
 
 # allauth settings
 AUTH_USER_MODEL = 'trainers.Trainer'

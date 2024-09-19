@@ -18,7 +18,7 @@ class UserAssistant(models.Model):
 
     def chat(self, question):
         """
-        Chat with the user's chat bot assistant.        
+        Chat with the user's chat bot assistant.
         """
         return generate_chat(question) if question else _('Missing question parameter.')
 

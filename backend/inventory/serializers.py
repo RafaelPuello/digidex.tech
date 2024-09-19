@@ -8,7 +8,7 @@ from .models import Box, BoxItem
 class BoxItemSerializer(serializers.ModelSerializer):
     """
     Serializer for the BoxItem model. It handles items stored in a box, which can be of various
-    types. The content_type and object_id fields are used to represent a GenericForeignKey, and 
+    types. The content_type and object_id fields are used to represent a GenericForeignKey, and
     content_object is dynamically serialized depending on the object type (currently limited to Plant).
     """
 
@@ -21,7 +21,7 @@ class BoxItemSerializer(serializers.ModelSerializer):
 
     def get_content_object(self, obj):
         """
-        Dynamically retrieves the object represented by the GenericForeignKey. In this case, 
+        Dynamically retrieves the object represented by the GenericForeignKey. In this case,
         it serializes the object if it is a Plant. The logic can be extended to handle other types.
         """
 
