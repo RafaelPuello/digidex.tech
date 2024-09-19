@@ -7,18 +7,17 @@ DEBUG = False
 # ------------------------------------------------------------------------
 # Site Configuration (PROD)
 # ------------------------------------------------------------------------
-SITE_NAME = "DigiDex"
+SITE_NAME = WAGTAIL_SITE_NAME = BASE_SITE_NAME
+
+SITE_SUBDOMAIN = "www"
+
+SITE_HOSTNAME = f'{SITE_SUBDOMAIN}.{BASE_SITE_HOSTNAME}'
+
+ALLOWED_HOSTS = [BASE_SITE_HOSTNAME, SITE_HOSTNAME]
 
 SITE_PROTOCOL = "https"
 
-WAGTAIL_SITE_NAME = SITE_NAME
-
-WAGTAILADMIN_BASE_URL = f"{SITE_PROTOCOL}://{BASE_SITE_HOSTNAME}"
-
-ALLOWED_HOSTS = [
-    BASE_SITE_HOSTNAME,
-    f"www.{BASE_SITE_HOSTNAME}"
-]
+WAGTAILADMIN_BASE_URL = f"{SITE_PROTOCOL}://{SITE_HOSTNAME}"
 
 # ------------------------------------------------------------------------
 # Database Configuration (PROD)
@@ -46,8 +45,14 @@ DATABASES = {
     }
 }
 
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+#     }
+# }
+
 # ------------------------------------------------------------------------
-# Common S3 Configuration (PROD)
+# Storage Configuration (PROD)
 # ------------------------------------------------------------------------
 AWS_ACCESS_KEY_ID = os.getenv("SPACES_ACCESS_KEY")
 
@@ -59,10 +64,8 @@ AWS_S3_ENDPOINT_URL = f'{SITE_PROTOCOL}://{AWS_S3_REGION_NAME}.digitaloceanspace
 
 AWS_S3_FILE_OVERWRITE = False
 
-# Media Files S3 Configuration (PROD)
 AWS_STORAGE_BUCKET_NAME_MEDIA = os.getenv("MEDIA_SPACES_BUCKET_NAME")
 
-# Static Files S3 Configuration (PROD)
 AWS_STORAGE_BUCKET_NAME_STATIC = os.getenv("STATIC_SPACES_BUCKET_NAME")
 
 STORAGES = {
@@ -103,14 +106,14 @@ STORAGES = {
 WAGTAIL_REDIRECTS_FILE_STORAGE = "cache"
 
 # ------------------------------------------------------------------------
-# Storage URL Configuration (PROD)
+# Storage-URL Configuration (PROD)
 # ------------------------------------------------------------------------
 MEDIA_URL = f'{SITE_PROTOCOL}://{AWS_STORAGE_BUCKET_NAME_MEDIA}.{AWS_S3_ENDPOINT_URL}/'
 
 STATIC_URL = f'cdn.{BASE_SITE_HOSTNAME}/'
 
 # ------------------------------------------------------------------------
-# Storage Staticfiles Configuration (PROD)
+# Storage-Staticfiles Configuration (PROD)
 # ------------------------------------------------------------------------
 STATIC_ROOT = 'static/'
 
@@ -133,8 +136,6 @@ WAGTAILSEARCH_BACKENDS = {
 # ------------------------------------------------------------------------
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
-EMAIL_SUBJECT_PREFIX = f"[{SITE_NAME}] "
-
 EMAIL_HOST = os.getenv("EMAIL_HOST")
 
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
@@ -147,10 +148,7 @@ EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS")
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-# ------------------------------------------------------------------------
-# Authentication Configuration (PROD)
-# ------------------------------------------------------------------------
-ACCOUNT_EMAIL_SUBJECT_PREFIX = EMAIL_SUBJECT_PREFIX
+EMAIL_SUBJECT_PREFIX = ACCOUNT_EMAIL_SUBJECT_PREFIX = f"[{SITE_NAME}] " 
 
 # ------------------------------------------------------------------------
 # Language Configuration (PROD)
@@ -164,6 +162,8 @@ WAGTAIL_CONTENT_LANGUAGES = LANGUAGES = [
     ('es-mx', "Spanish (Mexico)"),
 ]
 
+WAGTAIL_I18N_ENABLED = True
+
 USE_L10N = True
 
 USE_I18N = True
@@ -176,9 +176,11 @@ TIME_ZONE = "UTC"
 USE_TZ = True
 
 # ------------------------------------------------------------------------
-# Session-based Security Configuration (PROD)
+# Security Configuration (PROD)
 # ------------------------------------------------------------------------
 SESSION_COOKIE_SECURE = True
+
+SECURE_HSTS_PRELOAD = True
 
 CSRF_TRUSTED_ORIGINS = os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",")
 
@@ -186,12 +188,7 @@ CSRF_COOKIE_SECURE = True
 
 SECURE_SSL_REDIRECT = True
 
-# ------------------------------------------------------------------------
-# HTTP Strict Transport Security (HSTS) Configuration (PROD)
-# ------------------------------------------------------------------------
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", SITE_PROTOCOL)
-
-SECURE_HSTS_PRELOAD = True
 
 DEFAULT_HSTS_SECONDS = 30 * 24 * 60 * 60  # 30 days
 
@@ -199,15 +196,8 @@ SECURE_HSTS_SECONDS = int(
     os.environ.get("SECURE_HSTS_SECONDS", DEFAULT_HSTS_SECONDS)
 )  # noqa
 
-# Do not use the `includeSubDomains` directive for HSTS. This needs to be prevented
-# because the apps are running on client domains (or our own for staging), that are
-# being used for other applications as well. We should therefore not impose any
-# restrictions on these unrelated applications.
 SECURE_HSTS_INCLUDE_SUBDOMAINS = False
 
-# ------------------------------------------------------------------------
-# Content Security Policy (CSP) Configuration (PROD)
-# ------------------------------------------------------------------------
 SECURE_BROWSER_XSS_FILTER = True
 
 SECURE_CONTENT_TYPE_NOSNIFF = True
@@ -216,3 +206,27 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 REFERRER_POLICY = os.environ.get(  # noqa
     "SECURE_REFERRER_POLICY", "no-referrer-when-downgrade"
 ).strip()
+
+# ------------------------------------------------------------------------
+# API Configuration (PROD)
+# ------------------------------------------------------------------------
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+
+# ------------------------------------------------------------------------
+# Logging Configuration (PROD)
+# ------------------------------------------------------------------------
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+}
+
+try:
+    from .local import *  # noqa
+except ImportError:
+    pass

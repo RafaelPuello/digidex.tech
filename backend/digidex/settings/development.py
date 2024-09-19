@@ -5,21 +5,18 @@ DEBUG = True
 # ------------------------------------------------------------------------
 # Site Configuration (DEV)
 # ------------------------------------------------------------------------
-SITE_NAME = f"{BASE_SITE_NAME} [DEV]"
-
-SITE_PROTOCOL = "http"
+SITE_NAME = WAGTAIL_SITE_NAME = f"{BASE_SITE_NAME} [DEV]"
 
 SITE_SUBDOMAIN = "dev"
 
-WAGTAIL_SITE_NAME = SITE_NAME
+# SITE_HOSTNAME = f'{SITE_SUBDOMAIN}.{BASE_SITE_HOSTNAME}'
+SITE_HOSTNAME = "localhost"
 
-WAGTAILADMIN_BASE_URL = f"{SITE_PROTOCOL}://localhost:8000"
+ALLOWED_HOSTS = [SITE_HOSTNAME]
 
-ALLOWED_HOSTS = [
-    # f'{SITE_SUBDOMAIN}.{BASE_SITE_HOSTNAME}',
-    "localhost",
-    "www.localhost",
-]
+SITE_PROTOCOL = "http"
+
+WAGTAILADMIN_BASE_URL = f"{SITE_PROTOCOL}://{SITE_HOSTNAME}"
 
 # ------------------------------------------------------------------------
 # Database Configuration (DEV)
@@ -48,7 +45,7 @@ DATABASES = {
 }
 
 # ------------------------------------------------------------------------
-# Common S3 Configuration (DEV)
+# Storage Configuration (DEV)
 # ------------------------------------------------------------------------
 AWS_ACCESS_KEY_ID = os.getenv("SPACES_ACCESS_KEY")
 
@@ -99,15 +96,17 @@ STORAGES = {
     }
 }
 
+# WAGTAIL_REDIRECTS_FILE_STORAGE = "cache"
+
 # ------------------------------------------------------------------------
-# Storage URL Configuration (TEST)
+# Storage-URL Configuration (DEV)
 # ------------------------------------------------------------------------
 MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME_MEDIA}.{AWS_S3_ENDPOINT_URL}/'
 
 STATIC_URL = 'cdn.digidex.tech/'
 
 # ------------------------------------------------------------------------
-# Storage Staticfiles Configuration (TEST)
+# Storage-Staticfiles Configuration (DEV)
 # ------------------------------------------------------------------------
 STATIC_ROOT = 'static/'
 
@@ -117,7 +116,7 @@ STATICFILES_FINDERS = [
 ]
 
 # ------------------------------------------------------------------------
-# Search Configuration (TEST)
+# Search Configuration (DEV)
 # ------------------------------------------------------------------------
 WAGTAILSEARCH_BACKENDS = {
     "default": {
@@ -130,12 +129,7 @@ WAGTAILSEARCH_BACKENDS = {
 # ------------------------------------------------------------------------
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
-EMAIL_SUBJECT_PREFIX = f"[{SITE_NAME}] "
-
-# ------------------------------------------------------------------------
-# Authentication Configuration (DEV)
-# ------------------------------------------------------------------------
-ACCOUNT_EMAIL_SUBJECT_PREFIX = EMAIL_SUBJECT_PREFIX
+EMAIL_SUBJECT_PREFIX = ACCOUNT_EMAIL_SUBJECT_PREFIX = f"[{SITE_NAME}] "
 
 # ------------------------------------------------------------------------
 # Language Configuration (DEV)
@@ -145,6 +139,8 @@ LANGUAGE_CODE = "en-us"
 WAGTAIL_CONTENT_LANGUAGES = LANGUAGES = [
     ('en-us', "English (United States)"),
 ]
+
+WAGTAIL_I18N_ENABLED = True
 
 USE_L10N = True
 
@@ -158,7 +154,7 @@ TIME_ZONE = "UTC"
 USE_TZ = True
 
 # ------------------------------------------------------------------------
-# Session Security Configuration (DEV)
+# Security Configuration (DEV)
 # ------------------------------------------------------------------------
 SECURE_PROXY_SSL_HEADER = None
 
@@ -169,7 +165,7 @@ CSRF_COOKIE_SECURE = False
 SECURE_SSL_REDIRECT = False
 
 # ------------------------------------------------------------------------
-# External API Configuration (DEV)
+# API Configuration (DEV)
 # ------------------------------------------------------------------------
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 

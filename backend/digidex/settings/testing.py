@@ -5,20 +5,17 @@ DEBUG = False
 # ------------------------------------------------------------------------
 # Site Configuration (TEST)
 # ------------------------------------------------------------------------
-SITE_NAME = f"{BASE_SITE_NAME} [TEST]"
-
-SITE_PROTOCOL = "http"
+SITE_NAME = WAGTAIL_SITE_NAME = f"{BASE_SITE_NAME} [TEST]"
 
 SITE_SUBDOMAIN = "test"
 
-WAGTAIL_SITE_NAME = SITE_NAME
+SITE_HOSTNAME = f'{SITE_SUBDOMAIN}.{BASE_SITE_HOSTNAME}'
 
-WAGTAILADMIN_BASE_URL = f"{SITE_PROTOCOL}://{BASE_SITE_HOSTNAME}"
+ALLOWED_HOSTS = [SITE_HOSTNAME]
 
-ALLOWED_HOSTS = [
-    # f'{SITE_SUBDOMAIN}.{BASE_SITE_HOSTNAME}',
-    'www.localhost',
-]
+SITE_PROTOCOL = "http"
+
+WAGTAILADMIN_BASE_URL = f"{SITE_PROTOCOL}://{SITE_HOSTNAME}"
 
 # ------------------------------------------------------------------------
 # Database Configuration (TEST)
@@ -104,15 +101,17 @@ STORAGES = {
     }
 }
 
+# WAGTAIL_REDIRECTS_FILE_STORAGE = "cache"
+
 # ------------------------------------------------------------------------
-# Storage URL Configuration (TEST)
+# Storage-URL Configuration (TEST)
 # ------------------------------------------------------------------------
 MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME_MEDIA}.{AWS_S3_ENDPOINT_URL}/'
 
-STATIC_URL = 'cdn.digidex.tech/'
+STATIC_URL = f'cdn.{BASE_SITE_HOSTNAME}/'
 
 # ------------------------------------------------------------------------
-# Storage Staticfiles Configuration (TEST)
+# Storage-Staticfiles Configuration (TEST)
 # ------------------------------------------------------------------------
 STATIC_ROOT = 'static/'
 
@@ -135,17 +134,7 @@ WAGTAILSEARCH_BACKENDS = {
 # ------------------------------------------------------------------------
 EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
 
-# ------------------------------------------------------------------------
-# Authentication Configuration (TEST)
-# ------------------------------------------------------------------------
 ACCOUNT_EMAIL_SUBJECT_PREFIX = f"[{SITE_NAME}] "
-
-# ------------------------------------------------------------------------
-# Wagtail Site Configuration (TEST)
-# ------------------------------------------------------------------------
-WAGTAIL_SITE_NAME = SITE_NAME
-
-WAGTAILADMIN_BASE_URL = f"{SITE_PROTOCOL}://{BASE_SITE_HOSTNAME}"
 
 # ------------------------------------------------------------------------
 # Language Configuration (TEST)
@@ -171,6 +160,22 @@ TIME_ZONE = "UTC"
 USE_TZ = True
 
 # ------------------------------------------------------------------------
+# Security Configuration (TEST)
+# ------------------------------------------------------------------------
+SECURE_PROXY_SSL_HEADER = None
+
+SESSION_COOKIE_SECURE = False
+
+CSRF_COOKIE_SECURE = False
+
+SECURE_SSL_REDIRECT = False
+
+# ------------------------------------------------------------------------
+# API Configuration (TEST)
+# ------------------------------------------------------------------------
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+
+# ------------------------------------------------------------------------
 # Logging Configuration (TEST)
 # ------------------------------------------------------------------------
 LOGGING = {
@@ -189,3 +194,8 @@ LOGGING = {
         },
     },
 }
+
+try:
+    from .local import *  # noqa
+except ImportError:
+    pass

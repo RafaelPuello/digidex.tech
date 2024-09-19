@@ -112,24 +112,6 @@ ROOT_URLCONF = "digidex.urls"
 WSGI_APPLICATION = "digidex.wsgi.application"
 
 # ------------------------------------------------------------------------
-# Password Configuration (BASE)
-# ------------------------------------------------------------------------
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
-    },
-]
-
-# ------------------------------------------------------------------------
 # Django REST Framework (DRF) Configuration (BASE)
 # ------------------------------------------------------------------------
 REST_FRAMEWORK = {
@@ -185,7 +167,7 @@ ACCOUNT_ADAPTER = 'trainers.adapter.TrainerAccountAdapter'
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 
 # ------------------------------------------------------------------------
-# Authentication Username Configuration (BASE)
+# Authentication-Username Configuration (BASE)
 # ------------------------------------------------------------------------
 ACCOUNT_PRESERVE_USERNAME_CASING = False
 
@@ -216,7 +198,7 @@ ACCOUNT_USERNAME_BLACKLIST = [
 ]
 
 # ------------------------------------------------------------------------
-# Authentication Email Configuration (BASE)
+# Authentication-Email Configuration (BASE)
 # ------------------------------------------------------------------------
 ACCOUNT_EMAIL_UNKNOWN_ACCOUNTS = False
 
@@ -229,7 +211,7 @@ ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3
 ACCOUNT_EMAIL_NOTIFICATIONS = True
 
 # ------------------------------------------------------------------------
-# Authentication URL Configuration (BASE)
+# Authentication-URL Configuration (BASE)
 # ------------------------------------------------------------------------
 LOGIN_URL = '/accounts/login/'
 
