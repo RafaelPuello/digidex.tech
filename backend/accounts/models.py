@@ -87,7 +87,6 @@ class User(AbstractUser):
         self.groups.add(group)
         return group
 
-
     def delete(self, *args, **kwargs):
         """
         Deletes the user and the associated group.
