@@ -3,7 +3,7 @@ from wagtail.admin.panels import TabbedInterface, FieldPanel, ObjectList
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet, SnippetViewSetGroup
 
-from .models import NFCTag, NFCTagDesign, NFCTagScan, NFCTagMemory
+from .models import NFCTag, NFCTagDesign, NFCTagScan, NFCTagEEPROM
 
 
 @hooks.register("register_icons")
@@ -11,7 +11,7 @@ def register_icons(icons):
     return icons + [
         'ntags/icons/ntag.svg',
         'ntags/icons/design.svg',
-        'ntags/icons/memory.svg',
+        'ntags/icons/eeprom.svg',
         'ntags/icons/scan.svg'
     ]
 
@@ -144,26 +144,26 @@ class NFCTagScanSnippetViewSet(SnippetViewSet):
         if user.is_superuser:
             return qs
         elif user.groups.filter(name='Trainers').exists():
-            return qs.filter(nfc_tag__user=user)
+            return qs.filter(ntag__user=user)
         else:
             return qs.none()
 
 
-class NFCTagMemorySnippetViewSet(SnippetViewSet):
+class NFCTagEEPROMSnippetViewSet(SnippetViewSet):
     """
-    A snippetviewset for viewing and editing NFC Tag memory.
+    A snippetviewset for viewing and editing NFC Tag eeprom.
     """
 
-    model = NFCTagMemory
-    icon = "memory"
-    menu_label = "Tag Memory"
-    menu_name = "memory"
+    model = NFCTagEEPROM
+    icon = "eeprom"
+    menu_label = "Tag EEPROM"
+    menu_name = "eeprom"
     copy_view_enabled = False
-    # list_filter = {"nfc_tag": ["exact"]}
-    list_display = ["nfc_tag", "last_modified"]
+    # list_filter = {"ntag": ["exact"]}
+    list_display = ["ntag", "last_modified"]
     list_per_page = 25
-    admin_url_namespace = "ntag_memory"
-    base_url_path = "ntags/memory"
+    admin_url_namespace = "ntag_eeprom"
+    base_url_path = "ntags/eeprom"
 
     shared_panels = [
     ]
@@ -180,7 +180,7 @@ class NFCTagMemorySnippetViewSet(SnippetViewSet):
 
     def get_queryset(self, request):
         """
-        Filter NFC tag memory based on user roles:
+        Filter NFC tag eeprom based on user roles:
         - Superusers see all tag memories.
         - Trainers see tag memories associated with their tags.
         - Others see no tag memories.
@@ -204,10 +204,10 @@ class NfcTagSnippetViewSetGroup(SnippetViewSetGroup):
     A snippetviewset group for NFC Tags.
     """
 
-    items = [NFCTagSnippetViewSet, NFCTagDesignSnippetViewSet, NFCTagScanSnippetViewSet, NFCTagMemorySnippetViewSet]
+    items = [NFCTagSnippetViewSet, NFCTagDesignSnippetViewSet, NFCTagScanSnippetViewSet, NFCTagEEPROMSnippetViewSet]
     menu_icon = "ntag"
     menu_label = "NFC Tags"
-    menu_name = "nfc_tags"
+    menu_name = "ntags"
     add_to_admin_menu = True
 
 

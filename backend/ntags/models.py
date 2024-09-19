@@ -33,7 +33,7 @@ IC_CHOICES = (
     (NTAG216, _("NTAG 216")),
 )
 
-MEMORY_SIZE = {
+EEPROM_SIZE = {
     NTAG213: 180,
     NTAG215: 540,
     NTAG216: 924,
@@ -197,15 +197,15 @@ class NFCTag(models.Model):
         auto_now=True
     )
 
-    def create_memory(self, ic_type=NTAG213):
+    def create_eeprom(self, ic_type=NTAG213):
         """
-        Creates a new memory object for the NFC tag.
+        Creates a new eeprom object for the NFC tag.
 
         Args:
             ic_type (str): The type of integrated circuit used in the NFC tag.
 
         Returns:
-            tuple: (NFCTagMemory, memory_view) The newly created memory object and its memory view.
+            tuple: (NFCTagEEPROM, eeprom_view) The newly created eeprom object and its eeprom view.
         """
 
         # Validate the integrated circuit type
@@ -213,25 +213,25 @@ class NFCTag(models.Model):
             raise ValueError(_("Invalid integrated circuit type."))
 
         columns = 4
-        rows = MEMORY_SIZE[ic_type] // columns
+        rows = EEPROM_SIZE[ic_type] // columns
 
         # Step 1: Create a 2D NumPy array filled with zeros
-        memory_2d = np.zeros((rows, columns), dtype=np.uint8)
+        eeprom_2d = np.zeros((rows, columns), dtype=np.uint8)
 
         # Step 2: Serialize the 2D array to bytes for storage
-        memory_bytes = memory_2d.tobytes()
+        eeprom_bytes = eeprom_2d.tobytes()
 
-        # Step 3: Create the NFCTagMemory object in the database
-        nfc_tag_memory = NFCTagMemory.objects.create(
-            nfc_tag=self,
+        # Step 3: Create the NFCTagEEPROM object in the database
+        ntag_eeprom = NFCTagEEPROM.objects.create(
+            ntag=self,
             integrated_circuit=ic_type,
-            memory=memory_bytes
+            eeprom=eeprom_bytes
         )
 
-        # Optional Step 4: Create a memoryview for in-memory 2D access
-        memory_view = memory_2d.view()
+        # Optional Step 4: Create a eepromview for in-eeprom 2D access
+        eeprom_view = eeprom_2d.view()
 
-        return nfc_tag_memory, memory_view
+        return ntag_eeprom, eeprom_view
 
     def log_scan(self, user, counter):
         """
@@ -247,7 +247,7 @@ class NFCTag(models.Model):
         try:
             cnt = int(counter, 16) if isinstance(counter, str) else int(counter)
             NFCTagScan.objects.create(
-                nfc_tag=self,
+                ntag=self,
                 counter=cnt,
                 scanned_by=user
             )
@@ -325,28 +325,28 @@ class NFCTagScan(models.Model):
         verbose_name_plural = _("ntag scans")
 
 
-class NFCTagMemory(
+class NFCTagEEPROM(
     DraftStateMixin,
     RevisionMixin,
     LockableMixin,
     models.Model
     ):
     """
-    Model representing the memory contents of an NFC tag.
+    Model representing the eeprom contents of an NFC tag.
 
     Attributes:
-        ntag (NfcTag): The NFC tag whose memory contents are stored.
+        ntag (NfcTag): The NFC tag whose eeprom contents are stored.
         uuid (UUID): A unique identifier for the NFC tag.
         integrated_circuit (str): The type of integrated circuit used in the NFC tag.
-        memory (binary): The memory contents of the NFC tag.
-        created_at (datetime): The date and time when the memory contents were created.
-        last_modified (datetime): The date and time when the memory contents were last modified.
+        eeprom (binary): The eeprom contents of the NFC tag.
+        created_at (datetime): The date and time when the eeprom contents were created.
+        last_modified (datetime): The date and time when the eeprom contents were last modified.
     """
 
     ntag = models.OneToOneField(
         NFCTag,
         on_delete=models.CASCADE,
-        related_name='memory'
+        related_name='eeprom'
     )
     uuid = models.UUIDField(
         primary_key=True,
@@ -359,7 +359,7 @@ class NFCTagMemory(
         choices=IC_CHOICES,
         default=NTAG213,
     )
-    memory = models.BinaryField(
+    eeprom = models.BinaryField(
         max_length=888,
     )
     created_at = models.DateTimeField(
@@ -371,10 +371,10 @@ class NFCTagMemory(
 
     def __str__(self):
         """
-        Returns a string representation of the NFC tag memory contents.
+        Returns a string representation of the NFC tag eeprom contents.
         """
         return str(self.ntag)
 
     class Meta:
-        verbose_name = _("ntag memory")
-        verbose_name_plural = _("ntag memory")
+        verbose_name = _("ntag eeprom")
+        verbose_name_plural = _("ntag eeprom")

@@ -35,10 +35,10 @@ def setup_ntag_developer_group():
         Group: The created or retrieved group instance.
     """
     NTAG_DEVELOPER_PERMISSIONS = [
-        "view_nfctagmemory",
-        "add_nfctagmemory", "change_nfctagmemory", "delete_nfctagmemory",
-        "lock_nfctagmemory", "unlock_nfctagmemory",
-        "publish_nfctagmemory"
+        "view_nfctageeprom",
+        "add_nfctageeprom", "change_nfctageeprom", "delete_nfctageeprom",
+        "lock_nfctageeprom", "unlock_nfctageeprom",
+        "publish_nfctageeprom"
     ]
 
     group = Group.objects.create("NTAG Developers")
@@ -62,7 +62,7 @@ def setup_ntag_user_group():
         "view_nfctag", "change_nfctag",
         "view_nfctagdesign",
         "view_nfctagscan",
-        "view_nfctagmemory",
+        "view_nfctageeprom",
     ]
 
     group = Group.objects.create("NTAG Users")

@@ -89,7 +89,7 @@
       },
       "required": ["ntag", "counter", "scanned_at"]
     },
-    "NFCTagMemory": {
+    "NFCTagEEPROM": {
       "type": "object",
       "properties": {
         "uuid": {
@@ -104,7 +104,7 @@
           "type": "string",
           "enum": ["213", "215", "216"]
         },
-        "memory": {
+        "eeprom": {
           "type": "string",
           "maxLength": 4096
         },
@@ -117,14 +117,14 @@
           "format": "date-time"
         }
       },
-      "required": ["uuid", "ntag", "memory", "created_at", "last_modified"]
+      "required": ["uuid", "ntag", "eeprom", "created_at", "last_modified"]
     }
   },
   "properties": {
     "ntags": { "$ref": "#/definitions/NFCTag" },
     "designs": { "$ref": "#/definitions/NFCTagDesign" },
     "scans": { "$ref": "#/definitions/NFCTagScan" },
-    "memories": { "$ref": "#/definitions/NFCTagMemory" }
+    "memories": { "$ref": "#/definitions/NFCTagEEPROM" }
   }
 }
   

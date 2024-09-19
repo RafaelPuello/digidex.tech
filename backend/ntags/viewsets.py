@@ -2,8 +2,8 @@ from rest_framework import status, viewsets, permissions
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 
-from .models import NFCTag, NFCTagDesign, NFCTagScan, NFCTagMemory
-from .serializers import NFCTagSerializer, NFCTagDesignSerializer, NFCTagScanSerializer, NFCTagMemorySerializer
+from .models import NFCTag, NFCTagDesign, NFCTagScan, NFCTagEEPROM
+from .serializers import NFCTagSerializer, NFCTagDesignSerializer, NFCTagScanSerializer, NFCTagEEPROMSerializer
 
 
 class NFCTagDesignViewSet(viewsets.ModelViewSet):
@@ -154,17 +154,17 @@ class NFCTagScanViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class NFCTagMemoryViewSet(viewsets.ModelViewSet):
+class NFCTagEEPROMViewSet(viewsets.ModelViewSet):
     """
     A viewset for viewing and editing an NFC Tag's EEPROM.
     """
 
-    queryset = NFCTagMemory.objects.all()
-    serializer_class = NFCTagMemorySerializer
+    queryset = NFCTagEEPROM.objects.all()
+    serializer_class = NFCTagEEPROMSerializer
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [JWTAuthentication]
     lookup_field = 'uuid'
-    body_fields = ['ntag', 'memory']
+    body_fields = ['ntag', 'eeprom']
     meta_fields = ['uuid']
 
     def get_queryset(self):
@@ -173,19 +173,19 @@ class NFCTagMemoryViewSet(viewsets.ModelViewSet):
         """
 
         if self.request.user.is_superuser:
-            return NFCTagMemory.objects.all()
+            return NFCTagEEPROM.objects.all()
         elif self.request.user.groups.filter(name='Trainers').exists():
-            return NFCTagMemory.objects.filter(ntag__user=self.request.user)
+            return NFCTagEEPROM.objects.filter(ntag__user=self.request.user)
         else:
-            return NFCTagMemory.objects.none()
+            return NFCTagEEPROM.objects.none()
 
     def create(self, request, *args, **kwargs):
         """
-        Create a new NFC tag memory with the provided NFC tag ID and memory contents.
+        Create a new NFC tag eeprom with the provided NFC tag ID and eeprom contents.
         """
 
         ntag_id = request.data.get('ntag_id')
-        memory = request.data.get('memory')
+        eeprom = request.data.get('eeprom')
 
         if not ntag_id:
             return Response({"error": "NFC Tag ID not provided."}, status=status.HTTP_400_BAD_REQUEST)
@@ -195,10 +195,10 @@ class NFCTagMemoryViewSet(viewsets.ModelViewSet):
         except NFCTag.DoesNotExist:
             return Response({"error": "Invalid NFC Tag ID."}, status=status.HTTP_400_BAD_REQUEST)
 
-        ntag_memory = NFCTagMemory.objects.create(
+        ntag_eeprom = NFCTagEEPROM.objects.create(
             ntag=ntag,
-            memory=memory
+            eeprom=eeprom
         )
 
-        serializer = self.get_serializer(ntag_memory, context={'request': request})
+        serializer = self.get_serializer(ntag_eeprom, context={'request': request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)

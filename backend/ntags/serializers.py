@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import NFCTagDesign, NFCTag, NFCTagScan, NFCTagMemory
+from .models import NFCTagDesign, NFCTag, NFCTagScan, NFCTagEEPROM
 
 
 class NFCTagDesignSerializer(serializers.ModelSerializer):
@@ -27,26 +27,26 @@ class NFCTagScanSerializer(serializers.ModelSerializer):
         fields = ['id', 'ntag', 'counter', 'scanned_by', 'scanned_at']
 
 
-class NFCTagMemorySerializer(serializers.ModelSerializer):
+class NFCTagEEPROMSerializer(serializers.ModelSerializer):
     """
-    Serializer for the NFCTagMemory model, representing the memory contents of an NFC tag.
-    Includes details about the memory content, the integrated circuit type, and timestamps.
+    Serializer for the NFCTagEEPROM model, representing the eeprom contents of an NFC tag.
+    Includes details about the eeprom content, the integrated circuit type, and timestamps.
     """
 
     class Meta:
-        model = NFCTagMemory
-        fields = ['uuid', 'ntag', 'integrated_circuit', 'memory', 'created_at', 'last_modified']
+        model = NFCTagEEPROM
+        fields = ['uuid', 'ntag', 'integrated_circuit', 'eeprom', 'created_at', 'last_modified']
 
 
 class NFCTagSerializer(serializers.ModelSerializer):
     """
-    Main serializer for the NFCTag model. It includes related scans and memory contents,
+    Main serializer for the NFCTag model. It includes related scans and eeprom contents,
     as well as information about the associated content object through the GenericForeignKey.
     """
 
     content_object = serializers.SerializerMethodField()
     scans = NFCTagScanSerializer(many=True, read_only=True)
-    memory = NFCTagMemorySerializer(read_only=True)
+    eeprom = NFCTagEEPROMSerializer(read_only=True)
 
     def get_content_object(self, obj):
         """
@@ -69,5 +69,5 @@ class NFCTagSerializer(serializers.ModelSerializer):
         model = NFCTag
         fields = [
             'id', 'serial_number', 'user', 'design', 'active', 'label', 'content_type',
-            'object_id', 'content_object', 'created_at', 'last_modified', 'scans', 'memory'
+            'object_id', 'content_object', 'created_at', 'last_modified', 'scans', 'eeprom'
         ]
