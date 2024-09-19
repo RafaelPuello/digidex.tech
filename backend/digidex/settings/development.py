@@ -13,11 +13,12 @@ SITE_SUBDOMAIN = "dev"
 
 WAGTAIL_SITE_NAME = SITE_NAME
 
-WAGTAILADMIN_BASE_URL = f"{SITE_PROTOCOL}://{BASE_SITE_HOSTNAME}"
+WAGTAILADMIN_BASE_URL = f"{SITE_PROTOCOL}://localhost:8000"
 
 ALLOWED_HOSTS = [
     # f'{SITE_SUBDOMAIN}.{BASE_SITE_HOSTNAME}',
-    'www.localhost',
+    "localhost",
+    "www.localhost",
 ]
 
 # ------------------------------------------------------------------------
