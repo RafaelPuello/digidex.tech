@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class BiologyConfig(AppConfig):
+class BotanyConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'biology'
+    name = 'botany'

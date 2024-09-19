@@ -33,7 +33,7 @@ INSTALLED_APPS = [
     "accounts",
     "base",
     "assistants",
-    "biology",
+    "botany",
     "ntags",
     "inventory",
     "home",

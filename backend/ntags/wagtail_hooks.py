@@ -9,10 +9,10 @@ from .models import NFCTag, NFCTagDesign, NFCTagScan, NFCTagMemory
 @hooks.register("register_icons")
 def register_icons(icons):
     return icons + [
-        'ntags/icons/ntag-icon.svg',
-        'ntags/icons/ntag-designs.svg',
-        'ntags/icons/ntag-scan.svg',
-        'ntags/icons/ntag-memory.svg',
+        'ntags/icons/ntag.svg',
+        'ntags/icons/design.svg',
+        'ntags/icons/memory.svg',
+        'ntags/icons/scan.svg'
     ]
 
 
@@ -22,7 +22,7 @@ class NFCTagDesignSnippetViewSet(SnippetViewSet):
     """
 
     model = NFCTagDesign
-    icon = "nfc-designs"
+    icon = "design"
     menu_label = "Tag Designs"
     menu_name = "designs"
     copy_view_enabled = False
@@ -105,7 +105,7 @@ class NFCTagScanSnippetViewSet(SnippetViewSet):
     """
 
     model = NFCTagScan
-    icon = "nfc-scan"
+    icon = "scan"
     menu_label = "Tag Scans"
     menu_name = "scans"
     copy_view_enabled = False
@@ -155,7 +155,7 @@ class NFCTagMemorySnippetViewSet(SnippetViewSet):
     """
 
     model = NFCTagMemory
-    icon = "nfc-memory"
+    icon = "memory"
     menu_label = "Tag Memory"
     menu_name = "memory"
     copy_view_enabled = False
@@ -205,7 +205,7 @@ class NfcTagSnippetViewSetGroup(SnippetViewSetGroup):
     """
 
     items = [NFCTagSnippetViewSet, NFCTagDesignSnippetViewSet, NFCTagScanSnippetViewSet, NFCTagMemorySnippetViewSet]
-    menu_icon = "nfc-icon"
+    menu_icon = "ntag"
     menu_label = "NFC Tags"
     menu_name = "nfc_tags"
     add_to_admin_menu = True

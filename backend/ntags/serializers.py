@@ -57,7 +57,8 @@ class NFCTagSerializer(serializers.ModelSerializer):
         if obj.content_object:
             content_type = obj.content_type.model
             if content_type == 'plant':
-                from biology.serializers import PlantSerializer
+                pass
+                from botany.serializers import PlantSerializer
                 return PlantSerializer(obj.content_object).data
             elif content_type == 'user':
                 from accounts.serializers import UserSerializer

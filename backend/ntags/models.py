@@ -171,7 +171,7 @@ class NFCTag(models.Model):
     )
     limit = (  # Not saved in the db, but the limited options for the content_type field
         models.Q(app_label='accounts', model='User') |  # noqa: W504 - used line break for readability
-        models.Q(app_label='biology', model='Plant') |  # noqa: W504 - used line break for readability
+        models.Q(app_label='botany', model='Plant') |  # noqa: W504 - used line break for readability
         models.Q(app_label='inventory', model='Box')
     )
     content_type = models.ForeignKey(
@@ -326,8 +326,8 @@ class NFCTagScan(models.Model):
 
 
 class NFCTagMemory(
-    RevisionMixin,
     DraftStateMixin,
+    RevisionMixin,
     LockableMixin,
     models.Model
     ):

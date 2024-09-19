@@ -23,8 +23,8 @@ class BoxItemSerializer(serializers.ModelSerializer):
         Dynamically retrieves the object represented by the GenericForeignKey. In this case,
         it serializes the object if it is a Plant. The logic can be extended to handle other types.
         """
-        from biology.models import Plant
-        from biology.serializers import PlantSerializer
+        from botany.models import Plant
+        from botany.serializers import PlantSerializer
         if isinstance(obj.content_object, Plant):
             return PlantSerializer(obj.content_object).data
         return None
