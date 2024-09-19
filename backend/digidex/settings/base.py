@@ -274,8 +274,8 @@ USE_TZ = True
 WAGTAIL_I18N_ENABLED = True
 
 WAGTAIL_CONTENT_LANGUAGES = [
-    ('en', _("English")),
-    ('es', _("Spanish")),
+    ('en-us', _("English (United States)")),
+    ('es-mx', _("Spanish (Mexico)")),
 ]
 
 # ------------------------------------------------------------------------
