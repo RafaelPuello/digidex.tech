@@ -22,7 +22,7 @@ WAGTAILADMIN_BASE_URL = f"{SITE_PROTOCOL}://{SITE_HOSTNAME}"
 # ------------------------------------------------------------------------
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-DB_NAME = os.getenv('DB_TEST_NAME')
+DB_NAME = os.getenv('DB_NAME')
 
 DB_USERNAME = os.getenv('DB_USERNAME')
 

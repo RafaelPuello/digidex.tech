@@ -3,7 +3,6 @@ Django settings for digidex project.
 """
 import os
 from datetime import timedelta
-from django.utils.translation import gettext_lazy as _
 
 from dotenv import load_dotenv
 
