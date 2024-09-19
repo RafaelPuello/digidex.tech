@@ -325,7 +325,12 @@ class NFCTagScan(models.Model):
         verbose_name_plural = _("ntag scans")
 
 
-class NFCTagMemory(models.Model):
+class NFCTagMemory(
+    RevisionMixin,
+    DraftStateMixin,
+    LockableMixin,
+    models.Model
+    ):
     """
     Model representing the memory contents of an NFC tag.
 
