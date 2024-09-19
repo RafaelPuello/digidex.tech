@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://digidex.tech/accounts.schema.json",
   "title": "User Application Models Schema",
-  "description": "Models for managing users and their pages.",
+  "description": "Models for managing users.",
   "type": "object",
   "definitions": {
     "User": {
@@ -56,33 +56,9 @@
       },
       "required": ["uuid", "username", "created_at", "last_modified"],
       "additionalProperties": false
-    },
-    "UserPage": {
-      "type": "object",
-      "properties": {
-        "title": {
-          "type": "string",
-          "description": "The title of the user page"
-        },
-        "slug": {
-          "type": "string",
-          "description": "A unique slug for the user page"
-        },
-        "owner": {
-          "type": "string",
-          "description": "Reference to the user (OneToOneField to User)"
-        },
-        "description": {
-          "type": "string",
-          "description": "The body content of the user page (RichTextField)"
-        }
-      },
-      "required": ["title", "slug", "owner", "description"],
-      "additionalProperties": false
     }
   },
   "properties": {
-    "User": { "$ref": "#/definitions/User" },
-    "UserPage": { "$ref": "#/definitions/UserPage" }
+    "User": { "$ref": "#/definitions/User" }
   }
 }
