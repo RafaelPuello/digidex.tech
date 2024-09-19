@@ -170,8 +170,8 @@ class NFCTag(models.Model):
         null=True
     )
     limit = (  # Not saved in the db, but the limited options for the content_type field
-        models.Q(app_label='trainers', model='Trainer') |  # noqa: W504 - used line break for readability
-        models.Q(app_label='biodiversity', model='Plant') |  # noqa: W504 - used line break for readability
+        models.Q(app_label='accounts', model='User') |  # noqa: W504 - used line break for readability
+        models.Q(app_label='biology', model='Plant') |  # noqa: W504 - used line break for readability
         models.Q(app_label='inventory', model='Box')
     )
     content_type = models.ForeignKey(

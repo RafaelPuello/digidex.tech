@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from django.contrib.contenttypes.models import ContentType
 
-from biodiversity.models import Plant
 from .models import Box, BoxItem
 
 
@@ -24,9 +23,9 @@ class BoxItemSerializer(serializers.ModelSerializer):
         Dynamically retrieves the object represented by the GenericForeignKey. In this case,
         it serializes the object if it is a Plant. The logic can be extended to handle other types.
         """
-
+        from biology.models import Plant
+        from biology.serializers import PlantSerializer
         if isinstance(obj.content_object, Plant):
-            from biodiversity.serializers import PlantSerializer
             return PlantSerializer(obj.content_object).data
         return None
 
