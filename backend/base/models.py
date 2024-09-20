@@ -6,6 +6,9 @@ from wagtail.documents.models import Document, AbstractDocument
 
 
 class BaseDocument(Orderable, AbstractDocument):
+    """
+    A model to store a document with additional fields.
+    """
     source = models.CharField(
         max_length=255,
         blank=True,
@@ -23,6 +26,9 @@ class BaseDocument(Orderable, AbstractDocument):
 
 
 class BaseImage(Orderable, AbstractImage):
+    """
+    A model to store an image with additional fields.
+    """
     alt = models.CharField(
         blank=True,
         null=True,
@@ -40,6 +46,9 @@ class BaseImage(Orderable, AbstractImage):
 
 
 class BaseRendition(AbstractRendition):
+    """
+    A model to store an image rendition with additional fields.
+    """
     image = models.ForeignKey(
         BaseImage,
         on_delete=models.CASCADE,

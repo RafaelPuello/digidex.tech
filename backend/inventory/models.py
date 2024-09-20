@@ -41,7 +41,6 @@ class Box(
         uuid (uuid): A unique identifier for the inventory box.
         collection (ForeignKey): The collection associated with the inventory box.
     """
-
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -116,35 +115,18 @@ class BoxItem(Orderable, models.Model):
 
     Attributes:
         box (ParentalKey): The inventory box the item belongs to.
-        limit (Q): The limit for the content_type field to restrict the choices to specific models.
-        content_type (ForeignKey): The content type of the item.
-        object_id (int): The ID of the item.
-        content_object (GenericForeignKey): The item itself.
+        content (json): The item contents.
         created_at (datetime): The date and time the item was created.
         last_modified (datetime): The date and time the item was last updated.
     """
-
     box = ParentalKey(
         Box,
         on_delete=models.CASCADE,
         related_name='items'
     )
-    limit = models.Q(app_label='botany', model='Plant')
-    content_type = models.ForeignKey(
-        ContentType,
-        limit_choices_to=limit,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True
-    )
-    object_id = models.PositiveIntegerField(
-        null=True,
+    content = models.JSONField(
         blank=True,
-        db_index=True
-    )
-    content_object = GenericForeignKey(
-        'content_type',
-        'object_id'
+        null=True
     )
     created_at = models.DateTimeField(
         auto_now_add=True
@@ -157,14 +139,4 @@ class BoxItem(Orderable, models.Model):
         """
         Returns a string representation of the box item.
         """
-        return f"{self.box.name} item."
-
-    class Meta(Orderable.Meta):
-        verbose_name = _("box item")
-        verbose_name_plural = _("box items")
-        indexes = [
-            models.Index(fields=["content_type", "object_id"]),
-        ]
-        constraints = [
-            models.UniqueConstraint(fields=["box", "content_type", "object_id"], name='unique_box_item')
-        ]
+        return f"{self.box.name}'s item."

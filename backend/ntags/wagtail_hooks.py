@@ -58,19 +58,19 @@ class NFCTagSnippetViewSet(SnippetViewSet):
     menu_label = "Tags"
     menu_name = "tags"
     copy_view_enabled = False
-    list_filter = {"design": ["exact"], "label": ["icontains"]}
-    list_display = ["label", "design", "serial_number"]
+    list_filter = {"design": ["exact"]}
+    list_display = ["serial_number", "design"]
     list_per_page = 25
     admin_url_namespace = "ntags"
     base_url_path = "ntags/tags"
 
     shared_panels = [
-        FieldPanel("label")
     ]
 
     private_panels = [
         FieldPanel("user"),
         FieldPanel("design"),
+        FieldPanel("content"),
         FieldPanel("active"),
     ]
 

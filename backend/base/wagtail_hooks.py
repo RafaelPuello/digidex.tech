@@ -17,6 +17,9 @@ from wagtail.admin.wagtail_hooks import (
 
 @hooks.register('construct_explorer_page_queryset')
 def show_relevant_pages_only(parent_page, pages, request):
+    """
+    Show only relevant pages to non-superusers.
+    """
     user = request.user
     if not user.is_superuser:
         pages = pages.filter(owner=user)
@@ -25,6 +28,9 @@ def show_relevant_pages_only(parent_page, pages, request):
 
 @hooks.register('construct_main_menu')
 def construct_main_menu_items(request, menu_items):
+    """
+    Hide menu items for non-superusers.
+    """
     HIDDEN_MAIN_MENU_ITEMS = (
         CollectionsMenuItem,
         SnippetsMenuItem,
@@ -44,6 +50,9 @@ def construct_main_menu_items(request, menu_items):
 
 @hooks.register('construct_reports_menu')
 def hide_report_menu_items(request, menu_items):
+    """
+    Hide report menu items for non-superusers.
+    """
     user = request.user
     if not user.is_superuser:
         menu_items[:] = [
@@ -60,6 +69,9 @@ def hide_report_menu_items(request, menu_items):
 
 @hooks.register("construct_homepage_summary_items", order=1)
 def hide_summary_items(request, summary_items):
+    """
+    Hide summary items for non-superusers.
+    """
     user = request.user
     if not user.is_superuser:
         summary_items[:] = [

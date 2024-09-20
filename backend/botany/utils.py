@@ -6,14 +6,10 @@ def assign_botany_permissions(group):
     """
     Assigns the necessary botany permissions for the given group.
     """
-    BOTANY_PERMISSIONS = [
-        "add_plant",
-        "change_plant",
-        "delete_plant",
-    ]
-
     permissions = Permission.objects.filter(
-        codename__in=BOTANY_PERMISSIONS
+        codename__in=[
+            "add_plant", "change_plant", "delete_plant"
+        ]
     )
     group.permissions.add(*permissions)
     group.save()

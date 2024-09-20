@@ -10,7 +10,7 @@ class UserAssistant(models.Model):
     A model to store the user's chat bot assistant.
     """
 
-    user = models.OneToOneField(
+    user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='assistant'
@@ -26,8 +26,8 @@ class UserAssistant(models.Model):
         """
         A string representation of the user's chat bot assistant.
         """
-        return f"{self.user.username}'s Assistant"
+        return f"{self.user.username}'s Assistants"
 
     class Meta:
-        verbose_name = _('User Chat Bot')
-        verbose_name_plural = _('User Chat Bots')
+        verbose_name = _('assistant')
+        verbose_name_plural = _('assistants')

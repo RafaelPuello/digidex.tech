@@ -6,11 +6,8 @@ def assign_inventory_permissions(group):
     """
     Assigns the necessary inventory permissions for the given group.
     """
-    INVENTORY_PERMISSIONS = [
-    ]
-
     permissions = Permission.objects.filter(
-        codename__in=INVENTORY_PERMISSIONS
+        codename__in=[]
     )
     group.permissions.add(*permissions)
     group.save()

@@ -10,16 +10,13 @@ def create_user_group_permissions(group):
     The permissions include 'add_image', 'change_image', 'choose_image', 'add_document',
     'change_document', and 'choose_document'.
     """
-
-    PERMISSIONS = [
-        "add_plant", "change_plant", "delete_plant",
-        "add_box", "change_box", "delete_box",
-        "view_nfctag", "view_nfctagdesign", "view_nfctagscan", "view_nfctagmemory",
-        "access_admin",
-    ]
-
     permissions = Permission.objects.filter(
-        codename__in=PERMISSIONS
+        codename__in=[
+            "add_plant", "change_plant", "delete_plant",
+            "add_box", "change_box", "delete_box",
+            "view_nfctag", "view_nfctagdesign", "view_nfctagscan", "view_nfctagmemory",
+            "access_admin",
+        ]
     )
     group.permissions.add(*permissions)
     group.save()
@@ -35,7 +32,6 @@ class User(AbstractUser):
         created_at (datetime): The date and time the user was created.
         last_modified (datetime): The date and time the user was last updated.
     """
-
     uuid = models.UUIDField(
         default=uuid.uuid4,
         unique=True,

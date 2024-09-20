@@ -11,7 +11,6 @@ class HomePage(Page):
     """
     Represents the homepage of the website.
     """
-
     body = RichTextField(
         blank=True
     )
@@ -38,7 +37,6 @@ class UserHomePage(Page):
     """
     Represents the homepage of a user.
     """
-
     body = RichTextField(
         blank=True
     )
@@ -70,8 +68,6 @@ class UserHomePage(Page):
         Returns:
             Collection: The created or retrieved collection instance.
         """
-
-        # Get the group
         group = None
 
         # Check if the trainer already has a collection

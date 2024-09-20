@@ -8,11 +8,16 @@ class MainImageField(Field):
     Example:
     "main": "/media/images/a_test_image.jpg"
     """
-
     def get_attribute(self, instance):
+        """
+        Returns the attribute value from the instance.
+        """
         return instance
 
     def to_representation(self, image):
+        """
+        Returns the representation of the image.
+        """
         return image.get_rendition('max-1024x882').url
 
 
@@ -23,11 +28,16 @@ class FeaturedImageField(Field):
     Example:
     "featured": "/media/images/a_test_image.jpg"
     """
-
     def get_attribute(self, instance):
+        """
+        Returns the attribute value from the instance.
+        """
         return instance
 
     def to_representation(self, image):
+        """
+        Returns the representation of the image.
+        """
         return image.get_rendition('max-600x600').url
 
 
@@ -38,9 +48,14 @@ class ThumbnailImageField(Field):
     Example:
     "thumbnail": "/media/images/a_test_image.jpg"
     """
-
     def get_attribute(self, instance):
+        """
+        Returns the attribute value from the instance.
+        """
         return instance
 
     def to_representation(self, image):
+        """
+        Returns the representation of the image.
+        """
         return image.get_rendition('max-300x300').url

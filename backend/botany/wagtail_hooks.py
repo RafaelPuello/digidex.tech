@@ -7,6 +7,9 @@ from .models import Plant
 
 @hooks.register("register_icons")
 def register_icons(icons):
+    """
+    Register the Plant icon.
+    """
     return icons + ['botany/icons/plant.svg']
 
 
@@ -14,7 +17,6 @@ class PlantSnippetViewSet(SnippetViewSet):
     """
     A snippet view set for the Plant model.
     """
-
     model = Plant
     icon = "plant"
     menu_label = "Plants"

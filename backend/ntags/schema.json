@@ -52,17 +52,17 @@
         "active": {
           "type": "boolean"
         },
-        "content_type": {
+        "content": {
           "type": ["string", "null"],
-          "description": "Content type for GenericForeignKey"
+          "description": "Content stored on the tag"
         },
-        "object_id": {
-          "type": ["integer", "null"],
-          "description": "Object ID for GenericForeignKey"
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
         },
-        "content_object": {
-          "type": ["string", "null"],
-          "description": "Content object for GenericForeignKey"
+        "last_modified": {
+          "type": "string",
+          "format": "date-time"
         }
       },
       "required": ["serial_number"]

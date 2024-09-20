@@ -17,11 +17,8 @@ def assign_assistant_permissions(group):
     """
     Assigns the necessary assistant permissions for the given group.
     """
-    ASSISTANT_PERMISSIONS = [
-    ]
-
     permissions = Permission.objects.filter(
-        codename__in=ASSISTANT_PERMISSIONS
+        codename__in=[]
     )
     group.permissions.add(*permissions)
     group.save()

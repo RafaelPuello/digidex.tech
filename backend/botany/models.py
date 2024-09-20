@@ -34,7 +34,6 @@ class Plant(
         slug (str): A unique slug for the plant.
         collection (ForeignKey): The collection associated with the plant.
     """
-
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,

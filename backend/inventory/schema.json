@@ -47,17 +47,9 @@
           "type": "string",
           "description": "Reference to the box (ForeignKey to the box model)"
         },
-        "content_type": {
+        "content": {
           "type": "string",
-          "description": "Reference to the box item object type"
-        },
-        "object_id": {
-          "type": "string",
-          "description": "Reference to the box item object id"
-        },
-        "content_object": {
-          "type": "string",
-          "description": "Reference to the box item object"
+          "description": "Reference to the box item contents"
         },
         "created_at": {
           "type": "string",

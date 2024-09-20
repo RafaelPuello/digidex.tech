@@ -2,8 +2,6 @@ import uuid
 import numpy as np
 from django.db import models
 from django.conf import settings
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
 from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
 from django.utils.text import slugify
@@ -59,7 +57,6 @@ class NFCTagDesign(
         slug (str): A unique slug for the ntag design.
         collection (ForeignKey): The collection associated with the ntag design.
     """
-
     name = models.CharField(
         max_length=255,
         unique=True
@@ -70,7 +67,7 @@ class NFCTagDesign(
     designer = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
-        related_name='ntag_designs',
+        related_name='designs',
         null=True
     )
     uuid = models.UUIDField(
@@ -119,8 +116,8 @@ class NFCTagDesign(
         return self.name
 
     class Meta(TranslatableMixin.Meta):
-        verbose_name = _("ntag design")
-        verbose_name_plural = _("ntag designs")
+        verbose_name = _("design")
+        verbose_name_plural = _("designs")
 
 
 class NFCTag(models.Model):
@@ -132,15 +129,10 @@ class NFCTag(models.Model):
         user (User): The user who is assigned the NFC tag.
         design (NfcTagDesign): The design of NFC tag.
         active (bool): Indicates whether the NFC tag is active.
-        label (str): A label for the NFC tag.
-        limit (Q): The limit for the content_type field to restrict the choices to specific models.
-        content_type (ContentType): The type of the related content_object model.
-        object_id (PositiveIntegerField): The ID of the related content_object instance.
-        content_object (GenericForeignKey): The generic foreign key to the content_object instance.
+        content (json): The content stored on the NFC tag.
         created_at (datetime): The date and time when the NFC tag was created.
         last_modified (datetime): The date and time when the NFC tag was last modified.
     """
-
     serial_number = models.CharField(
         max_length=32,
         editable=False,
@@ -152,43 +144,21 @@ class NFCTag(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='tags'
+        related_name='ntags'
     )
     design = models.ForeignKey(
         NFCTagDesign,
         on_delete=models.PROTECT,
         blank=True,
         null=True,
-        related_name='tags'
+        related_name='ntags'
     )
     active = models.BooleanField(
         default=True
     )
-    label = models.CharField(
-        max_length=255,
+    content = models.JSONField(
         blank=True,
         null=True
-    )
-    limit = (  # Not saved in the db, but the limited options for the content_type field
-        models.Q(app_label='accounts', model='User') |  # noqa: W504 - used line break for readability
-        models.Q(app_label='botany', model='Plant') |  # noqa: W504 - used line break for readability
-        models.Q(app_label='inventory', model='Box')
-    )
-    content_type = models.ForeignKey(
-        ContentType,
-        limit_choices_to=limit,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True
-    )
-    object_id = models.PositiveIntegerField(
-        null=True,
-        blank=True,
-        db_index=True
-    )
-    content_object = GenericForeignKey(
-        'content_type',
-        'object_id'
     )
     created_at = models.DateTimeField(
         auto_now_add=True
@@ -274,10 +244,7 @@ class NFCTag(models.Model):
         """
         Returns a string representation of the NFC tag, with the serial number formatted as pairs of characters.
         """
-        if self.label:
-            return self.label
-        uid = ':'.join(self.serial_number[i:i + 2] for i in range(0, len(self.serial_number), 2))
-        return str(uid)
+        return self.serial_number
 
     class Meta:
         verbose_name = _("ntag")
@@ -308,7 +275,7 @@ class NFCTagScan(models.Model):
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
-        related_name='scans'
+        related_name='+'
     )
     scanned_at = models.DateTimeField(
         auto_now_add=True
@@ -321,8 +288,8 @@ class NFCTagScan(models.Model):
         return (f"Scan #{self.counter} for {self.ntag}")
 
     class Meta:
-        verbose_name = _("ntag scan")
-        verbose_name_plural = _("ntag scans")
+        verbose_name = _("scan")
+        verbose_name_plural = _("cans")
 
 
 class NFCTagEEPROM(
@@ -376,5 +343,5 @@ class NFCTagEEPROM(
         return str(self.ntag)
 
     class Meta:
-        verbose_name = _("ntag eeprom")
-        verbose_name_plural = _("ntag eeprom")
+        verbose_name = _("eeprom")
+        verbose_name_plural = _("eeproms")

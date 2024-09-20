@@ -44,7 +44,6 @@ class NFCTagSerializer(serializers.ModelSerializer):
     as well as information about the associated content object through the GenericForeignKey.
     """
 
-    content_object = serializers.SerializerMethodField()
     scans = NFCTagScanSerializer(many=True, read_only=True)
     eeprom = NFCTagEEPROMSerializer(read_only=True)
 
@@ -53,21 +52,11 @@ class NFCTagSerializer(serializers.ModelSerializer):
         Dynamically retrieves the object represented by the GenericForeignKey. This function can
         be extended to handle various content types such as Plant or User.
         """
-
-        if obj.content_object:
-            content_type = obj.content_type.model
-            if content_type == 'plant':
-                pass
-                from botany.serializers import PlantSerializer
-                return PlantSerializer(obj.content_object).data
-            elif content_type == 'user':
-                from accounts.serializers import UserSerializer
-                return UserSerializer(obj.content_object).data
-        return None
+        pass
 
     class Meta:
         model = NFCTag
         fields = [
-            'id', 'serial_number', 'user', 'design', 'active', 'label', 'content_type',
-            'object_id', 'content_object', 'created_at', 'last_modified', 'scans', 'eeprom'
+            'id', 'serial_number', 'user', 'design', 'active', 'content',
+            'created_at', 'last_modified', 'scans', 'eeprom'
         ]

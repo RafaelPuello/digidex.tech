@@ -9,13 +9,12 @@ class BoxItemViewSet(viewsets.ModelViewSet):
     """
     A viewset for viewing and editing box items.
     """
-
     queryset = BoxItem.objects.all()
     base_serializer_class = BoxItemSerializer
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [JWTAuthentication]
     lookup_field = 'id'
-    body_fields = ['id', 'content_type', 'object_id', 'content_object', 'created_at', 'last_modified']
+    body_fields = ['id', 'content', 'created_at', 'last_modified']
     meta_fields = ['id']
 
     def get_queryset(self):
@@ -29,7 +28,6 @@ class BoxViewSet(viewsets.ModelViewSet):
     """
     A viewset for viewing and editing boxes.
     """
-
     queryset = Box.objects.all()
     base_serializer_class = BoxSerializer
     permission_classes = [permissions.IsAuthenticated]
