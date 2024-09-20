@@ -7,9 +7,6 @@ from .models import Plant
 
 @hooks.register("register_icons")
 def register_icons(icons):
-    """
-    Register the Plant icon.
-    """
     return icons + ['botany/icons/plant.svg']
 
 

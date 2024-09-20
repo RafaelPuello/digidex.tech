@@ -1,8 +1,6 @@
 from uuid import uuid4
 from django.db import models
 from django.conf import settings
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
 from django.utils.text import slugify
 from modelcluster.fields import ParentalKey
@@ -140,3 +138,7 @@ class BoxItem(Orderable, models.Model):
         Returns a string representation of the box item.
         """
         return f"{self.box.name}'s item."
+
+    class Meta:
+        verbose_name = _("item")
+        verbose_name_plural = _("items")

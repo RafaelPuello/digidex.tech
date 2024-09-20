@@ -1,6 +1,5 @@
 from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth.models import Permission
 from django.utils.translation import gettext_lazy as _
 from wagtail.models import Page, Collection
 from wagtail.fields import RichTextField
@@ -113,22 +112,7 @@ class UserHomePage(Page):
         Returns:
             Collection: The collection instance with permissions set.
         """
-
-        PERMISSIONS = [
-            "add_plant", "change_plant", "delete_plant",
-            "add_box", "change_box", "delete_box",
-            "view_nfctagtype",
-            "view_nfctag", "change_nfctag",
-            "view_nfctagscan",
-            "view_nfctagmemory",
-            "access_admin",
-        ]
-
-        permissions = Permission.objects.filter(
-            codename__in=PERMISSIONS
-        )
-        group.permissions.add(*permissions)
-        group.save()
+        pass
 
     def __str__(self):
         """

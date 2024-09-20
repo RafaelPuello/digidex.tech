@@ -1,8 +1,4 @@
-from django.utils.translation import gettext_lazy as _
-from django.contrib.auth.models import Permission
-
-from django.utils.translation import gettext_lazy as _
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Permission, Group
 
 
 def create_home_group(user):
@@ -21,11 +17,8 @@ def assign_assistant_permissions(group):
     """
     Assigns the necessary assistant permissions for the given group.
     """
-    ASSISTANT_PERMISSIONS = [
-    ]
-
     permissions = Permission.objects.filter(
-        codename__in=ASSISTANT_PERMISSIONS
+        codename__in=[]
     )
     group.permissions.add(*permissions)
     group.save()

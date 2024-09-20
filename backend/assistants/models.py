@@ -9,11 +9,10 @@ class UserAssistant(models.Model):
     """
     A model to store the user's chat bot assistant.
     """
-
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name='assistant'
+        related_name='assistants'
     )
 
     def chat(self, question):
@@ -23,10 +22,7 @@ class UserAssistant(models.Model):
         return generate_chat(question) if question else _('Missing question parameter.')
 
     def __str__(self):
-        """
-        A string representation of the user's chat bot assistant.
-        """
-        return f"{self.user.username}'s Assistants"
+        return f"{self.user.username}'s assistants"
 
     class Meta:
         verbose_name = _('assistant')

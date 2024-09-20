@@ -273,7 +273,6 @@ class NFCTagScan(models.Model):
     scanned_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
-        blank=True,
         null=True,
         related_name='+'
     )
@@ -297,7 +296,7 @@ class NFCTagEEPROM(
     RevisionMixin,
     LockableMixin,
     models.Model
-    ):
+):
     """
     Model representing the eeprom contents of an NFC tag.
 
@@ -309,7 +308,6 @@ class NFCTagEEPROM(
         created_at (datetime): The date and time when the eeprom contents were created.
         last_modified (datetime): The date and time when the eeprom contents were last modified.
     """
-
     ntag = models.OneToOneField(
         NFCTag,
         on_delete=models.CASCADE,

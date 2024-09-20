@@ -86,9 +86,6 @@ class Plant(
         super().save(*args, **kwargs)
 
     def __str__(self):
-        """
-        Returns a string representation of the plant.
-        """
         return self.name
 
     class Meta(TranslatableMixin.Meta):

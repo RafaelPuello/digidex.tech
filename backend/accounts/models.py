@@ -7,8 +7,10 @@ from django.contrib.auth.models import AbstractUser, Group, Permission
 def create_user_group_permissions(group):
     """
     Creates the necessary permissions for the given group.
-    The permissions include 'add_image', 'change_image', 'choose_image', 'add_document',
-    'change_document', and 'choose_document'.
+
+    The permissions include:
+       'add_image', 'change_image', 'choose_image',
+       'add_document', 'change_document', 'choose_document'
     """
     permissions = Permission.objects.filter(
         codename__in=[
@@ -61,9 +63,6 @@ class User(AbstractUser):
             super().delete(*args, **kwargs)
 
     def __str__(self):
-        """
-        A string representation of the user.
-        """
         return f"{self.first_name} {self.last_name} ({self.username})"
 
     class Meta:

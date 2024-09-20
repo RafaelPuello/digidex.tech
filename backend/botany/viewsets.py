@@ -9,7 +9,6 @@ class PlantViewSet(viewsets.ModelViewSet):
     """
     A viewset for viewing and editing plants.
     """
-
     queryset = Plant.objects.all().order_by('id')
     serializer_class = PlantSerializer
     permission_classes = [permissions.IsAuthenticated]
