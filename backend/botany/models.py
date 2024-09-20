@@ -13,9 +13,11 @@ from wagtail.models import (
 )
 from wagtail.images import get_image_model
 from wagtail.documents import get_document_model
+from wagtail.search import index
 
 
 class Plant(
+    index.Indexed,
     DraftStateMixin,
     RevisionMixin,
     LockableMixin,
@@ -65,22 +67,21 @@ class Plant(
         blank=True
     )
 
+    search_fields = [
+        index.SearchField('name'),
+        index.AutocompleteField('name'),
+    ]
+
     def get_documents(self):
-        """
-        Returns all documents associated with plant.
-        """
         return get_document_model().objects.filter(collection=self.collection)
 
     def get_images(self):
-        """
-        Returns all images associated with plant.
-        """
         return get_image_model().objects.filter(collection=self.collection)
 
+    def get_preview_template(self, request, mode_name):
+        return "demo/previews/advert.html"
+
     def save(self, *args, **kwargs):
-        """
-        Overrides the save method to generate a slug for the plant if one is not provided.
-        """
         if not self.slug:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)

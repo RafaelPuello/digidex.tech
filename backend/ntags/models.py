@@ -15,12 +15,14 @@ from wagtail.models import (
 from wagtail.fields import RichTextField
 from wagtail.images import get_image_model
 from wagtail.documents import get_document_model
+from wagtail.search import index
 
 from .constants import NTAG213, IC_CHOICES, EEPROM_SIZE
 from .validators import validate_serial_number, validate_integrated_circuit
 
 
 class NFCTagDesign(
+    index.Indexed,
     DraftStateMixin,
     RevisionMixin,
     LockableMixin,
@@ -65,11 +67,19 @@ class NFCTagDesign(
         blank=True
     )
 
+    search_fields = [
+        index.SearchField('name'),
+        index.AutocompleteField('name'),
+    ]
+
     def get_documents(self):
         return get_document_model().objects.filter(collection=self.collection)
 
     def get_images(self):
         return get_image_model().objects.filter(collection=self.collection)
+
+    def get_preview_template(self, request, mode_name):
+        return "demo/previews/advert.html"
 
     def __str__(self):
         return self.name

@@ -22,7 +22,7 @@ class NFCTagDesignSnippetViewSet(SnippetViewSet):
     """
     model = NFCTagDesign
     icon = "design"
-    menu_label = "Tag Designs"
+    menu_label = "Designs"
     menu_name = "designs"
     copy_view_enabled = False
     list_filter = {"name": ["exact"], "description": ["icontains"]}
@@ -92,7 +92,7 @@ class NFCTagScanSnippetViewSet(SnippetViewSet):
     """
     model = NFCTagScan
     icon = "scan"
-    menu_label = "Tag Scans"
+    menu_label = "Scans"
     menu_name = "scans"
     copy_view_enabled = False
     # list_filter = {"ntag": ["exact"], "scanned_by": ["exact"], "scanned_at": ["date"]}
@@ -127,7 +127,7 @@ class NFCTagEEPROMSnippetViewSet(SnippetViewSet):
     """
     model = NFCTagEEPROM
     icon = "eeprom"
-    menu_label = "Tag EEPROM"
+    menu_label = "EEPROM"
     menu_name = "eeprom"
     copy_view_enabled = False
     # list_filter = {"ntag": ["exact"]}
