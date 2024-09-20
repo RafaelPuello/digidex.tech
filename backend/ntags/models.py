@@ -4,7 +4,6 @@ from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
-from django.utils.text import slugify
 from wagtail.models import (
     Collection,
     RevisionMixin,
@@ -17,24 +16,8 @@ from wagtail.fields import RichTextField
 from wagtail.images import get_image_model
 from wagtail.documents import get_document_model
 
-from .validators import validate_serial_number
-
-
-NTAG213 = "213"
-NTAG215 = "215"
-NTAG216 = "216"
-
-IC_CHOICES = (
-    (NTAG213, _("NTAG 213")),
-    (NTAG215, _("NTAG 215")),
-    (NTAG216, _("NTAG 216")),
-)
-
-EEPROM_SIZE = {
-    NTAG213: 180,
-    NTAG215: 540,
-    NTAG216: 924,
-}
+from .constants import NTAG213, IC_CHOICES, EEPROM_SIZE
+from .validators import validate_serial_number, validate_integrated_circuit
 
 
 class NFCTagDesign(
@@ -121,6 +104,7 @@ class NFCTag(models.Model):
         max_length=5,
         choices=IC_CHOICES,
         default=NTAG213,
+        validators=[validate_integrated_circuit]
     )
     design = models.ForeignKey(
         NFCTagDesign,
@@ -153,12 +137,10 @@ class NFCTag(models.Model):
         """
         Creates and returns a new eeprom object for the NFC tag.
         """
-        if self.integrated_circuit not in dict(IC_CHOICES).keys():
-            raise ValueError(_("Invalid integrated circuit type."))
-
-        # Create a 2D NumPy array filled with zeros
         columns = 4
         rows = EEPROM_SIZE[self.integrated_circuit] // columns
+
+        # Create a 2D NumPy array filled with zeros
         eeprom_2d = np.zeros((rows, columns), dtype=np.uint8)
         eeprom_bytes = eeprom_2d.tobytes()
 
