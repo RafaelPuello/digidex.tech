@@ -45,13 +45,14 @@ class NFCTagDesign(
         unique=True
     )
     description = RichTextField(
-        null=True
+        blank=True
     )
     designer = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         related_name='designs',
-        null=True
+        null=True,
+        blank=True
     )
     uuid = models.UUIDField(
         default=uuid.uuid4,
@@ -130,6 +131,7 @@ class NFCTag(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
+        blank=True,
         related_name='ntags'
     )
     content = models.JSONField(
