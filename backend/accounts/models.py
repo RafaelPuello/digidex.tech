@@ -1,28 +1,7 @@
 import uuid
 from django.db import models, transaction
 from django.utils.translation import gettext_lazy as _
-from django.contrib.auth.models import AbstractUser, Group, Permission
-
-
-def create_user_group_permissions(group):
-    """
-    Creates the necessary permissions for the given group.
-
-    The permissions include:
-       'add_image', 'change_image', 'choose_image',
-       'add_document', 'change_document', 'choose_document'
-    """
-    permissions = Permission.objects.filter(
-        codename__in=[
-            "add_plant", "change_plant", "delete_plant",
-            "add_box", "change_box", "delete_box",
-            "view_nfctag", "view_nfctagdesign", "view_nfctagscan", "view_nfctagmemory",
-            "access_admin",
-        ]
-    )
-    group.permissions.add(*permissions)
-    group.save()
-    return group
+from django.contrib.auth.models import AbstractUser, Group
 
 
 class User(AbstractUser):
