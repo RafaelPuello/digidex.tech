@@ -53,7 +53,6 @@ class NFCTagDesign(
         description (str): A description of the ntag design.
         designer (ForeignKey): The user who designed the ntag.
         uuid (UUID): A unique identifier for the ntag design.
-        slug (str): A unique slug for the ntag design.
         collection (ForeignKey): The collection associated with the ntag design.
     """
     name = models.CharField(
@@ -75,11 +74,6 @@ class NFCTagDesign(
         unique=True,
         db_index=True
     )
-    slug = models.SlugField(
-        max_length=255,
-        unique=True,
-        db_index=True
-    )
     collection = models.ForeignKey(
         Collection,
         on_delete=models.SET_NULL,
@@ -89,29 +83,12 @@ class NFCTagDesign(
     )
 
     def get_documents(self):
-        """
-        Returns all documents associated with ntag design.
-        """
         return get_document_model().objects.filter(collection=self.collection)
 
     def get_images(self):
-        """
-        Returns all images associated with ntag design.
-        """
         return get_image_model().objects.filter(collection=self.collection)
 
-    def save(self, *args, **kwargs):
-        """
-        Overrides the save method to generate a slug for the ntag design if one is not provided.
-        """
-        if not self.slug:
-            self.slug = slugify(self.name)
-        super().save(*args, **kwargs)
-
     def __str__(self):
-        """
-        Returns a string representation of the ntag design.
-        """
         return self.name
 
     class Meta(TranslatableMixin.Meta):
@@ -125,6 +102,7 @@ class NFCTag(models.Model):
 
     Attributes:
         serial_number (str): The serial number of the NFC tag.
+        integrated_circuit (str): The type of integrated circuit used in the NFC tag.
         user (User): The user who is assigned the NFC tag.
         design (NfcTagDesign): The design of NFC tag.
         active (bool): Indicates whether the NFC tag is active.
@@ -139,11 +117,10 @@ class NFCTag(models.Model):
         db_index=True,
         validators=[validate_serial_number]
     )
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name='ntags'
+    integrated_circuit = models.CharField(
+        max_length=5,
+        choices=IC_CHOICES,
+        default=NTAG213,
     )
     design = models.ForeignKey(
         NFCTagDesign,
@@ -154,6 +131,12 @@ class NFCTag(models.Model):
     )
     active = models.BooleanField(
         default=True
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='ntags'
     )
     content = models.JSONField(
         blank=True,
@@ -166,41 +149,24 @@ class NFCTag(models.Model):
         auto_now=True
     )
 
-    def create_eeprom(self, ic_type=NTAG213):
+    def create_eeprom(self):
         """
-        Creates a new eeprom object for the NFC tag.
-
-        Args:
-            ic_type (str): The type of integrated circuit used in the NFC tag.
-
-        Returns:
-            tuple: (NFCTagEEPROM, eeprom_view) The newly created eeprom object and its eeprom view.
+        Creates and returns a new eeprom object for the NFC tag.
         """
-
-        # Validate the integrated circuit type
-        if ic_type not in dict(IC_CHOICES).keys():
+        if self.integrated_circuit not in dict(IC_CHOICES).keys():
             raise ValueError(_("Invalid integrated circuit type."))
 
+        # Create a 2D NumPy array filled with zeros
         columns = 4
-        rows = EEPROM_SIZE[ic_type] // columns
-
-        # Step 1: Create a 2D NumPy array filled with zeros
+        rows = EEPROM_SIZE[self.integrated_circuit] // columns
         eeprom_2d = np.zeros((rows, columns), dtype=np.uint8)
-
-        # Step 2: Serialize the 2D array to bytes for storage
         eeprom_bytes = eeprom_2d.tobytes()
 
-        # Step 3: Create the NFCTagEEPROM object in the database
         ntag_eeprom = NFCTagEEPROM.objects.create(
             ntag=self,
-            integrated_circuit=ic_type,
             eeprom=eeprom_bytes
         )
-
-        # Optional Step 4: Create a eepromview for in-eeprom 2D access
-        eeprom_view = eeprom_2d.view()
-
-        return ntag_eeprom, eeprom_view
+        return ntag_eeprom, eeprom_2d.view()
 
     def log_scan(self, user, counter):
         """
@@ -240,9 +206,6 @@ class NFCTag(models.Model):
         self.save()
 
     def __str__(self):
-        """
-        Returns a string representation of the NFC tag, with the serial number formatted as pairs of characters.
-        """
         return self.serial_number
 
     class Meta:
@@ -280,48 +243,34 @@ class NFCTagScan(models.Model):
     )
 
     def __str__(self):
-        """
-        Returns a string representation of the ntag scan, including the scanning user and timestamp if available.
-        """
         return (f"Scan #{self.counter} for {self.ntag}")
 
     class Meta:
         verbose_name = _("scan")
-        verbose_name_plural = _("cans")
+        verbose_name_plural = _("scans")
 
 
-class NFCTagEEPROM(
-    DraftStateMixin,
-    RevisionMixin,
-    LockableMixin,
-    models.Model
-):
+class NFCTagEEPROM(models.Model):
     """
     Model representing the eeprom contents of an NFC tag.
 
     Attributes:
-        ntag (NfcTag): The NFC tag whose eeprom contents are stored.
         uuid (UUID): A unique identifier for the NFC tag.
-        integrated_circuit (str): The type of integrated circuit used in the NFC tag.
+        ntag (NfcTag): The NFC tag whose eeprom contents are stored.
         eeprom (binary): The eeprom contents of the NFC tag.
         created_at (datetime): The date and time when the eeprom contents were created.
         last_modified (datetime): The date and time when the eeprom contents were last modified.
     """
-    ntag = models.OneToOneField(
-        NFCTag,
-        on_delete=models.CASCADE,
-        related_name='eeprom'
-    )
     uuid = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
         unique=True,
     )
-    integrated_circuit = models.CharField(
-        max_length=5,
-        choices=IC_CHOICES,
-        default=NTAG213,
+    ntag = models.OneToOneField(
+        NFCTag,
+        on_delete=models.CASCADE,
+        related_name='eeprom'
     )
     eeprom = models.BinaryField(
         max_length=888,
@@ -334,9 +283,6 @@ class NFCTagEEPROM(
     )
 
     def __str__(self):
-        """
-        Returns a string representation of the NFC tag eeprom contents.
-        """
         return str(self.ntag)
 
     class Meta:

@@ -15,7 +15,7 @@ class BoxSnippetViewSet(SnippetViewSet):
     menu_label = "Boxes"
     menu_name = "boxes"
 
-    shared_panels = [
+    public_panels = [
         FieldPanel("name"),
         FieldPanel("description"),
     ]
@@ -25,7 +25,7 @@ class BoxSnippetViewSet(SnippetViewSet):
 
     edit_handler = TabbedInterface(
         [
-            ObjectList(shared_panels, heading='Details'),
+            ObjectList(public_panels, heading='Details'),
             ObjectList(private_panels, heading='Admin only', permission="superuser"),
         ]
     )

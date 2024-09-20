@@ -19,7 +19,7 @@ class PlantSnippetViewSet(SnippetViewSet):
     menu_label = "Plants"
     menu_name = "plants"
 
-    shared_panels = [
+    public_panels = [
         FieldPanel("name"),
         FieldPanel("description"),
         FieldPanel("collection"),
@@ -30,7 +30,7 @@ class PlantSnippetViewSet(SnippetViewSet):
 
     edit_handler = TabbedInterface(
         [
-            ObjectList(shared_panels, heading='Details'),
+            ObjectList(public_panels, heading='Details'),
             ObjectList(private_panels, heading='Admin only', permission="superuser"),
         ]
     )

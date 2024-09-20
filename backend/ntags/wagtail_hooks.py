@@ -20,7 +20,6 @@ class NFCTagDesignSnippetViewSet(SnippetViewSet):
     """
     A snippetviewset for viewing and editing the designs of NFC Tags.
     """
-
     model = NFCTagDesign
     icon = "design"
     menu_label = "Tag Designs"
@@ -32,7 +31,7 @@ class NFCTagDesignSnippetViewSet(SnippetViewSet):
     admin_url_namespace = "ntag_designs"
     base_url_path = "ntags/designs"
 
-    shared_panels = [
+    public_panels = [
         FieldPanel("name"),
         FieldPanel("description"),
     ]
@@ -42,7 +41,7 @@ class NFCTagDesignSnippetViewSet(SnippetViewSet):
 
     edit_handler = TabbedInterface(
         [
-            ObjectList(shared_panels, heading='Details'),
+            ObjectList(public_panels, heading='Details'),
             ObjectList(private_panels, heading='Admin only', permission="superuser"),
         ]
     )
@@ -52,7 +51,6 @@ class NFCTagSnippetViewSet(SnippetViewSet):
     """
     A snippetviewset for viewing and editing NFC Tags.
     """
-
     model = NFCTag
     icon = "tag"
     menu_label = "Tags"
@@ -64,7 +62,7 @@ class NFCTagSnippetViewSet(SnippetViewSet):
     admin_url_namespace = "ntags"
     base_url_path = "ntags/tags"
 
-    shared_panels = [
+    public_panels = [
     ]
 
     private_panels = [
@@ -76,34 +74,22 @@ class NFCTagSnippetViewSet(SnippetViewSet):
 
     edit_handler = TabbedInterface(
         [
-            ObjectList(shared_panels, heading='Details'),
+            ObjectList(public_panels, heading='Details'),
             ObjectList(private_panels, heading='Admin only', permission="superuser"),
         ]
     )
 
     def get_queryset(self, request):
-        """
-        Filter NFC tags based on user roles:
-        """
-
         qs = super().get_queryset(request)
         if qs is None:
             qs = self.model.objects.all()
-        user = request.user
-
-        if user.is_superuser:
-            return qs
-        elif user.groups.filter(name='Trainers').exists():
-            return qs.filter(user=user)
-        else:
-            return qs.none()
+        return qs.filter(user=request.user)
 
 
 class NFCTagScanSnippetViewSet(SnippetViewSet):
     """
     A snippetviewset for viewing and editing NFC Tag scans.
     """
-
     model = NFCTagScan
     icon = "scan"
     menu_label = "Tag Scans"
@@ -115,7 +101,7 @@ class NFCTagScanSnippetViewSet(SnippetViewSet):
     admin_url_namespace = "ntag_scans"
     base_url_path = "ntags/scans"
 
-    shared_panels = [
+    public_panels = [
     ]
 
     private_panels = [
@@ -123,37 +109,22 @@ class NFCTagScanSnippetViewSet(SnippetViewSet):
 
     edit_handler = TabbedInterface(
         [
-            ObjectList(shared_panels, heading='Details'),
+            ObjectList(public_panels, heading='Details'),
             ObjectList(private_panels, heading='Admin only', permission="superuser"),
         ]
     )
 
     def get_queryset(self, request):
-        """
-        Filter NFC tag scans based on user roles:
-        - Superusers see all tag scans.
-        - Trainers see tag scans associated with their tags.
-        - Others see no tag scans.
-        """
-
         qs = super().get_queryset(request)
         if qs is None:
             qs = self.model.objects.all()
-        user = request.user
-
-        if user.is_superuser:
-            return qs
-        elif user.groups.filter(name='Trainers').exists():
-            return qs.filter(ntag__user=user)
-        else:
-            return qs.none()
+        return qs.filter(ntag__user=request.user)
 
 
 class NFCTagEEPROMSnippetViewSet(SnippetViewSet):
     """
     A snippetviewset for viewing and editing NFC Tag eeprom.
     """
-
     model = NFCTagEEPROM
     icon = "eeprom"
     menu_label = "Tag EEPROM"
@@ -165,7 +136,7 @@ class NFCTagEEPROMSnippetViewSet(SnippetViewSet):
     admin_url_namespace = "ntag_eeprom"
     base_url_path = "ntags/eeprom"
 
-    shared_panels = [
+    public_panels = [
     ]
 
     private_panels = [
@@ -173,37 +144,22 @@ class NFCTagEEPROMSnippetViewSet(SnippetViewSet):
 
     edit_handler = TabbedInterface(
         [
-            ObjectList(shared_panels, heading='Details'),
+            ObjectList(public_panels, heading='Details'),
             ObjectList(private_panels, heading='Admin only', permission="superuser"),
         ]
     )
 
     def get_queryset(self, request):
-        """
-        Filter NFC tag eeprom based on user roles:
-        - Superusers see all tag memories.
-        - Trainers see tag memories associated with their tags.
-        - Others see no tag memories.
-        """
-
         qs = super().get_queryset(request)
         if qs is None:
             qs = self.model.objects.all()
-        user = request.user
-
-        if user.is_superuser:
-            return qs
-        elif user.groups.filter(name='Trainers').exists():
-            return qs.filter(ntag__user=user)
-        else:
-            return qs.none()
+        return qs.filter(ntag__user=request.user)
 
 
 class NfcTagSnippetViewSetGroup(SnippetViewSetGroup):
     """
     A snippetviewset group for NFC Tags.
     """
-
     items = [NFCTagSnippetViewSet, NFCTagDesignSnippetViewSet, NFCTagScanSnippetViewSet, NFCTagEEPROMSnippetViewSet]
     menu_icon = "ntag"
     menu_label = "NFC Tags"

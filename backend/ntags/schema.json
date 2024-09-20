@@ -23,16 +23,12 @@
           "type": "string",
           "format": "uuid"
         },
-        "slug": {
-          "type": "string",
-          "maxLength": 255
-        },
         "collection": {
           "type": "string",
           "maxLength": 255
         }
       },
-      "required": ["name", "uuid", "slug"]
+      "required": ["name", "uuid"]
     },
     "NFCTag": {
       "type": "object",
@@ -40,6 +36,10 @@
         "serial_number": {
           "type": "string",
           "maxLength": 32
+        },
+        "integrated_circuit": {
+          "type": "string",
+          "enum": ["213", "215", "216"]
         },
         "user": {
           "type": ["string", "null"],
@@ -100,10 +100,6 @@
           "type": "string",
           "description": "Foreign key reference to NFCTag"
         },
-        "integrated_circuit": {
-          "type": "string",
-          "enum": ["213", "215", "216"]
-        },
         "eeprom": {
           "type": "string",
           "maxLength": 4096
@@ -124,7 +120,7 @@
     "ntags": { "$ref": "#/definitions/NFCTag" },
     "designs": { "$ref": "#/definitions/NFCTagDesign" },
     "scans": { "$ref": "#/definitions/NFCTagScan" },
-    "memories": { "$ref": "#/definitions/NFCTagEEPROM" }
+    "eeproms": { "$ref": "#/definitions/NFCTagEEPROM" }
   }
 }
   

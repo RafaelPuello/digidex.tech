@@ -9,7 +9,6 @@ def link(request):
     """
     Handles the initial logic for an NFC tag link.
     """
-
     mirrored_values = request.GET.get('m', None)
     # Separation character "x" is automatically mirrored
     # between UID mirror and NFC counter mirror.
