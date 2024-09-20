@@ -2,9 +2,42 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://digidex.tech/home.schema.json",
   "title": "Home Application Model Schema",
-  "description": "Model for managing pages.",
+  "description": "Schema for the Home application models, including HomePage, UserCollection, and UserPage.",
   "type": "object",
   "definitions": {
+    "UserCollection": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "type": "string",
+          "description": "The UUID of the associated user"
+        },
+        "collection": {
+          "type": "string",
+          "description": "The name of the associated collection"
+        }
+      },
+      "required": ["user", "collection"]
+    },
+    "UserPage": {
+      "type": "object",
+      "properties": {
+        "user_collection": {
+          "type": "object",
+          "description": "The associated UserCollection object",
+          "$ref": "#/definitions/UserCollection"
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the user page"
+        },
+        "slug": {
+          "type": "string",
+          "description": "The slug of the user page"
+        }
+      },
+      "required": ["user_collection", "title", "slug"]
+    },
     "HomePage": {
       "type": "object",
       "properties": {
@@ -18,6 +51,8 @@
     }
   },
   "properties": {
+    "userCollection": { "$ref": "#/definitions/UserCollection" },
+    "userPage": { "$ref": "#/definitions/UserPage" },
     "home": { "$ref": "#/definitions/HomePage" }
   }
 }

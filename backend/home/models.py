@@ -1,9 +1,90 @@
 from django.db import models
-from django.core.exceptions import ObjectDoesNotExist
+from django.conf import settings
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from wagtail.models import Page, Collection
 from wagtail.fields import RichTextField
-from wagtail.admin.panels import FieldPanel
+
+
+class UserCollection(models.Model):
+    """
+    Represents a user's collection.
+    """
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name='collection'
+    )
+    collection = models.OneToOneField(
+        Collection,
+        on_delete=models.PROTECT,
+        related_name='+'
+    )
+
+    def create_user_page(self):
+        root_page = UserPage.get_root_page()
+        try:
+            return root_page.get_children().get(user_collection=self)
+        except Page.DoesNotExist:
+            user_page = UserPage(
+                title=self.user.username,
+                slug=slugify(self.user.username),
+                owner=self.user,
+                user_collection=self
+            )
+            root_page.add_child(instance=user_page)
+            return user_page.save_revision().publish()
+
+    @staticmethod
+    def get_root_collection():
+        root = Collection.get_first_root_node()
+        if not root:
+            raise Exception("Root collection not found. Please ensure a root collection exists.")
+        return root
+
+    @classmethod
+    def get_for_user(cls, user):
+        root = cls.get_root_collection()
+        try:
+            collection = root.get_children().get(name=str(user.uuid))
+        except Collection.DoesNotExist:
+            collection = root.add_child(instance=Collection(name=str(user.uuid)))
+        return cls.objects.get_or_create(user=user, collection=collection)[0]
+
+    def __str__(self):
+        return f"{self.user.username}'s collection"
+
+    class Meta:
+        verbose_name = _('user collection')
+        verbose_name_plural = _('user collections')
+
+
+class UserPage(Page):
+    """
+    Represents a user's page.
+    """
+    user_collection = models.OneToOneField(
+        UserCollection,
+        on_delete=models.PROTECT,
+        related_name='page'
+    )
+
+    parent_page_types = ['home.HomePage']
+    child_page_types = []
+
+    @staticmethod
+    def get_root_page():
+        root = HomePage.objects.first()
+        if not root:
+            raise Exception("home page not found. Please ensure a home page exists.")
+        return root
+
+    def __str__(self):
+        return f"{self.user_collection} and  page"
+
+    class Meta:
+        verbose_name = _('user page')
+        verbose_name_plural = _('user pages')
 
 
 class HomePage(Page):
@@ -14,111 +95,12 @@ class HomePage(Page):
         blank=True
     )
 
-    content_panels = Page.content_panels + [
-        FieldPanel('body')
-    ]
-
     parent_page_types = ['wagtailcore.Page']
-
-    child_page_types = ['home.UserHomePage']
+    child_page_types = ['home.UserPage']
 
     def __str__(self):
-        """
-        Represents the string representation of the homepage by its title.
-        """
         return self.title
 
     class Meta:
-        verbose_name = _('homepage')
-
-
-class UserHomePage(Page):
-    """
-    Represents the homepage of a user.
-    """
-    body = RichTextField(
-        blank=True
-    )
-    collection = models.ForeignKey(
-        Collection,
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+',
-        verbose_name='collection',
-    )
-
-    content_panels = Page.content_panels + [
-        FieldPanel('body')
-    ]
-
-    parent_page_types = ['home.HomePage']
-
-    child_page_types = []
-
-    def setup_collection(self):
-        """
-        Creates a collection for the trainer if it does not already exist.
-        The collection path will be: root -> trainer collection -> [user_uuid].
-
-        Args:
-            group (Group): An instance of the Group model.
-
-        Returns:
-            Collection: The created or retrieved collection instance.
-        """
-        group = None
-
-        # Check if the trainer already has a collection
-        if self.collection:
-            return self.collection
-
-        # Get the root collection
-        try:
-            root_collection = Collection.get_first_root_node()
-        except ObjectDoesNotExist:
-            raise Exception("Root collection not found. Please ensure a root collection exists.")
-
-        # Create the 'Trainer Collection' under the root and save it
-        root_user_collection = Collection(
-            name="Trainer Collections"
-        )
-        root_collection.add_child(instance=root_user_collection)
-        root_user_collection.save()
-
-        # Create the user's specific collection under the root 'Trainer Collections'
-        user_collection = Collection(
-            name=self.uuid
-        )
-        root_user_collection.add_child(instance=user_collection)
-
-        # Set up the permissions for the group
-        user_collection = self.setup_collection_permissions(self, group)
-
-        # Assign the collection to the user
-        self.collection = user_collection
-        self.save()
-        return user_collection
-
-    def setup_collection_permissions(self, group):
-        """
-        Creates the necessary permissions for the given group on the given collection.
-        The permissions include 'add_image', 'change_image', 'choose_image', 'add_document',
-        'change_document', and 'choose_document'.
-
-        Args:
-            collection (Collection): An instance of the Collection model.
-            group (Group): An instance of the Group model.
-        Returns:
-            Collection: The collection instance with permissions set.
-        """
-        pass
-
-    def __str__(self):
-        """
-        Represents the string representation of the user homepage by its title.
-        """
-        return self.title
-
-    class Meta:
-        verbose_name = _('user homepage')
+        verbose_name = _('home page')
+        verbose_name_plural = _('home pages')
