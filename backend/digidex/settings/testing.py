@@ -13,7 +13,7 @@ WAGTAILADMIN_BASE_URL = f"{SITE_PROTOCOL}://{SITE_HOSTNAME}"
 # ------------------------------------------------------------------------
 # Database Configuration (TEST)
 # ------------------------------------------------------------------------
-DATABASES['default']['NAME'] = DB_TEST_NAME  # noqa: F405
+# DATABASES['default']['NAME'] = DATABASES['default']['TEST']['NAME']
 
 CACHES = {
     'default': {

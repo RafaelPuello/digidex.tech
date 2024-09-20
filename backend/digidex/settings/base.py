@@ -106,8 +106,6 @@ DB_PASSWORD = os.getenv('DB_PASSWORD')
 DB_HOST = os.getenv('DB_HOST')
 DB_PORT = os.getenv('DB_PORT')
 
-DB_TEST_NAME = os.getenv('DB_TEST_NAME')
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -115,7 +113,10 @@ DATABASES = {
         'USER': DB_USERNAME,
         'PASSWORD': DB_PASSWORD,
         'HOST': DB_HOST,
-        'PORT': DB_PORT
+        'PORT': DB_PORT,
+        "TEST": {
+            "NAME": f"test_{DB_NAME}",
+        }
     }
 }
 

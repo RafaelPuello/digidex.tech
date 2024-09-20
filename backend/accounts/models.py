@@ -26,12 +26,6 @@ class User(AbstractUser):
         auto_now=True
     )
 
-    def get_inventory(self):
-        """
-        Returns all inventory boxes of the user.
-        """
-        return self.boxes.all()
-
     def delete(self, *args, **kwargs):
         """
         Deletes the user and the associated group.

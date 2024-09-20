@@ -5,7 +5,6 @@ from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
 from django.utils.text import slugify
-from modelcluster.models import ClusterableModel
 from wagtail.models import (
     Collection,
     RevisionMixin,
@@ -44,7 +43,7 @@ class NFCTagDesign(
     LockableMixin,
     TranslatableMixin,
     PreviewableMixin,
-    ClusterableModel
+    models.Model
 ):
     """
     Model representing the design of an ntag.
