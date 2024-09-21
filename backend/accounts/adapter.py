@@ -3,9 +3,6 @@ from allauth.account.adapter import DefaultAccountAdapter
 
 
 class UserAccountAdapter(DefaultAccountAdapter):
-    """
-    Custom account adapter for project.
-    """
     def get_login_redirect_url(self, request):
         """
         Returns the default URL to redirect to after logging in.
