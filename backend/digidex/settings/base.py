@@ -24,13 +24,9 @@ INSTALLED_APPS = [
 
     "accounts",
     "base",
-    "assistants",
-    "botany",
     "ntags",
-    "inventory",
     "home",
     "search",
-    "api",
 
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
