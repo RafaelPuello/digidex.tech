@@ -51,18 +51,6 @@
         },
         "active": {
           "type": "boolean"
-        },
-        "content": {
-          "type": ["string", "null"],
-          "description": "Content stored on the tag"
-        },
-        "created_at": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "last_modified": {
-          "type": "string",
-          "format": "date-time"
         }
       },
       "required": ["serial_number"]

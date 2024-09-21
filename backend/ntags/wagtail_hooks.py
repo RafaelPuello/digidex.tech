@@ -68,7 +68,6 @@ class NFCTagSnippetViewSet(SnippetViewSet):
     private_panels = [
         FieldPanel("user"),
         FieldPanel("design"),
-        FieldPanel("content"),
         FieldPanel("active"),
     ]
 

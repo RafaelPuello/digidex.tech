@@ -2,6 +2,8 @@ import uuid
 import numpy as np
 from django.db import models
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.contrib.contenttypes.models import ContentType
 from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
 from wagtail.models import (
@@ -19,6 +21,39 @@ from wagtail.search import index
 
 from .constants import NTAG213, IC_CHOICES, EEPROM_SIZE
 from .validators import validate_serial_number, validate_integrated_circuit
+
+
+class NFCTaggableManager(models.Manager):
+    def add(self, obj, nfc_tag):
+        content_type = ContentType.objects.get_for_model(obj)
+        tagged_item, created = NFCTaggedItem.objects.get_or_create(
+            nfc_tag=nfc_tag,
+            content_type=content_type,
+            object_id=obj.pk
+        )
+        return tagged_item
+
+    def remove(self, obj, nfc_tag):
+        content_type = ContentType.objects.get_for_model(obj)
+        return NFCTaggedItem.objects.filter(
+            nfc_tag=nfc_tag,
+            content_type=content_type,
+            object_id=obj.pk
+        ).delete()
+
+    def clear(self, obj):
+        content_type = ContentType.objects.get_for_model(obj)
+        return NFCTaggedItem.objects.filter(
+            content_type=content_type,
+            object_id=obj.pk
+        ).delete()
+
+    def get_tags(self, obj):
+        content_type = ContentType.objects.get_for_model(obj)
+        return NFCTag.objects.filter(
+            tagged_items__content_type=content_type,
+            tagged_items__object_id=obj.pk
+        )
 
 
 class NFCTagDesign(
@@ -50,7 +85,7 @@ class NFCTagDesign(
     designer = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
-        related_name='designs',
+        related_name='ntag_designs',
         null=True,
         blank=True
     )
@@ -100,9 +135,6 @@ class NFCTag(models.Model):
         user (User): The user who is assigned the NFC tag.
         design (NfcTagDesign): The design of NFC tag.
         active (bool): Indicates whether the NFC tag is active.
-        content (json): The content stored on the NFC tag.
-        created_at (datetime): The date and time when the NFC tag was created.
-        last_modified (datetime): The date and time when the NFC tag was last modified.
     """
     serial_number = models.CharField(
         max_length=32,
@@ -133,16 +165,6 @@ class NFCTag(models.Model):
         null=True,
         blank=True,
         related_name='ntags'
-    )
-    content = models.JSONField(
-        blank=True,
-        null=True
-    )
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
-    last_modified = models.DateTimeField(
-        auto_now=True
     )
 
     def create_eeprom(self):
@@ -185,26 +207,41 @@ class NFCTag(models.Model):
             print(f"Error logging scan: {e}")
             return False
 
-    def activate_tag(self):
-        """
-        Activates the NFC tag.
-        """
-        self.active = True
-        self.save()
-
-    def deactivate_tag(self):
-        """
-        Deactivates the NFC tag.
-        """
-        self.active = False
-        self.save()
-
     def __str__(self):
         return self.serial_number
 
     class Meta:
         verbose_name = _("ntag")
         verbose_name_plural = _("ntags")
+
+
+class NFCTaggedItem(models.Model):
+    """
+    Model representing the relationship between NFCTags and any other model instance.
+    """
+    nfc_tag = models.ForeignKey(
+        NFCTag,
+        on_delete=models.CASCADE,
+        related_name='tagged_items'
+    )
+    content_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        related_name='nfc_tagged_items'
+    )
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey(
+        'content_type',
+        'object_id'
+    )
+
+    class Meta:
+        unique_together = ('nfc_tag', 'content_type', 'object_id')
+        verbose_name = _("NFC Tagged Item")
+        verbose_name_plural = _("NFC Tagged Items")
+
+    def __str__(self):
+        return f"{self.nfc_tag} tagged to {self.content_object}"
 
 
 class NFCTagScan(models.Model):
@@ -217,7 +254,6 @@ class NFCTagScan(models.Model):
         scanned_by (User): The user who scanned the NFC tag.
         scanned_at (datetime): The date and time when the NFC tag was scanned.
     """
-
     ntag = models.ForeignKey(
         NFCTag,
         on_delete=models.CASCADE,
