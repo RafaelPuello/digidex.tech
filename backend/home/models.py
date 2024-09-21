@@ -9,7 +9,12 @@ from wagtail.fields import RichTextField
 class UserCollection(models.Model):
     """
     Represents a user's collection.
+
+    Attributes:
+        user (User): The user who owns the collection.
+        collection (Collection): The collection that belongs to the user.
     """
+
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
@@ -62,7 +67,11 @@ class UserCollection(models.Model):
 class UserPage(Page):
     """
     Represents a user's page.
+
+    Attributes:
+        user_collection (UserCollection): The user collection that the page belongs to.
     """
+
     user_collection = models.OneToOneField(
         UserCollection,
         on_delete=models.PROTECT,
@@ -90,6 +99,9 @@ class UserPage(Page):
 class HomePage(Page):
     """
     Represents the homepage of the website.
+
+    Attributes:
+        body (RichTextField): The body of the homepage.
     """
     body = RichTextField(
         blank=True

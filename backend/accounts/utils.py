@@ -8,6 +8,7 @@ def create_user_group(user):
     Returns:
         Group: The created or retrieved group instance.
     """
+
     group = Group.objects.create(name=user.uuid)
     user.groups.add(group)
     return group

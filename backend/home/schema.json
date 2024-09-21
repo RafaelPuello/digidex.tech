@@ -51,8 +51,8 @@
     }
   },
   "properties": {
-    "userCollection": { "$ref": "#/definitions/UserCollection" },
-    "userPage": { "$ref": "#/definitions/UserPage" },
+    "collection": { "$ref": "#/definitions/UserCollection" },
+    "page": { "$ref": "#/definitions/UserPage" },
     "home": { "$ref": "#/definitions/HomePage" }
   }
 }

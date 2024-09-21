@@ -10,26 +10,32 @@ class User(AbstractUser):
 
     Attributes:
         uuid (uuid): A unique identifier for the user.
-        created_at (datetime): The date and time the user was created.
-        last_modified (datetime): The date and time the user was last updated.
+
+        username (str): The username of the user.
+        first_name (str): The first name of the user.
+        last_name (str): The last name of the user.
+        email (str): The email address of the user.
+        groups (list): The groups the user belongs to.
+        user_permissions (list): The permissions the user has.
+        is_staff (bool): Whether the user is a staff member.
+        is_active (bool): Whether the user is active.
+        is_superuser (bool): Whether the user is a superuser.
+        last_login (datetime): The date and time the user last logged in.
+        date_joined (datetime): The date and time the user joined.
     """
+
     uuid = models.UUIDField(
         default=uuid.uuid4,
         unique=True,
         editable=False,
         db_index=True,
     )
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
-    last_modified = models.DateTimeField(
-        auto_now=True
-    )
 
     def delete(self, *args, **kwargs):
         """
         Deletes the user and the associated group.
         """
+    
         with transaction.atomic():
             user_group = Group.objects.get(name=self.uuid)
             user_group.delete()

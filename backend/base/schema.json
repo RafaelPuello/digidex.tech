@@ -5,52 +5,124 @@
   "description": "Models for managing app-wide content.",
   "type": "object",
   "definitions": {
-    "BaseImage": {
-      "type": "object",
-      "properties": {
-        "src": {
-          "type": "string",
-          "format": "uri"
-        },
-        "alt": {
-          "type": "string"
-        }
-      },
-      "required": ["src", "alt"]
-    },
-    "BaseRendition": {
-      "type": "object",
-      "properties": {
-        "src": {
-          "type": "string",
-          "format": "uri"
-        },
-        "alt": {
-          "type": "string"
-        },
-        "width": {
-          "type": "integer"
-        },
-        "height": {
-          "type": "integer"
-        }
-      },
-      "required": ["src", "alt", "width", "height"]
-    },
     "BaseDocument": {
       "type": "object",
       "properties": {
         "title": {
           "type": "string"
         },
-        "description": {
+        "file": {
+          "type": "string",
+          "format": "binary"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "file_size": {
+          "type": "integer"
+        },
+        "file_hash": {
           "type": "string"
         },
-        "content": {
+        "source": {
+          "type": "string"
+        },
+        "collection": {
+          "type": "string"
+        },
+        "uploaded_by_user": {
+          "type": "string"
+        },
+        "caption": {
+          "type": "string"
+        },
+        "sort_order": {
+          "type": "integer"
+        }
+      },
+      "required": ["title", "file", "created_at"]
+    },
+    "BaseImage": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "file": {
+          "type": "string",
+          "format": "binary"
+        },
+        "width": {
+          "type": "integer"
+        },
+        "height": {
+          "type": "integer"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "focal_point_x": {
+          "type": "integer"
+        },
+        "focal_point_y": {
+          "type": "integer"
+        },
+        "focal_point_width": {
+          "type": "integer"
+        },
+        "focal_point_height": {
+          "type": "integer"
+        },
+        "file_size": {
+          "type": "integer"
+        },
+        "file_hash": {
+          "type": "string"
+        },
+        "collection": {
+          "type": "string"
+        },
+        "uploaded_by_user": {
+          "type": "string"
+        },
+        "alt": {
+          "type": "string"
+        },
+        "caption": {
+          "type": "string"
+        },
+        "sort_order": {
+          "type": "integer"
+        }
+      },
+      "required": ["title", "file", "width", "height", "created_at"]
+    },
+    "BaseRendition": {
+      "type": "object",
+      "properties": {
+        "filter_spec": {
+          "type": "string"
+        },
+        "file": {
+          "type": "string",
+          "format": "binary"
+        },
+        "width": {
+          "type": "integer"
+        },
+        "height": {
+          "type": "integer"
+        },
+        "focal_point_key": {
+          "type": "string"
+        },
+        "image": {
           "type": "string"
         }
       },
-      "required": ["title", "description", "content"]
+      "required": ["filter_spec", "file", "width", "height", "image"]
     }
   },
   "images": { "$ref": "#/definitions/BaseImage" },

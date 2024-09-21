@@ -20,9 +20,9 @@ def show_relevant_pages_only(parent_page, pages, request):
     """
     Show only relevant pages to non-superusers.
     """
-    user = request.user
-    if not user.is_superuser:
-        pages = pages.filter(owner=user)
+
+    if not request.user.is_superuser:
+        pages = pages.filter(owner=request.user)
     return pages
 
 
@@ -31,6 +31,7 @@ def construct_main_menu_items(request, menu_items):
     """
     Hide menu items for non-superusers.
     """
+
     HIDDEN_MAIN_MENU_ITEMS = (
         CollectionsMenuItem,
         SnippetsMenuItem,
@@ -38,8 +39,7 @@ def construct_main_menu_items(request, menu_items):
         DocumentsMenuItem
     )
 
-    user = request.user
-    if not user.is_superuser:
+    if not request.user.is_superuser:
         modified_menu_items = []
         for item in menu_items:
             if isinstance(item, HIDDEN_MAIN_MENU_ITEMS):
@@ -53,8 +53,8 @@ def hide_report_menu_items(request, menu_items):
     """
     Hide report menu items for non-superusers.
     """
-    user = request.user
-    if not user.is_superuser:
+
+    if not request.user.is_superuser:
         menu_items[:] = [
             item for item in menu_items
             if not isinstance(item, (
@@ -72,8 +72,8 @@ def hide_summary_items(request, summary_items):
     """
     Hide summary items for non-superusers.
     """
-    user = request.user
-    if not user.is_superuser:
+
+    if not request.user.is_superuser:
         summary_items[:] = [
             item for item in summary_items
             if not isinstance(item, (

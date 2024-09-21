@@ -8,6 +8,11 @@
     "User": {
       "type": "object",
       "properties": {
+        "uuid": {
+          "type": "string",
+          "description": "A unique identifier for the user",
+          "format": "uuid"
+        },
         "username": {
           "type": "string",
           "description": "The username of the user"
@@ -20,31 +25,10 @@
           "type": "string",
           "description": "The last name of the user"
         },
-        "uuid": {
+        "email": {
           "type": "string",
-          "description": "A unique identifier for the user",
-          "format": "uuid"
-        },
-        "collection": {
-          "type": "string",
-          "description": "The collection associated with the user"
-        },
-        "created_at": {
-          "type": "string",
-          "description": "The date and time the user was created",
-          "format": "date-time"
-        },
-        "last_modified": {
-          "type": "string",
-          "description": "The date and time the user was last updated",
-          "format": "date-time"
-        },
-        "permissions": {
-          "type": "array",
-          "description": "Permissions assigned to the user",
-          "items": {
-            "type": "string"
-          }
+          "description": "The email address of the user",
+          "format": "email"
         },
         "groups": {
           "type": "array",
@@ -52,9 +36,38 @@
           "items": {
             "type": "string"
           }
+        },
+        "user_permissions": {
+          "type": "array",
+          "description": "Permissions assigned to the user",
+          "items": {
+            "type": "string"
+          }
+        },
+        "is_staff": {
+          "type": "boolean",
+          "description": "Designates whether the user can access the admin site"
+        },
+        "is_active": {
+          "type": "boolean",
+          "description": "Designates whether the user account is active"
+        },
+        "is_superuser": {
+          "type": "boolean",
+          "description": "Designates whether the user has all permissions without explicitly assigning them"
+        },
+        "last_login": {
+          "type": "string",
+          "description": "The date and time the user last logged in",
+          "format": "date-time"
+        },
+        "date_joined": {
+          "type": "string",
+          "description": "The date and time the user joined",
+          "format": "date-time"
         }
       },
-      "required": ["uuid", "username", "created_at", "last_modified"],
+      "required": ["uuid", "username", "email"],
       "additionalProperties": false
     }
   },

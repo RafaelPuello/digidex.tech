@@ -5,6 +5,7 @@ class MainImageField(Field):
     """
     Serializes the "main" field for images.
     """
+
     def get_attribute(self, instance):
         return instance
 
@@ -16,6 +17,7 @@ class FeaturedImageField(Field):
     """
     Serializes the "featured" field for images.
     """
+
     def get_attribute(self, instance):
         return instance
 
@@ -27,6 +29,7 @@ class ThumbnailImageField(Field):
     """
     Serializes the "thumbnail" field for images.
     """
+
     def get_attribute(self, instance):
         return instance
 
