@@ -167,6 +167,8 @@ class NFCTag(models.Model):
         related_name='ntags'
     )
 
+    tagged_items = GenericRelation('NFCTaggedItem')
+
     def create_eeprom(self):
         """
         Creates and returns a new eeprom object for the NFC tag.
