@@ -21,11 +21,13 @@ djangorestframework-simplejwt==5.3.1
 draftjs-exporter==5.0.0
 et-xmlfile==1.1.0
 filetype==1.2.0
+gunicorn==23.0.0
 idna==3.10
 jmespath==1.0.1
 l18n==2021.3
 laces==0.1.1
 openpyxl==3.1.5
+packaging==24.1
 pillow==10.4.0
 pillow_heif==0.18.0
 psycopg2-binary==2.9.9
