@@ -108,6 +108,21 @@ class NFCTagDesign(
         index.AutocompleteField('name'),
     ]
 
+    def setup_collection(self, parent=None):
+        """
+        Create a collection for the ntag design if it does not already exist.
+        """
+
+        if parent is None:
+            parent = Collection.get_first_root_node()
+            if not parent:
+                raise Exception("Root collection not found. Please ensure a root collection exists.")
+
+        try:
+            return parent.get_children().get(name=self.uuid)
+        except Collection.DoesNotExist:
+            return parent.add_child(instance=Collection(name=self.uuid))
+
     def get_documents(self):
         return get_document_model().objects.filter(collection=self.collection)
 
@@ -115,7 +130,12 @@ class NFCTagDesign(
         return get_image_model().objects.filter(collection=self.collection)
 
     def get_preview_template(self, request, mode_name):
-        return "demo/previews/advert.html"
+        return "ntags/previews/design.html"
+
+    def save(self, *args, **kwargs):
+        if not self.collection:
+            self.collection = self.setup_collection()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
