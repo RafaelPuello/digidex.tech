@@ -10,6 +10,7 @@ class NFCTagDesignViewSet(viewsets.ModelViewSet):
     """
     A viewset for viewing and editing the types of NFC Tag.
     """
+
     queryset = NFCTagDesign.objects.all().order_by('id')
     serializer_class = NFCTagDesignSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -22,6 +23,7 @@ class NFCTagDesignViewSet(viewsets.ModelViewSet):
         """
         Create a new ntag design with the provided name, description, and owner.
         """
+    
         name = request.data.get('name')
         description = request.data.get('description')
         owner = request.data.get('owner')
@@ -45,6 +47,7 @@ class NFCTagViewSet(viewsets.ModelViewSet):
     """
     A viewset for viewing and editing NFC Tags.
     """
+
     queryset = NFCTag.objects.all()
     serializer_class = NFCTagSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -85,6 +88,7 @@ class NFCTagViewSet(viewsets.ModelViewSet):
         """
         Set active to False for now. Will fix later.
         """
+
         instance = self.get_object()
         instance.active = False
         # self.perform_destroy(instance)
@@ -95,6 +99,7 @@ class NFCTagScanViewSet(viewsets.ModelViewSet):
     """
     A viewset for viewing and editing an NFC Tag's Scans.
     """
+
     queryset = NFCTagScan.objects.all()
     serializer_class = NFCTagScanSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -110,6 +115,7 @@ class NFCTagScanViewSet(viewsets.ModelViewSet):
         """
         Create a new NFC tag scan with the provided NFC tag ID and scan time.
         """
+
         ntag_id = request.data.get('ntag_id')
         scan_time = request.data.get('scan_time')
 
@@ -150,6 +156,7 @@ class NFCTagEEPROMViewSet(viewsets.ModelViewSet):
         """
         Create a new NFC tag eeprom with the provided NFC tag ID and eeprom contents.
         """
+
         ntag_id = request.data.get('ntag_id')
         eeprom = request.data.get('eeprom')
 

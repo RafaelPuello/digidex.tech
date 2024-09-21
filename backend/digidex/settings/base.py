@@ -18,9 +18,7 @@ PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 
 INSTALLED_APPS = [
-    "modelcluster",
     "taggit",
-    "queryish",
 
     "accounts",
     "base",
@@ -49,9 +47,9 @@ INSTALLED_APPS = [
 
     "rest_framework",
     "rest_framework_simplejwt",
+
     "allauth",
     "allauth.account",
-    "allauth.mfa",
 ]
 
 MIDDLEWARE = [
@@ -261,7 +259,7 @@ ACCOUNT_USERNAME_BLACKLIST = [
     'new', 'all', 'any', 'every', 'site', 'api-key', 'reset', 'change',
     'start', 'stop', 'edit', 'delete', 'remove', 'read', 'write', 'list',
     'create', 'update', 'confirm', 'save', 'load', 'logout', 'signin', 'signout',
-    'BASE', 'BASEing', 'demo', 'example', 'batch', 'status',
+    'test', 'testing', 'demo', 'example', 'batch', 'status',
     'django-admin',
 ]
 

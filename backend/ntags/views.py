@@ -9,9 +9,9 @@ def link(request):
     """
     Handles the initial logic for an NFC tag link.
     """
+
     mirrored_values = request.GET.get('m', None)
-    # Separation character "x" is automatically mirrored
-    # between UID mirror and NFC counter mirror.
+    # Separation character "x" is automatically mirrored between UID and counter.
     if not mirrored_values or 'x' not in mirrored_values:
         messages.error(request, _('Invalid NFC tag URI.'))
         return redirect('/')

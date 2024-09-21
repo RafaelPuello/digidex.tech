@@ -8,6 +8,7 @@ def setup_group(name=None, permissions=None):
     """
     Create, setup and return a group for ntag users if it does not already exist.
     """
+
     group, created = Group.objects.get_or_create(name)
     if created:
         permissions = Permission.objects.filter(codename__in=permissions)
@@ -21,6 +22,7 @@ def setup_app_groups():
     """
     Create and setup groups for ntag users.
     """
+
     for name, permissions in GROUPS.items():
         setup_group(name, permissions)
 

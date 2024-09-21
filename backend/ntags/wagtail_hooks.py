@@ -20,6 +20,7 @@ class NFCTagDesignSnippetViewSet(SnippetViewSet):
     """
     A snippetviewset for viewing and editing the designs of NFC Tags.
     """
+
     model = NFCTagDesign
     icon = "design"
     menu_label = "Designs"
@@ -51,6 +52,7 @@ class NFCTagSnippetViewSet(SnippetViewSet):
     """
     A snippetviewset for viewing and editing NFC Tags.
     """
+
     model = NFCTag
     icon = "tag"
     menu_label = "Tags"
@@ -89,6 +91,7 @@ class NFCTagScanSnippetViewSet(SnippetViewSet):
     """
     A snippetviewset for viewing and editing NFC Tag scans.
     """
+
     model = NFCTagScan
     icon = "scan"
     menu_label = "Scans"
@@ -124,6 +127,7 @@ class NFCTagEEPROMSnippetViewSet(SnippetViewSet):
     """
     A snippetviewset for viewing and editing NFC Tag eeprom.
     """
+
     model = NFCTagEEPROM
     icon = "eeprom"
     menu_label = "EEPROM"
@@ -159,6 +163,7 @@ class NfcTagSnippetViewSetGroup(SnippetViewSetGroup):
     """
     A snippetviewset group for NFC Tags.
     """
+
     items = [NFCTagSnippetViewSet, NFCTagDesignSnippetViewSet, NFCTagScanSnippetViewSet, NFCTagEEPROMSnippetViewSet]
     menu_icon = "ntag"
     menu_label = "NFC Tags"

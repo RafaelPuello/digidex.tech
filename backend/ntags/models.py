@@ -1,5 +1,4 @@
 import uuid
-import numpy as np
 from django.db import models
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
@@ -75,6 +74,7 @@ class NFCTagDesign(
         uuid (UUID): A unique identifier for the ntag design.
         collection (ForeignKey): The collection associated with the ntag design.
     """
+
     name = models.CharField(
         max_length=255,
         unique=True
@@ -136,6 +136,7 @@ class NFCTag(models.Model):
         design (NfcTagDesign): The design of NFC tag.
         active (bool): Indicates whether the NFC tag is active.
     """
+
     serial_number = models.CharField(
         max_length=32,
         editable=False,
@@ -172,7 +173,7 @@ class NFCTag(models.Model):
     def create_eeprom(self):
         """
         Creates and returns a new eeprom object for the NFC tag.
-        """
+        import numpy as np
         columns = 4
         rows = EEPROM_SIZE[self.integrated_circuit] // columns
 
@@ -185,6 +186,9 @@ class NFCTag(models.Model):
             eeprom=eeprom_bytes
         )
         return ntag_eeprom, eeprom_2d.view()
+        """
+    
+        pass
 
     def log_scan(self, user, counter):
         """
@@ -197,6 +201,7 @@ class NFCTag(models.Model):
         Returns:
             bool: True if the scan was logged successfully, False otherwise.
         """
+
         try:
             cnt = int(counter, 16) if isinstance(counter, str) else int(counter)
             NFCTagScan.objects.create(
@@ -221,6 +226,7 @@ class NFCTaggedItem(models.Model):
     """
     Model representing the relationship between NFCTags and any other model instance.
     """
+
     nfc_tag = models.ForeignKey(
         NFCTag,
         on_delete=models.CASCADE,
@@ -256,6 +262,7 @@ class NFCTagScan(models.Model):
         scanned_by (User): The user who scanned the NFC tag.
         scanned_at (datetime): The date and time when the NFC tag was scanned.
     """
+
     ntag = models.ForeignKey(
         NFCTag,
         on_delete=models.CASCADE,
@@ -293,6 +300,7 @@ class NFCTagEEPROM(models.Model):
         created_at (datetime): The date and time when the eeprom contents were created.
         last_modified (datetime): The date and time when the eeprom contents were last modified.
     """
+
     uuid = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
