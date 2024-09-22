@@ -1,26 +1,15 @@
-from django.db import transaction
-from django.contrib.auth.models import Permission, Group
+from django.apps import apps
+from django.conf import settings
 
-from .constants import GROUPS
-
-def setup_group(name=None, permissions=None):
+def get_nfc_tag_model():
     """
-    Create, setup and return a group for ntag users if it does not already exist.
+    Returns the NFCTag model that is active in this project.
     """
+    model_string = getattr(settings, 'NFC_TAG_MODEL', 'ntags.NFCTag')
+    return apps.get_model(model_string)
 
-    group, created = Group.objects.get_or_create(name)
-    if created:
-        permissions = Permission.objects.filter(codename__in=permissions)
-        group.permissions.add(*permissions)
-        group.save()
-    return group
-
-
-@transaction.atomic
-def setup_app_groups():
+def get_nfc_tag_model_string():
     """
-    Create and setup groups for ntag users.
+    Returns the dotted app.Model name for the NFCTag model as a string.
     """
-
-    for name, permissions in GROUPS.items():
-        setup_group(name, permissions)
+    return getattr(settings, 'NFC_TAG_MODEL', 'ntags.NFCTag')

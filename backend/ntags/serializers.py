@@ -1,16 +1,7 @@
 from rest_framework import serializers
 
-from .models import NFCTagDesign, NFCTag, NFCTagScan, NFCTagEEPROM
-
-
-class NFCTagDesignSerializer(serializers.ModelSerializer):
-    """
-    Serializer for the NFCTagDesign model.
-    """
-
-    class Meta:
-        model = NFCTagDesign
-        fields = ['id', 'name', 'description', 'designer', 'uuid', 'collection']
+from .utils import get_nfc_tag_model
+from .models import NFCTagScan, NFCTagEEPROM
 
 
 class NFCTagScanSerializer(serializers.ModelSerializer):
@@ -55,8 +46,8 @@ class NFCTagSerializer(serializers.ModelSerializer):
         pass
 
     class Meta:
-        model = NFCTag
+        model = get_nfc_tag_model()
         fields = [
-            'id', 'serial_number', 'integrated_circuit', 'design', 'active', 'user',
+            'id', 'serial_number', 'integrated_circuit', 'active', 'user',
             'created_at', 'last_modified', 'scans', 'eeprom'
         ]

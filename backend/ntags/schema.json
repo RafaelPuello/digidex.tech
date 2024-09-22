@@ -5,31 +5,6 @@
   "description": "Models for managing NFC Tags.",
   "type": "object",
   "definitions": {
-    "NFCTagDesign": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string",
-          "maxLength": 255
-        },
-        "description": {
-          "type": ["string", "null"]
-        },
-        "designer": {
-          "type": ["string", "null"],
-          "description": "Foreign key reference to User"
-        },
-        "uuid": {
-          "type": "string",
-          "format": "uuid"
-        },
-        "collection": {
-          "type": ["string", "null"],
-          "description": "Foreign key reference to Collection"
-        }
-      },
-      "required": ["name", "uuid"]
-    },
     "NFCTag": {
       "type": "object",
       "properties": {
@@ -44,10 +19,6 @@
         "user": {
           "type": ["string", "null"],
           "description": "Foreign key reference to User"
-        },
-        "design": {
-          "type": ["string", "null"],
-          "description": "Foreign key reference to NFCTagDesign"
         },
         "active": {
           "type": "boolean"
@@ -125,9 +96,8 @@
   },
   "properties": {
     "ntags": { "$ref": "#/definitions/NFCTag" },
-    "designs": { "$ref": "#/definitions/NFCTagDesign" },
     "scans": { "$ref": "#/definitions/NFCTagScan" },
-    "eeproms": { "$ref": "#/definitions/NFCTagEEPROM" },
-    "tagged_items": { "$ref": "#/definitions/NFCTaggedItem" }
+    "tagged_items": { "$ref": "#/definitions/NFCTaggedItem" },
+    "eeproms": { "$ref": "#/definitions/NFCTagEEPROM" }
   }
 }

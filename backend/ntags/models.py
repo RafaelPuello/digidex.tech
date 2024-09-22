@@ -1,25 +1,14 @@
-import uuid
+from uuid import uuid4
 from django.db import models
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
-from wagtail.models import (
-    Collection,
-    RevisionMixin,
-    DraftStateMixin,
-    LockableMixin,
-    TranslatableMixin,
-    PreviewableMixin
-)
-from wagtail.fields import RichTextField
-from wagtail.images import get_image_model
-from wagtail.documents import get_document_model
-from wagtail.search import index
 
 from .constants import NTAG213, IC_CHOICES, EEPROM_SIZE
 from .validators import validate_serial_number, validate_integrated_circuit
+from .utils import get_nfc_tag_model, get_nfc_tag_model_string
 
 
 class NFCTaggableManager(models.Manager):
@@ -55,106 +44,55 @@ class NFCTaggableManager(models.Manager):
         )
 
 
-class NFCTagDesign(
-    index.Indexed,
-    DraftStateMixin,
-    RevisionMixin,
-    LockableMixin,
-    TranslatableMixin,
-    PreviewableMixin,
-    models.Model
-):
+class NFCTagManager(models.Manager):
+    def __init__(self, through=None, model=None, instance=None):
+        self.through = through
+        self.model = model
+        self.instance = instance
+        super().__init__()
+
+    def __get__(self, instance, model):
+        manager = NFCTagManager(
+            through=self.through,
+            model=self.model,
+            instance=instance
+        )
+        return manager
+
+    def add(self, *tags):
+        NFCTag = get_nfc_tag_model()
+        for tag in tags:
+            if not isinstance(tag, NFCTag):
+                raise ValueError("All tags must be instances of the NFCTag model.")
+            NFCTaggedItem.objects.create(
+                nfc_tag=tag,
+                content_object=self.instance
+            )
+
+    def remove(self, *tags):
+        NFCTaggedItem.objects.filter(
+            nfc_tag__in=tags,
+            content_type=ContentType.objects.get_for_model(self.instance),
+            object_id=self.instance.pk
+        ).delete()
+
+    def clear(self):
+        NFCTaggedItem.objects.filter(
+            content_type=ContentType.objects.get_for_model(self.instance),
+            object_id=self.instance.pk
+        ).delete()
+
+    def all(self):
+        NFCTag = get_nfc_tag_model()
+        return NFCTag.objects.filter(
+            tagged_items__content_type=ContentType.objects.get_for_model(self.instance),
+            tagged_items__object_id=self.instance.pk
+        )
+
+
+class AbstractNFCTag(models.Model):
     """
-    Model representing the design of an ntag.
-
-    Attributes:
-        name (str): The name of the ntag design.
-        description (str): A description of the ntag design.
-        designer (ForeignKey): The user who designed the ntag.
-        uuid (UUID): A unique identifier for the ntag design.
-        collection (ForeignKey): The collection associated with the ntag design.
-    """
-
-    name = models.CharField(
-        max_length=255,
-        unique=True
-    )
-    description = RichTextField(
-        blank=True
-    )
-    designer = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,
-        related_name='ntag_designs',
-        null=True,
-        blank=True
-    )
-    uuid = models.UUIDField(
-        default=uuid.uuid4,
-        editable=False,
-        unique=True,
-        db_index=True
-    )
-    collection = models.ForeignKey(
-        Collection,
-        on_delete=models.SET_NULL,
-        related_name='+',
-        null=True,
-        blank=True
-    )
-
-    search_fields = [
-        index.SearchField('name'),
-        index.AutocompleteField('name'),
-    ]
-
-    def setup_collection(self, parent=None):
-        """
-        Create a collection for the ntag design if it does not already exist.
-        """
-
-        if parent is None:
-            parent = Collection.get_first_root_node()
-            if not parent:
-                raise Exception("Root collection not found. Please ensure a root collection exists.")
-
-        try:
-            return parent.get_children().get(name=self.uuid)
-        except Collection.DoesNotExist:
-            return parent.add_child(instance=Collection(name=self.uuid))
-
-    def get_documents(self):
-        return get_document_model().objects.filter(collection=self.collection)
-
-    def get_images(self):
-        return get_image_model().objects.filter(collection=self.collection)
-
-    def get_preview_template(self, request, mode_name):
-        return "ntags/previews/design.html"
-
-    def save(self, *args, **kwargs):
-        if not self.collection:
-            self.collection = self.setup_collection()
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return self.name
-
-    class Meta(TranslatableMixin.Meta):
-        verbose_name = _("design")
-        verbose_name_plural = _("designs")
-
-
-class NFCTag(models.Model):
-    """
-    Model representing an individual ntag, which is linked to a physical object.
-
-    Attributes:
-        serial_number (str): The serial number of the NFC tag.
-        integrated_circuit (str): The type of integrated circuit used in the NFC tag.
-        user (User): The user who is assigned the NFC tag.
-        design (NfcTagDesign): The design of NFC tag.
-        active (bool): Indicates whether the NFC tag is active.
+    Abstract base model for NFCTag.
     """
 
     serial_number = models.CharField(
@@ -170,13 +108,6 @@ class NFCTag(models.Model):
         default=NTAG213,
         validators=[validate_integrated_circuit]
     )
-    design = models.ForeignKey(
-        NFCTagDesign,
-        on_delete=models.PROTECT,
-        blank=True,
-        null=True,
-        related_name='ntags'
-    )
     active = models.BooleanField(
         default=True
     )
@@ -187,28 +118,9 @@ class NFCTag(models.Model):
         blank=True,
         related_name='ntags'
     )
-
-    tagged_items = GenericRelation('NFCTaggedItem')
-
-    def create_eeprom(self):
-        """
-        Creates and returns a new eeprom object for the NFC tag.
-        import numpy as np
-        columns = 4
-        rows = EEPROM_SIZE[self.integrated_circuit] // columns
-
-        # Create a 2D NumPy array filled with zeros
-        eeprom_2d = np.zeros((rows, columns), dtype=np.uint8)
-        eeprom_bytes = eeprom_2d.tobytes()
-
-        ntag_eeprom = NFCTagEEPROM.objects.create(
-            ntag=self,
-            eeprom=eeprom_bytes
-        )
-        return ntag_eeprom, eeprom_2d.view()
-        """
-    
-        pass
+    tagged_items = GenericRelation(
+        'NFCTaggedItem'
+    )
 
     def log_scan(self, user, counter):
         """
@@ -221,25 +133,84 @@ class NFCTag(models.Model):
         Returns:
             bool: True if the scan was logged successfully, False otherwise.
         """
-
-        try:
-            cnt = int(counter, 16) if isinstance(counter, str) else int(counter)
-            NFCTagScan.objects.create(
-                ntag=self,
-                counter=cnt,
-                scanned_by=user
-            )
-            return True
-        except (ValueError, TypeError) as e:
-            print(f"Error logging scan: {e}")
-            return False
+        pass
 
     def __str__(self):
         return self.serial_number
 
     class Meta:
+        abstract = True
         verbose_name = _("ntag")
         verbose_name_plural = _("ntags")
+
+
+class NFCTagEEPROM(models.Model):
+    """
+    Model representing the eeprom contents of an NFC tag.
+
+    Attributes:
+        uuid (UUID): A unique identifier for the NFC tag.
+        ntag (NfcTag): The NFC tag whose eeprom contents are stored.
+        eeprom (binary): The eeprom contents of the NFC tag.
+        created_at (datetime): The date and time when the eeprom contents were created.
+        last_modified (datetime): The date and time when the eeprom contents were last modified.
+    """
+
+    uuid = models.UUIDField(
+        primary_key=True,
+        default=uuid4,
+        editable=False,
+        unique=True,
+    )
+    ntag = models.OneToOneField(
+        get_nfc_tag_model_string(),
+        on_delete=models.CASCADE,
+        related_name='eeprom'
+    )
+    eeprom = models.BinaryField(
+        max_length=888,
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+    last_modified = models.DateTimeField(
+        auto_now=True
+    )
+
+    @classmethod
+    def get_for_ntag(cls, ntag):
+        """
+        Gets or creates the EEPROM object for the NFC tag.
+        """
+        columns = 4
+        rows = EEPROM_SIZE[ntag.integrated_circuit] // columns
+
+        # Create a 2D NumPy array filled with zeros
+        eeprom_2d = None #  np.zeros((rows, columns), dtype=np.uint8)
+        eeprom_bytes = eeprom_2d.tobytes()
+
+        ntag_eeprom = cls.objects.create(
+            ntag=ntag,
+            eeprom=eeprom_bytes
+        )
+        cls.objects.get_or_create(ntag=ntag)
+        return ntag_eeprom, eeprom_2d.view()
+
+
+    def __str__(self):
+        return str(self.ntag)
+
+    class Meta:
+        verbose_name = _("eeprom")
+        verbose_name_plural = _("eeproms")
+
+
+class NFCTag(AbstractNFCTag):
+    """
+    Default concrete NFCTag model.
+    """
+
+    pass
 
 
 class NFCTaggedItem(models.Model):
@@ -248,7 +219,7 @@ class NFCTaggedItem(models.Model):
     """
 
     nfc_tag = models.ForeignKey(
-        NFCTag,
+        get_nfc_tag_model_string(),
         on_delete=models.CASCADE,
         related_name='tagged_items'
     )
@@ -284,7 +255,7 @@ class NFCTagScan(models.Model):
     """
 
     ntag = models.ForeignKey(
-        NFCTag,
+        get_nfc_tag_model_string(),
         on_delete=models.CASCADE,
         related_name='scans'
     )
@@ -307,44 +278,3 @@ class NFCTagScan(models.Model):
     class Meta:
         verbose_name = _("scan")
         verbose_name_plural = _("scans")
-
-
-class NFCTagEEPROM(models.Model):
-    """
-    Model representing the eeprom contents of an NFC tag.
-
-    Attributes:
-        uuid (UUID): A unique identifier for the NFC tag.
-        ntag (NfcTag): The NFC tag whose eeprom contents are stored.
-        eeprom (binary): The eeprom contents of the NFC tag.
-        created_at (datetime): The date and time when the eeprom contents were created.
-        last_modified (datetime): The date and time when the eeprom contents were last modified.
-    """
-
-    uuid = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-        unique=True,
-    )
-    ntag = models.OneToOneField(
-        NFCTag,
-        on_delete=models.CASCADE,
-        related_name='eeprom'
-    )
-    eeprom = models.BinaryField(
-        max_length=888,
-    )
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
-    last_modified = models.DateTimeField(
-        auto_now=True
-    )
-
-    def __str__(self):
-        return str(self.ntag)
-
-    class Meta:
-        verbose_name = _("eeprom")
-        verbose_name_plural = _("eeproms")

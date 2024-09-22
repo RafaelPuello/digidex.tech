@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.shortcuts import redirect, get_object_or_404
 from django.utils.translation import gettext_lazy as _
 
-from .models import NFCTag
+from .utils import get_nfc_tag_model
 
 
 def link(request):
@@ -23,7 +23,7 @@ def link(request):
         return redirect('/')
 
     ntag = get_object_or_404(
-        NFCTag.objects.select_related('linked_item'),
+        get_nfc_tag_model().objects.select_related('linked_item'),
         serial_number=serial_number
     )
     ntag.log_scan(request.user, scan_counter)
