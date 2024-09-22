@@ -48,7 +48,7 @@
       },
       "required": ["ntag", "counter", "scanned_at"]
     },
-    "NFCTagEEPROM": {
+    "NFCTagMemory": {
       "type": "object",
       "properties": {
         "uuid": {
@@ -98,6 +98,6 @@
     "ntags": { "$ref": "#/definitions/NFCTag" },
     "scans": { "$ref": "#/definitions/NFCTagScan" },
     "tagged_items": { "$ref": "#/definitions/NFCTaggedItem" },
-    "eeproms": { "$ref": "#/definitions/NFCTagEEPROM" }
+    "eeproms": { "$ref": "#/definitions/NFCTagMemory" }
   }
 }

@@ -2,13 +2,21 @@ NTAG213 = "213"
 NTAG215 = "215"
 NTAG216 = "216"
 
-IC_CHOICES = (
+DEFAULT_NTAG = NTAG213
+
+NTAG_FILTER_METHODS = [
+    'uid',
+    'counter',
+    'uid_counter'
+]
+
+NTAG_IC_CHOICES = (
     (NTAG213, "NTAG 213"),
     (NTAG215, "NTAG 215"),
     (NTAG216, "NTAG 216"),
 )
 
-EEPROM_SIZE = {
+NTAG_EEPROM_SIZES = {
     NTAG213: 180,
     NTAG215: 540,
     NTAG216: 924,
