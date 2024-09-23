@@ -28,17 +28,19 @@ class UserCollection(models.Model):
 
     def create_user_page(self):
         root_page = UserPage.get_root_page()
+        user_slug = slugify(self.user.username)
         try:
-            return root_page.get_children().get(user_collection=self)
+            return root_page.get_children().get(slug=user_slug)
         except Page.DoesNotExist:
             user_page = UserPage(
                 title=self.user.username,
-                slug=slugify(self.user.username),
+                slug=user_slug,
                 owner=self.user,
                 user_collection=self
             )
             root_page.add_child(instance=user_page)
-            return user_page.save_revision().publish()
+            user_page.save_revision().publish()
+            return user_page
 
     @staticmethod
     def get_root_collection():

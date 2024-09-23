@@ -8,7 +8,6 @@ class HomePageTests(WagtailPageTestCase):
     """
     Test class for HomePage model.
     """
-
     @classmethod
     def setUpTestData(cls):
         root = Page.get_first_root_node()
@@ -20,6 +19,7 @@ class HomePageTests(WagtailPageTestCase):
         )
         home = HomePage(title="Home")
         root.add_child(instance=home)
+        cls.page = home
 
     def test_get(self):
         response = self.client.get(self.page.url)
