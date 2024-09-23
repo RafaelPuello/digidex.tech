@@ -1,8 +1,8 @@
 from django.contrib import messages
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
 
-from .models import NFCTag
+from .utils import get_nfc_tag_model
 
 
 def link(request):
@@ -11,23 +11,19 @@ def link(request):
     """
 
     mirrored_values = request.GET.get('m', None)
-    # Separation character "x" is automatically mirrored between UID and counter.
-    if not mirrored_values or 'x' not in mirrored_values:
+    if not mirrored_values:
         messages.error(request, _('Invalid NFC tag URI.'))
         return redirect('/')
 
-    serial_number, scan_counter = mirrored_values.split('x')
-    if not serial_number:
-        # MIRROR_BYTE or MIRROR_PAGE is not set properly
-        messages.error(request, _('NFC Tag improperly configured.'))
+    NFCTag = get_nfc_tag_model()
+    try:
+        ntag = NFCTag.objects.get_from_mirror(mirrored_values)
+        return redirect(ntag.get_absolute_url())
+
+    except ValueError as e:
+        messages.error(request, str(e))
         return redirect('/')
 
-    ntag = get_object_or_404(
-        NFCTag.objects.select_related('linked_item'),
-        serial_number=serial_number
-    )
-    ntag.log_scan(request.user, scan_counter)
-
-    if not hasattr(ntag, 'linked_item'):
+    except NFCTag.DoesNotExist as e:
+        messages.error(request, str(e))
         return redirect('/')
-    return redirect(ntag.linked_item.url)

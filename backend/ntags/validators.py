@@ -1,7 +1,7 @@
 import re
 from django.core.exceptions import ValidationError
 
-from .constants import IC_CHOICES
+from .constants import NTAG_IC_CHOICES
 
 
 def validate_serial_number(value):
@@ -21,7 +21,7 @@ def validate_integrated_circuit(value):
     Validates the NTAG integrated circuit type.
     """
 
-    if value not in dict(IC_CHOICES).keys():
+    if value not in dict(NTAG_IC_CHOICES).keys():
         raise ValidationError(
             '%(value)s is not a valid NTAG integrated circuit type',
             params={'value': value},

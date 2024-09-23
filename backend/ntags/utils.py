@@ -1,26 +1,59 @@
-from django.db import transaction
-from django.contrib.auth.models import Permission, Group
+from django.apps import apps
+from django.conf import settings
 
-from .constants import GROUPS
+from .constants import NTAG_FILTER_METHODS
 
-def setup_group(name=None, permissions=None):
+
+def get_nfc_tag_model():
     """
-    Create, setup and return a group for ntag users if it does not already exist.
+    Returns the NFCTag model that is active in this project.
+    """
+    return getattr(settings, 'NFC_TAG_MODEL', 'ntags.NFCTag')
+
+
+def get_nfc_tag_model_string():
+    """
+    Returns the dotted app.Model name for the NFCTag model as a string.
+    """
+    return getattr(settings, 'NFC_TAG_MODEL', 'ntags.NFCTag')
+
+
+def get_nfc_tag_filter_method():
+    """
+    Returns the method to filter NFC tags that is active in this project.
     """
 
-    group, created = Group.objects.get_or_create(name)
-    if created:
-        permissions = Permission.objects.filter(codename__in=permissions)
-        group.permissions.add(*permissions)
-        group.save()
-    return group
+    filter_method =  getattr(settings, 'NFC_TAG_FILTER_METHOD', 'uid')
+    if filter_method not in NTAG_FILTER_METHODS:
+        raise ValueError('Invalid filter method for NFC tags. Valid options are: {}'.format(NTAG_FILTER_METHODS))
+    return filter_method
 
 
-@transaction.atomic
-def setup_app_groups():
+def get_nfc_tag_scan_model():
     """
-    Create and setup groups for ntag users.
+    Returns the NFCTagScan model that is active in this project.
     """
+    model_string = getattr(settings, 'NFC_TAG_SCAN_MODEL', 'ntags.NFCTagScan')
+    return apps.get_model(model_string)
 
-    for name, permissions in GROUPS.items():
-        setup_group(name, permissions)
+
+def get_nfc_tag_scan_model_string():
+    """
+    Returns the dotted app.Model name for the NFCTagScan model as a string.
+    """
+    return getattr(settings, 'NFC_TAG_SCAN_MODEL', 'ntags.NFCTagScan')
+
+
+def get_nfc_tag_memory_model():
+    """
+    Returns the NFCTagMemory model that is active in this project.
+    """
+    model_string = getattr(settings, 'NFC_TAG_MEMORY_MODEL', 'ntags.NFCTagMemory')
+    return apps.get_model(model_string)
+
+
+def get_nfc_tag_memory_model_string():
+    """
+    Returns the dotted app.Model name for the NFCTagMemory model as a string.
+    """
+    return getattr(settings, 'NFC_TAG_MEMORY_MODEL', 'ntags.NFCTagMemory')

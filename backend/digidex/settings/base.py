@@ -384,6 +384,16 @@ WAGTAILSEARCH_BACKENDS = {
     }
 }
 
+# ------------------------------------------------------------------------
+# Wagtail-ntag Configuration (BASE)
+NFC_TAG_MODEL = 'ntags.NFCTag'
+
+NFC_TAG_SCAN_MODEL = 'ntags.NFCTagScan'
+
+NFC_TAG_MEMORY_MODEL = 'ntags.NFCTagMemory'
+
+NFC_TAG_FILTER_METHOD = 'uid_counter'
+
 try:
     from .local import *  # noqa
 except ImportError:
