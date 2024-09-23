@@ -11,13 +11,11 @@ def link(request):
     """
 
     mirrored_values = request.GET.get('m', None)
-
     if not mirrored_values:
         messages.error(request, _('Invalid NFC tag URI.'))
         return redirect('/')
 
     NFCTag = get_nfc_tag_model()
-
     try:
         ntag = NFCTag.objects.get_from_mirror(mirrored_values)
         return redirect(ntag.get_absolute_url())

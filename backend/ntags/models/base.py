@@ -148,6 +148,12 @@ class AbstractNFCTag(models.Model):
     )
     tagged_items = GenericRelation('NFCTaggedItem')
 
+    def log_scan(self, counter):
+        return get_nfc_tag_scan_model().objects.create(
+            ntag=self,
+            counter=counter
+        )
+
     def __str__(self):
         return self.serial_number
 
