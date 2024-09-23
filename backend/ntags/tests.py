@@ -6,7 +6,6 @@ from .models import NFCTag
 
 User = get_user_model()
 
-
 class NFCTagModelTest(TestCase):
     def setUp(self):
         """
@@ -14,23 +13,25 @@ class NFCTagModelTest(TestCase):
         """
         self.user = User.objects.create(username="testuser")
 
-    def test_str_representation(self, user):
+    def test_str_representation(self):
         nfc_tag = NFCTag.objects.create(
             serial_number="04E141124C2880",
             integrated_circuit="213",
-            user=user
+            user=self.user
         )
-        assert str(nfc_tag) == "04E141124C2880"
+        self.assertEqual(str(nfc_tag), "04E141124C2880")
 
-    def test_serial_number_uniqueness(self, user):
-        NFCTag.objects.create(serial_number="04E141124C2880", integrated_circuit="213", user=user)
-        assert 1==1
+    def test_serial_number_uniqueness(self):
+        NFCTag.objects.create(serial_number="04E141124C2880", integrated_circuit="213", user=self.user)
+        # Testing uniqueness constraint should involve trying to create a second object with the same serial number.
+        with self.assertRaises(Exception):  # Adjust the exception type if necessary
+            NFCTag.objects.create(serial_number="04E141124C2880", integrated_circuit="213", user=self.user)
 
-    def test_tagged_items_generic_relation(self, user):
+    def test_tagged_items_generic_relation(self):
         nfc_tag = NFCTag.objects.create(
             serial_number="04E141124C2880",
             integrated_circuit="213",
-            user=user
+            user=self.user
         )
         content_type = ContentType.objects.get_for_model(NFCTag)
         item = nfc_tag.tagged_items.create(
@@ -38,17 +39,17 @@ class NFCTagModelTest(TestCase):
             object_id=nfc_tag.id,
             tag="SampleTag"
         )
-        assert nfc_tag.tagged_items.count() == 1
-        assert item.tag == "SampleTag"
+        self.assertEqual(nfc_tag.tagged_items.count(), 1)
+        self.assertEqual(item.tag, "SampleTag")
 
-    def test_default_values(self, user):
+    def test_default_values(self):
         nfc_tag = NFCTag.objects.create(
             serial_number="04E141124C2880",
             integrated_circuit="213",
-            user=user
+            user=self.user
         )
-        assert nfc_tag.active is True
-        assert nfc_tag.integrated_circuit == "213"
+        self.assertTrue(nfc_tag.active)
+        self.assertEqual(nfc_tag.integrated_circuit, "213")
 
     def test_nullable_user_field(self):
         nfc_tag = NFCTag.objects.create(
@@ -56,4 +57,4 @@ class NFCTagModelTest(TestCase):
             integrated_circuit="213",
             user=None
         )
-        assert nfc_tag.user is None
+        self.assertIsNone(nfc_tag.user)
