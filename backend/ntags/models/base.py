@@ -89,19 +89,19 @@ class NFCTagManager(models.Manager):
         except self.model.DoesNotExist:
             raise self.model.DoesNotExist(_('NFC Tag Scan not found.'))
 
-    def add(self, *tags):
+    def add(self, *ntags):
         NFCTag = get_nfc_tag_model()
-        for tag in tags:
-            if not isinstance(tag, NFCTag):
-                raise ValueError("All tags must be instances of the NFCTag model.")
+        for ntag in ntags:
+            if not isinstance(ntag, NFCTag):
+                raise ValueError("All NFC-Tags must be instances of the NFCTag model.")
             NFCTaggedItem.objects.create(
-                nfc_tag=tag,
+                nfc_tag=ntag,
                 content_object=self.instance
             )
 
-    def remove(self, *tags):
+    def remove(self, *ntags):
         NFCTaggedItem.objects.filter(
-            nfc_tag__in=tags,
+            nfc_tag__in=ntags,
             content_type=ContentType.objects.get_for_model(self.instance),
             object_id=self.instance.pk
         ).delete()
@@ -174,19 +174,19 @@ class BaseNFCTaggableManager(models.Manager):
     and retrieve tags associated with an object.
     """
 
-    def add(self, obj, nfc_tag):
+    def add(self, obj, ntag):
         content_type = ContentType.objects.get_for_model(obj)
         tagged_item, created = NFCTaggedItem.objects.get_or_create(
-            nfc_tag=nfc_tag,
+            nfc_tag=ntag,
             content_type=content_type,
             object_id=obj.pk
         )
         return tagged_item
 
-    def remove(self, obj, nfc_tag):
+    def remove(self, obj, ntag):
         content_type = ContentType.objects.get_for_model(obj)
         return NFCTaggedItem.objects.filter(
-            nfc_tag=nfc_tag,
+            nfc_tag=ntag,
             content_type=content_type,
             object_id=obj.pk
         ).delete()

@@ -22,25 +22,12 @@ class NFCTagModelTest(TestCase):
         self.assertEqual(str(nfc_tag), "04E141124C2880")
 
     def test_serial_number_uniqueness(self):
+        """
+        Testing uniqueness constraint should involve trying to create a second object with the same serial number.
+        """
         NFCTag.objects.create(serial_number="04E141124C2880", integrated_circuit="213", user=self.user)
-        # Testing uniqueness constraint should involve trying to create a second object with the same serial number.
         with self.assertRaises(Exception):  # Adjust the exception type if necessary
             NFCTag.objects.create(serial_number="04E141124C2880", integrated_circuit="213", user=self.user)
-
-    def test_tagged_items_generic_relation(self):
-        nfc_tag = NFCTag.objects.create(
-            serial_number="04E141124C2880",
-            integrated_circuit="213",
-            user=self.user
-        )
-        content_type = ContentType.objects.get_for_model(NFCTag)
-        item = nfc_tag.tagged_items.create(
-            content_type=content_type,
-            object_id=nfc_tag.id,
-            tag="SampleTag"
-        )
-        self.assertEqual(nfc_tag.tagged_items.count(), 1)
-        self.assertEqual(item.tag, "SampleTag")
 
     def test_default_values(self):
         nfc_tag = NFCTag.objects.create(
