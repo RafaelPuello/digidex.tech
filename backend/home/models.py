@@ -7,7 +7,6 @@ from wagtail.fields import RichTextField
 from wagtail.admin.panels import (
     FieldPanel,
     TabbedInterface,
-    TitleFieldPanel,
     ObjectList
 )
 
@@ -104,8 +103,8 @@ class UserPage(Page):
     edit_handler = TabbedInterface([
         ObjectList(shared_panels, heading='Details'),
         ObjectList(private_panels, heading='Admin only', permission="superuser"),
-        ObjectList(Page.promote_panels, heading='Promote'),
-        ObjectList(Page.settings_panels, heading='Settings'), # The default settings are now displayed in the sidebar but need to be in the `TabbedInterface`.
+        # ObjectList(Page.promote_panels, heading='Promote'),
+        # ObjectList(Page.settings_panels, heading='Settings'), # The default settings are now displayed in the sidebar but need to be in the `TabbedInterface`.
     ])
 
     parent_page_types = ['home.HomePage']
