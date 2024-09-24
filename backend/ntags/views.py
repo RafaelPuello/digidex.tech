@@ -8,10 +8,9 @@ def link(request):
     """
     Handles the initial logic for an NFC tag link.
     """
-
     mirrored_values = request.GET.get('m', None)
     if not mirrored_values:
-        messages.error(request, _('Invalid NFC tag URI.'))
+        messages.error(request, _('Invalid mirror values.'))
         return redirect('/')
 
     NFCTag = get_nfc_tag_model()
