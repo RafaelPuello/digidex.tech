@@ -2,9 +2,9 @@ from rest_framework import status, viewsets, permissions
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 
+from . import get_nfc_tag_model
 from .models import NFCTagScan
 from .serializers import NFCTagSerializer, NFCTagScanSerializer
-from . import get_nfc_tag_model
 
 
 class NFCTagViewSet(viewsets.ModelViewSet):

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
-from .utils import get_nfc_tag_model
 from .models import NFCTagScan, NFCTagMemory
+from . import get_nfc_tag_model
 
 
 class NFCTagScanSerializer(serializers.ModelSerializer):
