@@ -4,6 +4,13 @@ from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from wagtail.models import Page, Collection
 from wagtail.fields import RichTextField
+from wagtail.admin.panels import (
+    FieldPanel,
+    TabbedInterface,
+    ObjectList
+)
+
+from ntags.utils import get_nfc_tag_model_string
 
 
 class UserCollection(models.Model):
@@ -28,17 +35,19 @@ class UserCollection(models.Model):
 
     def create_user_page(self):
         root_page = UserPage.get_root_page()
+        user_slug = slugify(self.user.username)
         try:
-            return root_page.get_children().get(user_collection=self)
+            return root_page.get_children().get(slug=user_slug)
         except Page.DoesNotExist:
             user_page = UserPage(
                 title=self.user.username,
-                slug=slugify(self.user.username),
+                slug=user_slug,
                 owner=self.user,
                 user_collection=self
             )
             root_page.add_child(instance=user_page)
-            return user_page.save_revision().publish()
+            user_page.save_revision().publish()
+            return user_page
 
     @staticmethod
     def get_root_collection():
@@ -71,12 +80,32 @@ class UserPage(Page):
     Attributes:
         user_collection (UserCollection): The user collection that the page belongs to.
     """
-
     user_collection = models.OneToOneField(
         UserCollection,
         on_delete=models.PROTECT,
         related_name='page'
     )
+    nfc_tag = models.OneToOneField(
+        get_nfc_tag_model_string(),
+        on_delete=models.PROTECT,
+        related_name='page',
+        null=True,
+        blank=True
+    )
+
+    shared_panels = [
+        FieldPanel('nfc_tag'),
+    ]
+    private_panels = [
+        FieldPanel('user_collection'),
+    ]
+
+    edit_handler = TabbedInterface([
+        ObjectList(shared_panels, heading='Details'),
+        ObjectList(private_panels, heading='Admin only', permission="superuser"),
+        # ObjectList(Page.promote_panels, heading='Promote'),
+        # ObjectList(Page.settings_panels, heading='Settings'), # The default settings are now displayed in the sidebar but need to be in the `TabbedInterface`.
+    ])
 
     parent_page_types = ['home.HomePage']
     child_page_types = []
