@@ -10,7 +10,7 @@ from wagtail.admin.panels import (
     ObjectList
 )
 
-from ntags.utils import get_nfc_tag_model_string
+from ntags import get_nfc_tag_model_string
 
 
 class UserCollection(models.Model):

@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from .utils import get_nfc_tag_filter_method
+from . import get_nfc_tag_filter_method
 
 
 class NFCTagManager(models.Manager):

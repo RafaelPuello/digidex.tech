@@ -4,7 +4,7 @@ from rest_framework.response import Response
 
 from .models import NFCTagScan
 from .serializers import NFCTagSerializer, NFCTagScanSerializer
-from .utils import get_nfc_tag_model
+from . import get_nfc_tag_model
 
 
 class NFCTagViewSet(viewsets.ModelViewSet):
