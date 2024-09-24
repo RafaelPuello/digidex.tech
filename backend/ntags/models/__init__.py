@@ -1,3 +1,6 @@
-from .base import AbstractNFCTag, NFCTag, NFCTaggedItem
-from .memory import AbstractNFCTagMemory, NFCTagMemory
-from .scans import AbstractNFCTagScan, NFCTagScan
+from .base import (
+    NFCTagManager, AbstractNFCTag, NFCTag,
+    NFCTagLinkManager, AbstractNFCTagLink, NFCTagLink
+)
+from .memory import NFCTagMemory
+from .scans import NFCTagScan

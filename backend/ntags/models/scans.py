@@ -6,11 +6,10 @@ from django.utils.translation import gettext_lazy as _
 from ..utils import get_nfc_tag_model_string
 
 
-class AbstractNFCTagScan(models.Model):
+class NFCTagScan(models.Model):
     """
     Model representing a scan of an NFC tag.
     """
-
     ntag = models.ForeignKey(
         get_nfc_tag_model_string(),
         on_delete=models.CASCADE,
@@ -36,7 +35,3 @@ class AbstractNFCTagScan(models.Model):
         abstract = True
         verbose_name = _("scan")
         verbose_name_plural = _("scans")
-
-
-class NFCTagScan(AbstractNFCTagScan):
-    pass

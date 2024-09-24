@@ -6,7 +6,7 @@ from ..constants import NTAG_EEPROM_SIZES
 from ..utils import get_nfc_tag_model_string
 
 
-class AbstractNFCTagMemory(models.Model):
+class NFCTagMemory(models.Model):
     """
     Model representing the EEPROM contents of an NFC tag.
     """
@@ -54,7 +54,3 @@ class AbstractNFCTagMemory(models.Model):
         abstract = True
         verbose_name = _("eeprom")
         verbose_name_plural = _("eeproms")
-
-
-class NFCTagMemory(AbstractNFCTagMemory):
-    pass

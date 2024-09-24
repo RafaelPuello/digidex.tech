@@ -4,6 +4,14 @@ from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from wagtail.models import Page, Collection
 from wagtail.fields import RichTextField
+from wagtail.admin.panels import (
+    FieldPanel,
+    TabbedInterface,
+    TitleFieldPanel,
+    ObjectList
+)
+
+from ntags.models import AbstractNFCTagLink
 
 
 class UserCollection(models.Model):
@@ -66,6 +74,14 @@ class UserCollection(models.Model):
         verbose_name_plural = _('user collections')
 
 
+class UserPageTag(AbstractNFCTagLink):
+    content_object = models.ForeignKey(
+        'UserPage',
+        related_name='linked_item',
+        on_delete=models.CASCADE
+    )
+
+
 class UserPage(Page):
     """
     Represents a user's page.
@@ -73,12 +89,32 @@ class UserPage(Page):
     Attributes:
         user_collection (UserCollection): The user collection that the page belongs to.
     """
-
     user_collection = models.OneToOneField(
         UserCollection,
         on_delete=models.PROTECT,
         related_name='page'
     )
+    nfc_tags = models.ForeignKey(
+        UserPageTag,
+        on_delete=models.PROTECT,
+        related_name='page',
+        null=True,
+        blank=True
+    )
+
+    shared_panels = [
+        FieldPanel('nfc_tags'),
+    ]
+    private_panels = [
+        FieldPanel('user_collection'),
+    ]
+
+    edit_handler = TabbedInterface([
+        ObjectList(shared_panels, heading='Details'),
+        ObjectList(private_panels, heading='Admin only', permission="superuser"),
+        ObjectList(Page.promote_panels, heading='Promote'),
+        ObjectList(Page.settings_panels, heading='Settings'), # The default settings are now displayed in the sidebar but need to be in the `TabbedInterface`.
+    ])
 
     parent_page_types = ['home.HomePage']
     child_page_types = []

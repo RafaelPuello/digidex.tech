@@ -1,10 +1,10 @@
-from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
 from .models import NFCTag
 
 User = get_user_model()
+
 
 class NFCTagModelTest(TestCase):
     def setUp(self):
