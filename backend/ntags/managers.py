@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from .utils import get_nfc_tag_filter_method
+from . import get_nfc_tag_filter_method
 
 
 class NFCTagManager(models.Manager):
@@ -23,9 +23,6 @@ class NFCTagManager(models.Manager):
         """
         Retrieves an NFCTag instance based on the mirrored ASCII value and filter type.
         """
-        if not ascii_mirror:
-            raise ValueError(_('Invalid NFC tag URI.'))
-
         ntag_filter = get_nfc_tag_filter_method()
 
         if ntag_filter == 'uid':
@@ -51,16 +48,9 @@ class NFCTagManager(models.Manager):
         Retrieves an NFCTag instance based on the Counter.
         """
         from .models import NFCTagScan
-        latest_scan_subquery = NFCTagScan.objects.filter(
-            ntag=models.OuterRef('pk')
-        ).order_by('-scanned_at').values('counter')[:1]
-
-        # Annotate NFCTag with the latest counter value
-        queryset = self.annotate(
-            latest_counter=models.Subquery(latest_scan_subquery)
-        ).filter(
-            latest_counter=counter
-        )
+        queryset = NFCTagScan.objects.filter(
+            counter=counter
+        ).order_by('-scanned_at')
         return queryset
 
     def get_from_uid_counter(self, uid_counter):
@@ -72,6 +62,6 @@ class NFCTagManager(models.Manager):
         uid, counter = uid_counter.split('x')
 
         try:
-            return self.get(serial_number=uid).scans.get(counter=counter)
+            return self.get(serial_number=uid) #  .scans.get(counter=counter)
         except self.model.DoesNotExist:
             raise self.model.DoesNotExist(_('NFC Tag Scan not found.'))

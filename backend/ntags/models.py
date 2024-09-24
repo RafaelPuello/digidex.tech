@@ -4,9 +4,11 @@ from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
 
-from .constants import NTAG213, NTAG_IC_CHOICES, NTAG_EEPROM_SIZES
+from . import (
+    get_nfc_tag_model_string,
+    NTAG213, NTAG_IC_CHOICES, NTAG_EEPROM_SIZES
+)
 from .validators import validate_serial_number, validate_integrated_circuit
-from .utils import get_nfc_tag_model_string
 from .managers import NFCTagManager
 
 

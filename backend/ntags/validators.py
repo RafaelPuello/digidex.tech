@@ -1,7 +1,7 @@
 import re
 from django.core.exceptions import ValidationError
 
-from .constants import NTAG_IC_CHOICES
+from . import NTAG_IC_CHOICES
 
 
 def validate_serial_number(value):
