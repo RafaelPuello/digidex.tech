@@ -17,7 +17,7 @@ def link(request):
     NFCTag = get_nfc_tag_model()
     try:
         ntag = NFCTag.objects.get_from_mirror(mirrored_values)
-        return redirect(ntag.get_absolute_url())
+        return redirect(ntag.linked_item.url)
 
     except ValueError as e:
         messages.error(request, str(e))
