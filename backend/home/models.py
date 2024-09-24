@@ -11,7 +11,7 @@ from wagtail.admin.panels import (
     ObjectList
 )
 
-from ntags.models import AbstractNFCTagLink
+from ntags.utils import get_nfc_tag_model_string
 
 
 class UserCollection(models.Model):
@@ -74,14 +74,6 @@ class UserCollection(models.Model):
         verbose_name_plural = _('user collections')
 
 
-class UserPageTag(AbstractNFCTagLink):
-    content_object = models.ForeignKey(
-        'UserPage',
-        related_name='linked_item',
-        on_delete=models.CASCADE
-    )
-
-
 class UserPage(Page):
     """
     Represents a user's page.
@@ -94,8 +86,8 @@ class UserPage(Page):
         on_delete=models.PROTECT,
         related_name='page'
     )
-    nfc_tags = models.ForeignKey(
-        UserPageTag,
+    nfc_tag = models.OneToOneField(
+        get_nfc_tag_model_string(),
         on_delete=models.PROTECT,
         related_name='page',
         null=True,
@@ -103,7 +95,7 @@ class UserPage(Page):
     )
 
     shared_panels = [
-        FieldPanel('nfc_tags'),
+        FieldPanel('nfc_tag'),
     ]
     private_panels = [
         FieldPanel('user_collection'),

@@ -1,12 +1,12 @@
+from uuid import uuid4
 from django.db import models
 from django.conf import settings
-from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
-from django.contrib.contenttypes.models import ContentType
+from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
 
-from ..constants import NTAG213, NTAG_IC_CHOICES
-from ..validators import validate_serial_number, validate_integrated_circuit
-from ..utils import get_nfc_tag_model, get_nfc_tag_model_string, get_nfc_tag_filter_method
+from .constants import NTAG213, NTAG_IC_CHOICES, NTAG_EEPROM_SIZES
+from .validators import validate_serial_number, validate_integrated_circuit
+from .utils import get_nfc_tag_model_string, get_nfc_tag_filter_method
 
 
 class NFCTagManager(models.Manager):
@@ -55,7 +55,7 @@ class NFCTagManager(models.Manager):
         """
         Retrieves an NFCTag instance based on the Counter.
         """
-        from . import NFCTagScan
+        from .models import NFCTagScan
         latest_scan_subquery = NFCTagScan.objects.filter(
             ntag=models.OuterRef('pk')
         ).order_by('-scanned_at').values('counter')[:1]
@@ -81,42 +81,11 @@ class NFCTagManager(models.Manager):
         except self.model.DoesNotExist:
             raise self.model.DoesNotExist(_('NFC Tag Scan not found.'))
 
-    def add(self, *ntags):
-        NFCTag = get_nfc_tag_model()
-        for ntag in ntags:
-            if not isinstance(ntag, NFCTag):
-                raise ValueError("All NFC-Tags must be instances of the NFCTag model.")
-            NFCTagLink.objects.create(
-                nfc_tag=ntag,
-                content_object=self.instance
-            )
-
-    def remove(self, *ntags):
-        NFCTagLink.objects.filter(
-            nfc_tag__in=ntags,
-            content_type=ContentType.objects.get_for_model(self.instance),
-            object_id=self.instance.pk
-        ).delete()
-
-    def clear(self):
-        NFCTagLink.objects.filter(
-            content_type=ContentType.objects.get_for_model(self.instance),
-            object_id=self.instance.pk
-        ).delete()
-
-    def all(self):
-        NFCTag = get_nfc_tag_model()
-        return NFCTag.objects.filter(
-            tagged_items__content_type=ContentType.objects.get_for_model(self.instance),
-            tagged_items__object_id=self.instance.pk
-        )
-
 
 class AbstractNFCTag(models.Model):
     """
     Abstract base model for NFC Tags.
     """
-
     serial_number = models.CharField(
         max_length=32,
         editable=False,
@@ -138,10 +107,9 @@ class AbstractNFCTag(models.Model):
         blank=True,
         related_name='ntags'
     )
-    tagged_items = GenericRelation('NFCTagLink')
 
     def log_scan(self, counter):
-        from . import NFCTagScan
+        from .models import NFCTagScan
         return NFCTagScan.objects.create(
             ntag=self,
             counter=counter
@@ -160,81 +128,82 @@ class NFCTag(AbstractNFCTag):
     pass
 
 
-class NFCTagLinkManager(models.Manager):
+class NFCTagMemory(models.Model):
     """
-    Manager to handle NFC tag associations with arbitrary models.
-    Provides methods to add, remove, clear tags associated with an object,
-    and retrieve tags associated with an object.
+    Model representing the EEPROM contents of an NFC tag.
     """
-
-    def add(self, obj, ntag):
-        content_type = ContentType.objects.get_for_model(obj)
-        tagged_item, created = NFCTagLink.objects.get_or_create(
-            nfc_tag=ntag,
-            content_type=content_type,
-            object_id=obj.pk
-        )
-        return tagged_item
-
-    def remove(self, obj, ntag):
-        content_type = ContentType.objects.get_for_model(obj)
-        return NFCTagLink.objects.filter(
-            nfc_tag=ntag,
-            content_type=content_type,
-            object_id=obj.pk
-        ).delete()
-
-    def clear(self, obj):
-        content_type = ContentType.objects.get_for_model(obj)
-        return NFCTagLink.objects.filter(
-            content_type=content_type,
-            object_id=obj.pk
-        ).delete()
-
-    def get_tags(self, obj):
-        NFCTag = get_nfc_tag_model()
-        content_type = ContentType.objects.get_for_model(obj)
-        return NFCTag.objects.filter(
-            tagged_items__content_type=content_type,
-            tagged_items__object_id=obj.pk
-        )
-
-
-class AbstractNFCTagLink(models.Model):
-    """
-    Abstract base model for the relationship between NFC tags and any other model instance.
-    """
-    nfc_tag = models.ForeignKey(
+    uuid = models.UUIDField(
+        primary_key=True,
+        default=uuid4,
+        editable=False,
+        unique=True,
+    )
+    ntag = models.OneToOneField(
         get_nfc_tag_model_string(),
         on_delete=models.CASCADE,
-        related_name="%(app_label)s_%(class)s_links"
+        related_name='eeprom'
     )
+    eeprom = models.BinaryField(
+        max_length=888,
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_modified = models.DateTimeField(auto_now=True)
+
+    @classmethod
+    def get_for_ntag(cls, ntag):
+        """
+        Retrieves or creates the EEPROM object for the given NFC tag.
+        """
+
+        columns = 4
+        rows = NTAG_EEPROM_SIZES[ntag.integrated_circuit] // columns
+
+        # Create a 2D NumPy array filled with zeros (assuming NumPy is used)
+        eeprom_2d = None #  np.zeros((rows, columns), dtype=np.uint8)
+        eeprom_bytes = eeprom_2d.tobytes()
+
+        ntag_eeprom, created = cls.objects.get_or_create(
+            ntag=ntag,
+            defaults={'eeprom': eeprom_bytes}
+        )
+        return ntag_eeprom, eeprom_2d.view()
+
+    def __str__(self):
+        return str(self.ntag)
 
     class Meta:
         abstract = True
+        verbose_name = _("eeprom")
+        verbose_name_plural = _("eeproms")
 
 
-class NFCTagLink(AbstractNFCTagLink):
+
+class NFCTagScan(models.Model):
     """
-    Model representing the relationship between NFC tags and any other model instance.
+    Model representing a scan of an NFC tag.
     """
-    content_type = models.ForeignKey(
-        ContentType,
+    ntag = models.ForeignKey(
+        get_nfc_tag_model_string(),
         on_delete=models.CASCADE,
-        related_name='nfc_tag_links'
+        related_name='scans'
     )
-    content_object = GenericForeignKey(
-        'content_type',
-        'object_id'
+    counter = models.PositiveIntegerField(
+        validators=[MinValueValidator(0)]
     )
-    object_id = models.PositiveIntegerField()
+    scanned_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='+'
+    )
+    scanned_at = models.DateTimeField(
+        auto_now_add=True
+    )
 
     def __str__(self):
-        return f"{self.nfc_tag} tagged to {self.content_object}"
+        return f"Scan #{self.counter} for {self.ntag}"
 
     class Meta:
-        verbose_name = _("NFC Tagged Item")
-        verbose_name_plural = _("NFC Tagged Items")
-        indexes = [
-            models.Index(fields=['content_type', 'object_id']),
-        ]
+        abstract = True
+        verbose_name = _("scan")
+        verbose_name_plural = _("scans")
