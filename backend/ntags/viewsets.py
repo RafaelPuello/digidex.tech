@@ -11,7 +11,6 @@ class NFCTagViewSet(viewsets.ModelViewSet):
     """
     A viewset for viewing and editing NFC Tags.
     """
-
     queryset = get_nfc_tag_model().objects.all()
     serializer_class = NFCTagSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -27,7 +26,6 @@ class NFCTagViewSet(viewsets.ModelViewSet):
         """
         Create a new NFC tag with the provided serial number and tag type.
         """
-
         serial_number = request.data.get('serial_number')
 
         if not serial_number:
@@ -44,7 +42,6 @@ class NFCTagViewSet(viewsets.ModelViewSet):
         """
         Set active to False for now. Will fix later.
         """
-
         instance = self.get_object()
         instance.active = False
         # self.perform_destroy(instance)
@@ -55,7 +52,6 @@ class NFCTagScanViewSet(viewsets.ModelViewSet):
     """
     A viewset for viewing and editing an NFC Tag's Scans.
     """
-
     queryset = NFCTagScan.objects.all()
     serializer_class = NFCTagScanSerializer
     permission_classes = [permissions.IsAuthenticated]
