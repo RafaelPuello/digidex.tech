@@ -1,24 +1,78 @@
-{% extends "base.html" %}
-
-{% load wagtailcore_tags %}
-
-{% block body_class %}template-blogindexpage{% endblock %}
+{% extends "blog/base.html" %}
+{% load static wagtailcore_tags wagtailimages_tags %}
 
 {% block content %}
-    <h1>{{ page.title }}</h1>
-
-    <div class="intro">{{ page.intro|richtext }}</div>
-    {% for post in page.get_children %}
-        {% with post=post.specific %}
-            <h2><a href="{% pageurl post %}">{{ post.title }}</a></h2>
-
-            {% with post.main_image as main_image %}
-                {% if main_image %}{% image main_image fill-160x100 %}{% endif %}
-            {% endwith %}
-
-            <p>{{ post.intro }}</p>
-            {{ post.body|richtext }}
-        {% endwith %}
-    {% endfor %}
-
-{% endblock %}
+  <section class="section-top">
+    <div style="opacity:0" class="content">
+      <div class="block-top">
+        <h1 class="heading-top">{{ page.title }}</h1>
+        <p class="paragraph-top">{{ page.intro|richtext }}</p>
+      </div>
+    </div>
+  </section>
+  <section class="section">
+    <div style="opacity:0" class="content">
+      <div class="collection-list-wrapper-posts large w-dyn-list">
+        <div role="list" class="collection-list-posts large w-dyn-items">
+          <div role="listitem" class="w-dyn-item">
+            <div class="block-post large">
+              <a href="#" class="link-post-thumbnail large w-inline-block">
+                {% with post.main_image as main_image %}
+                    {% if main_image %}{% image main_image fill-160x100 loading="lazy", class="image-post-thumbnail large" %}{% endif %}
+                {% endwith %}
+                <img alt="" loading="eager" src="" class="image-post-thumbnail large">
+              </a>
+              <div class="post large">
+                <div class="date"></div>
+                <a href="#" class="link-heading-post large w-inline-block">
+                  <h3 class="heading-post"></h3>
+                </a>
+                <p class="paragraph-post large"></p>
+                <a href="#" class="link-block w-inline-block">
+                  <div class="text-link">Read more</div>
+                  <div class="block-icon-link">
+                    <img src="images/bx-arrow-to-right_blue.svg" loading="eager" alt="" class="icon-link">
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="collection-list-wrapper-posts w-dyn-list">
+        {% for post in page.get_children %}
+          {% with post=post.specific %}
+            <div role="list" class="collection-list-posts w-dyn-items">
+              <div role="listitem" class="w-dyn-item">
+                <div class="block-post">
+                  <a href="{% pageurl post %}" class="link-post-thumbnail w-inline-block">
+                    {% with post.main_image as main_image %}
+                      {% if main_image %}{% image main_image fill-160x100 loading="lazy", class="image-post-thumbnail" %}{% endif %}
+                    {% endwith %}
+                  </a>
+                  <div class="post">
+                    <div class="date">{{ post.date }}</div>
+                    <a href="{% pageurl post %}" class="link-heading-post w-inline-block">
+                      <h4 class="heading-post">{{ post.title }}</h4>
+                    </a>
+                    <p class="paragraph-post">{{ post.body|richtext }}</p>
+                    <a href="{% pageurl post %}" class="link-block w-inline-block">
+                      <div class="text-link">Read more</div>
+                      <div class="block-icon-link">
+                        <img src="{% static 'base/images/bx-arrow-to-right_blue.svg' %}" loading="eager" alt="" class="icon-link">
+                      </div>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endwith %}
+        {% empty %}
+          <div class="empty-state w-dyn-empty">
+            <div class="text-empty">No items found.</div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endblock content %}
