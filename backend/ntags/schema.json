@@ -20,6 +20,10 @@
           "type": ["string", "null"],
           "description": "Foreign key reference to User"
         },
+        "label": {
+          "type": "string",
+          "maxLength": 64
+        },
         "active": {
           "type": "boolean"
         }

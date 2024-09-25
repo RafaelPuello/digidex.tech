@@ -29,13 +29,20 @@ class AbstractNFCTag(models.Model):
         default=NTAG213,
         validators=[validate_integrated_circuit]
     )
-    active = models.BooleanField(default=True)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
         related_name='ntags'
+    )
+    label = models.CharField(
+        max_length=64,
+        blank=True,
+        null=True
+    )
+    active = models.BooleanField(
+        default=True
     )
 
     objects = NFCTagManager()
@@ -46,6 +53,17 @@ class AbstractNFCTag(models.Model):
             ntag=self,
             counter=counter
         )
+
+    def save(self, *args, **kwargs):
+        if not self.label:
+            if self.user:
+                # Count the number of NFC Tags assigned to the user
+                n = self.user.ntags.count() + 1
+                self.label = f"NFC Tag {n}"
+            else:
+                # If no user is assigned, generate a generic label
+                self.label = f"NFC Tag {uuid4()}"
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.serial_number
