@@ -13,7 +13,7 @@ from wagtail.admin.panels import (
 from ntags import get_nfc_tag_model_string
 
 
-class UserCollection(models.Model):
+class UserIndexCollection(models.Model):
     """
     Represents a user's collection.
 
@@ -34,12 +34,12 @@ class UserCollection(models.Model):
     )
 
     def create_user_page(self):
-        root_page = UserPage.get_root_page()
+        root_page = UserIndexPage.get_root_page()
         user_slug = slugify(self.user.username)
         try:
             return root_page.get_children().get(slug=user_slug)
         except Page.DoesNotExist:
-            user_page = UserPage(
+            user_page = UserIndexPage(
                 title=self.user.username,
                 slug=user_slug,
                 owner=self.user,
@@ -73,15 +73,15 @@ class UserCollection(models.Model):
         verbose_name_plural = _('user collections')
 
 
-class UserPage(Page):
+class UserIndexPage(Page):
     """
-    Represents a user's page.
+    Represents a user's index page.
 
     Attributes:
-        user_collection (UserCollection): The user collection that the page belongs to.
+        user_collection (UserIndexCollection): The user collection that the page belongs to.
     """
     user_collection = models.OneToOneField(
-        UserCollection,
+        UserIndexCollection,
         on_delete=models.PROTECT,
         related_name='page'
     )
@@ -137,7 +137,7 @@ class HomePage(Page):
     )
 
     parent_page_types = ['wagtailcore.Page']
-    child_page_types = ['home.UserPage']
+    child_page_types = ['home.UserIndexPage']
 
     def __str__(self):
         return self.title

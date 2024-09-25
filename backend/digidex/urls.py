@@ -1,3 +1,4 @@
+from django.contrib import admin
 from django.urls import include, path
 from wagtail.documents import urls as wagtaildocs_urls
 from wagtail.admin import urls as dashboard_urls
@@ -13,6 +14,7 @@ urlpatterns = [
     path("search/", search, name="search"),
     path("link/", include('ntags.urls')),
     path('documents/', include(wagtaildocs_urls)),
+    path('admin/', admin.site.urls),
     path("dashboard/", include(dashboard_urls)),
     path("", include(wagtail_urls)),
 ]

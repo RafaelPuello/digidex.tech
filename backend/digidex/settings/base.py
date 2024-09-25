@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "wagtail",
     'wagtail.api.v2',
 
+    "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",

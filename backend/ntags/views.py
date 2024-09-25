@@ -21,4 +21,3 @@ def link(request):
     except Exception as e:
         messages.error(request, str(e))
         return redirect('/')
-
