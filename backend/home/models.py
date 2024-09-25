@@ -85,16 +85,15 @@ class UserIndexPage(Page):
         on_delete=models.PROTECT,
         related_name='page'
     )
-    nfc_tag = models.OneToOneField(
-        get_nfc_tag_model_string(),
-        on_delete=models.PROTECT,
-        related_name='linked_item',
-        null=True,
-        blank=True
-    )
+    # nfc_tag = models.OneToOneField(
+    #     get_nfc_tag_model_string(),
+    #     on_delete=models.PROTECT,
+    #     related_name='linked_item',
+    #     null=True,
+    #     blank=True
+    # )
 
     shared_panels = [
-        FieldPanel('nfc_tag'),
     ]
     private_panels = [
         FieldPanel('user_collection'),
