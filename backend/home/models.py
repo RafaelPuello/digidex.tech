@@ -21,7 +21,6 @@ class UserIndexCollection(models.Model):
         user (User): The user who owns the collection.
         collection (Collection): The collection that belongs to the user.
     """
-
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
@@ -95,8 +94,9 @@ class UserIndexPage(Page):
 
     shared_panels = [
     ]
+
     private_panels = [
-        FieldPanel('user_collection'),
+        FieldPanel('user_collection')
     ]
 
     edit_handler = TabbedInterface([
@@ -106,8 +106,12 @@ class UserIndexPage(Page):
         # ObjectList(Page.settings_panels, heading='Settings'), # The default settings are now displayed in the sidebar but need to be in the `TabbedInterface`.
     ])
 
-    parent_page_types = ['home.HomePage']
-    child_page_types = []
+    parent_page_types = [
+        'home.HomePage'
+    ]
+
+    child_page_types = [
+    ]
 
     @staticmethod
     def get_root_page():
@@ -135,8 +139,15 @@ class HomePage(Page):
         blank=True
     )
 
-    parent_page_types = ['wagtailcore.Page']
-    child_page_types = ['home.UserIndexPage']
+    parent_page_types = [
+        'wagtailcore.Page'
+    ]
+
+    child_page_types = [
+        'home.UserIndexPage',
+        'blog.BlogIndexPage',
+        'blog.TagIndexPage'
+    ]
 
     def __str__(self):
         return self.title
