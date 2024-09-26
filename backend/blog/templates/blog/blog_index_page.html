@@ -21,7 +21,7 @@
                   {% if main_image %}
                     {% image main_image original class="image-post-thumbnail large" %}
                   {% else %}
-                    <img alt="Featured blog post placeholder" loading="lazy" decoding="async" src="{% static 'base/images/placeholder.svg' %}" class="image-post-thumbnail">
+                    <img alt="Featured blog post placeholder" loading="lazy" decoding="async" src="{% static 'blog/image-placeholder.svg' %}" class="image-post-thumbnail">
                   {% endif %}
                 {% endwith %}
               </a>
@@ -34,7 +34,7 @@
                 <a href="#" class="link-block w-inline-block">
                   <div class="text-link">Read more</div>
                   <div class="block-icon-link">
-                    <img src="{% static 'base/images/bx-arrow-to-right_blue.svg' %}" loading="lazy" decoding="async" alt="Blue Arrow Pointing Right" class="icon-link">
+                    <img src="{% static 'base/images/bx-arrow-to-right_green.svg' %}" loading="lazy" decoding="async" alt="Blue Arrow Pointing Right" class="icon-link">
                   </div>
                 </a>
               </div>
@@ -53,7 +53,7 @@
                       {% if main_image %}
                         {% image main_image original class="image-post-thumbnail" %}
                       {% else %}
-                        <img alt="Blog Post Placeholder" loading="eager" decoding="async" src="{% static 'base/images/placeholder.svg' %}" class="image-post-thumbnail">
+                        <img alt="Blog Post Placeholder" loading="eager" decoding="async" src="{% static 'blog/image-placeholder.svg' %}" class="image-post-thumbnail">
                       {% endif %}
                     {% endwith %}
                   </a>
@@ -66,7 +66,7 @@
                     <a href="{% pageurl post %}" class="link-block w-inline-block">
                       <div class="text-link">Read more</div>
                       <div class="block-icon-link">
-                        <img src="{% static 'base/images/bx-arrow-to-right_blue.svg' %}" loading="lazy" decoding="async" alt="Blue Arrow Pointing Right" class="icon-link">
+                        <img src="{% static 'base/images/bx-arrow-to-right_green.svg' %}" loading="lazy" decoding="async" alt="Blue Arrow Pointing Right" class="icon-link">
                       </div>
                     </a>
                   </div>
