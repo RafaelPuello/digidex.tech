@@ -147,7 +147,7 @@ class HomePage(Page):
         'home.UserIndexPage',
         'blog.BlogIndexPage',
         'blog.TagIndexPage',
-        'contact.ContactFormPage'
+        'support.ContactFormPage'
     ]
 
     def __str__(self):

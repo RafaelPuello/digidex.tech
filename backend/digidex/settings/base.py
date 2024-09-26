@@ -25,7 +25,7 @@ INSTALLED_APPS = [
     "ntags",
     "home",
     "blog",
-    "contact",
+    "support",
     "search",
 
     "wagtail.contrib.forms",
