@@ -146,7 +146,8 @@ class HomePage(Page):
     child_page_types = [
         'home.UserIndexPage',
         'blog.BlogIndexPage',
-        'blog.TagIndexPage'
+        'blog.TagIndexPage',
+        'contact.ContactFormPage'
     ]
 
     def __str__(self):
