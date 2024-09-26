@@ -133,11 +133,20 @@ class HomePage(Page):
     Represents the homepage of the website.
 
     Attributes:
-        body (RichTextField): The body of the homepage.
+        intro (TextField): The introduction of the page.
+        body (RichTextField): The body of the page.
     """
+    intro = models.TextField(
+        blank=True
+    )
     body = RichTextField(
         blank=True
     )
+
+    content_panels = Page.content_panels + [
+        FieldPanel('intro'),
+        FieldPanel('body'),
+    ]
 
     parent_page_types = [
         'wagtailcore.Page'
@@ -147,7 +156,8 @@ class HomePage(Page):
         'home.UserIndexPage',
         'blog.BlogIndexPage',
         'blog.TagIndexPage',
-        'support.ContactFormPage'
+        'company.CompanyIndexPage',
+        'support.ContactFormPage',
     ]
 
     def __str__(self):

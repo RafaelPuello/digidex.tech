@@ -14,11 +14,20 @@ class CompanyIndexPage(Page):
     Represents the company index page.
 
     Attributes:
+        intro (TextField): The introduction of the page.
         body (RichTextField): The body of the page.
     """
+    intro = models.TextField(
+        blank=True
+    )
     body = RichTextField(
         blank=True
     )
+
+    content_panels = Page.content_panels + [
+        FieldPanel('intro'),
+        FieldPanel('body'),
+    ]
 
     parent_page_types = [
         'home.HomePage'
