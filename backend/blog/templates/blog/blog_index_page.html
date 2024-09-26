@@ -19,12 +19,11 @@
               <a href="#" class="link-post-thumbnail large w-inline-block">
                 {% with post.main_image as main_image %}
                   {% if main_image %}
-                    {% image main_image fill-160x100 class="image-post-thumbnail large" %}
+                    {% image main_image original class="image-post-thumbnail large" %}
                   {% else %}
                     <img alt="Featured blog post placeholder" loading="lazy" decoding="async" src="{% static 'base/images/placeholder.svg' %}" class="image-post-thumbnail">
                   {% endif %}
                 {% endwith %}
-                <img alt="" loading="eager" src="" class="image-post-thumbnail large">
               </a>
               <div class="post large">
                 <div class="date"></div>
@@ -52,7 +51,7 @@
                   <a href="{% pageurl post %}" class="link-post-thumbnail w-inline-block">
                     {% with post.main_image as main_image %}
                       {% if main_image %}
-                        {% image main_image fill-160x100 class="image-post-thumbnail" %}
+                        {% image main_image original class="image-post-thumbnail" %}
                       {% else %}
                         <img alt="Blog Post Placeholder" loading="eager" decoding="async" src="{% static 'base/images/placeholder.svg' %}" class="image-post-thumbnail">
                       {% endif %}
