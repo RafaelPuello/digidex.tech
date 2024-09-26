@@ -6,9 +6,15 @@ from wagtail.models import Page, Collection
 from wagtail.fields import RichTextField
 from wagtail.admin.panels import (
     FieldPanel,
+    InlinePanel,
+    MultiFieldPanel,
+    FieldRowPanel,
     TabbedInterface,
     ObjectList
 )
+from wagtail.contrib.forms.models import AbstractEmailForm, AbstractFormField
+from wagtail.contrib.forms.panels import FormSubmissionsPanel
+from modelcluster.fields import ParentalKey
 
 from ntags import get_nfc_tag_model_string
 
@@ -111,6 +117,7 @@ class UserIndexPage(Page):
     ]
 
     child_page_types = [
+        'home.UserFormPage'
     ]
 
     @staticmethod
@@ -124,8 +131,54 @@ class UserIndexPage(Page):
         return f"{self.user_collection} and  page"
 
     class Meta:
-        verbose_name = _('user page')
-        verbose_name_plural = _('user pages')
+        verbose_name = _('user home page')
+        verbose_name_plural = _('user home pages')
+
+
+class UserFormField(AbstractFormField):
+    page = ParentalKey(
+        'home.UserFormPage',
+        on_delete=models.CASCADE,
+        related_name='form_fields'
+    )
+
+
+class UserFormPage(AbstractEmailForm):
+    intro = RichTextField(
+        blank=True
+    )
+    thank_you_text = RichTextField(
+        blank=True
+    )
+
+    content_panels = AbstractEmailForm.content_panels + [
+        FormSubmissionsPanel(),
+        FieldPanel('intro'),
+        InlinePanel('form_fields', label="Form fields"),
+        FieldPanel('thank_you_text'),
+        MultiFieldPanel([
+            FieldRowPanel([
+                FieldPanel('from_address'),
+                FieldPanel('to_address'),
+            ]),
+            FieldPanel('subject'),
+        ], "Email"),
+    ]
+
+    parent_page_types = [
+        'home.UserIndexPage'
+    ]
+
+    child_page_types = []
+
+    def __str__(self):
+        if self.owner:
+            return f"{self.owner.username}'s form page."
+        return f"Form page with no owner."
+
+    class Meta:
+        verbose_name = _('user form page')
+        verbose_name_plural = _('user form pages')
 
 
 class HomePage(Page):

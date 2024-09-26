@@ -23,10 +23,17 @@ class CompanyIndexPage(Page):
     body = RichTextField(
         blank=True
     )
+    collection = models.ForeignKey(
+        Collection,
+        null=True,
+        on_delete=models.PROTECT,
+        related_name='+'
+    )
 
     content_panels = Page.content_panels + [
         FieldPanel('intro'),
         FieldPanel('body'),
+        FieldPanel('collection')
     ]
 
     parent_page_types = [
@@ -40,5 +47,5 @@ class CompanyIndexPage(Page):
         return self.title
 
     class Meta:
-        verbose_name = _('company page')
-        verbose_name_plural = _('company pages')
+        verbose_name = _('company index page')
+        verbose_name_plural = _('company index pages')
