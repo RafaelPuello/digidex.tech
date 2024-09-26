@@ -1,3 +1,21 @@
+.contact {
+  z-index: 50;
+  background-color: var(--white);
+  text-align: center;
+  border-radius: .87em;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  max-width: 42em;
+  margin-top: -.5em;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 3.1em;
+  display: flex;
+  position: relative;
+  box-shadow: 0 15px 25px -10px #1417180d;
+}
 
 .contact-lottie {
   z-index: 20;
@@ -97,4 +115,22 @@
   display: flex;
   position: relative;
   box-shadow: 0 15px 25px -10px #1417180d;
+}
+
+@media screen and (max-width: 479px) {
+  .contact-lottie-link {
+    grid-column-gap: 1em;
+    grid-row-gap: 1em;
+    min-width: 15em;
+    margin-right: 0%;
+    font-size: .9em;
+  }
+
+  .contact-lottie-link.a2, .contact-lottie-link.a3 {
+    margin-right: 0%;
+  }
+
+  .contact {
+    padding: 2em;
+  }
 }
