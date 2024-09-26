@@ -64,7 +64,6 @@ cover/
 logs/
 *.log
 staticfiles/
-images/
 original_images/
 media/
 local_settings.py
