@@ -17,6 +17,9 @@
             </a>
           {% endif %}
           <nav role="navigation" class="nav-menu w-nav-menu">
+            {% for menuitem in site_root.get_children.live.in_menu %}
+              <a href="{% pageurl menuitem %}" class="nav-link w-nav-link">{{ menuitem.slug.title }}</a>
+            {% endfor %}
             <div class="button-mobile">
               {% get_navigation_buttons %}
             </div>
