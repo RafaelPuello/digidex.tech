@@ -7,16 +7,12 @@ from wagtail.fields import RichTextField
 from wagtail.admin.panels import (
     FieldPanel,
     InlinePanel,
-    MultiFieldPanel,
-    FieldRowPanel,
     TabbedInterface,
     ObjectList
 )
-from wagtail.contrib.forms.models import AbstractEmailForm, AbstractFormField
+from wagtail.contrib.forms.models import AbstractForm, AbstractFormField
 from wagtail.contrib.forms.panels import FormSubmissionsPanel
 from modelcluster.fields import ParentalKey
-
-from ntags import get_nfc_tag_model_string
 
 
 class UserIndexCollection(models.Model):
@@ -90,13 +86,6 @@ class UserIndexPage(Page):
         on_delete=models.PROTECT,
         related_name='page'
     )
-    # nfc_tag = models.OneToOneField(
-    #     get_nfc_tag_model_string(),
-    #     on_delete=models.PROTECT,
-    #     related_name='linked_item',
-    #     null=True,
-    #     blank=True
-    # )
 
     shared_panels = [
     ]
@@ -143,7 +132,7 @@ class UserFormField(AbstractFormField):
     )
 
 
-class UserFormPage(AbstractEmailForm):
+class UserFormPage(AbstractForm):
     intro = RichTextField(
         blank=True
     )
@@ -151,18 +140,10 @@ class UserFormPage(AbstractEmailForm):
         blank=True
     )
 
-    content_panels = AbstractEmailForm.content_panels + [
+    content_panels = AbstractForm.content_panels + [
         FormSubmissionsPanel(),
         FieldPanel('intro'),
-        InlinePanel('form_fields', label="Form fields"),
-        FieldPanel('thank_you_text'),
-        MultiFieldPanel([
-            FieldRowPanel([
-                FieldPanel('from_address'),
-                FieldPanel('to_address'),
-            ]),
-            FieldPanel('subject'),
-        ], "Email"),
+        InlinePanel('form_fields', label="Form fields")
     ]
 
     parent_page_types = [

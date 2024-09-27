@@ -3,6 +3,8 @@ from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey
 
 from . import (
     get_nfc_tag_model_string,
@@ -44,11 +46,25 @@ class AbstractNFCTag(models.Model):
     active = models.BooleanField(
         default=True
     )
+    content_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='+'
+    )
+    object_id = models.PositiveIntegerField(
+        null=True,
+        blank=True
+    )
+    content_object = GenericForeignKey(
+        'content_type', 
+        'object_id'
+    )
 
     objects = NFCTagManager()
 
     def log_scan(self, counter):
-        from .models import NFCTagScan
         return NFCTagScan.objects.create(
             ntag=self,
             counter=counter
@@ -72,6 +88,9 @@ class AbstractNFCTag(models.Model):
         abstract = True
         verbose_name = _("ntag")
         verbose_name_plural = _("ntags")
+        indexes = [
+            models.Index(fields=['content_type', 'object_id']),
+        ]
 
 
 class NFCTag(AbstractNFCTag):
@@ -99,8 +118,12 @@ class NFCTagMemory(models.Model):
     eeprom = models.BinaryField(
         max_length=888,
     )
-    created_at = models.DateTimeField(auto_now_add=True)
-    last_modified = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+    last_modified = models.DateTimeField(
+        auto_now=True
+    )
 
     @classmethod
     def get_for_ntag(cls, ntag):
