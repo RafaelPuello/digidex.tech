@@ -6,11 +6,13 @@ from wagtail.models import Page, Collection
 from wagtail.fields import RichTextField
 from wagtail.admin.panels import (
     FieldPanel,
+    InlinePanel,
     TabbedInterface,
     ObjectList
 )
-
-from ntags import get_nfc_tag_model_string
+from wagtail.contrib.forms.models import AbstractForm, AbstractFormField
+from wagtail.contrib.forms.panels import FormSubmissionsPanel
+from modelcluster.fields import ParentalKey
 
 
 class UserIndexCollection(models.Model):
@@ -21,7 +23,6 @@ class UserIndexCollection(models.Model):
         user (User): The user who owns the collection.
         collection (Collection): The collection that belongs to the user.
     """
-
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
@@ -85,18 +86,12 @@ class UserIndexPage(Page):
         on_delete=models.PROTECT,
         related_name='page'
     )
-    # nfc_tag = models.OneToOneField(
-    #     get_nfc_tag_model_string(),
-    #     on_delete=models.PROTECT,
-    #     related_name='linked_item',
-    #     null=True,
-    #     blank=True
-    # )
 
     shared_panels = [
     ]
+
     private_panels = [
-        FieldPanel('user_collection'),
+        FieldPanel('user_collection')
     ]
 
     edit_handler = TabbedInterface([
@@ -106,8 +101,13 @@ class UserIndexPage(Page):
         # ObjectList(Page.settings_panels, heading='Settings'), # The default settings are now displayed in the sidebar but need to be in the `TabbedInterface`.
     ])
 
-    parent_page_types = ['home.HomePage']
-    child_page_types = []
+    parent_page_types = [
+        'home.HomePage'
+    ]
+
+    child_page_types = [
+        'home.UserFormPage'
+    ]
 
     @staticmethod
     def get_root_page():
@@ -120,8 +120,46 @@ class UserIndexPage(Page):
         return f"{self.user_collection} and  page"
 
     class Meta:
-        verbose_name = _('user page')
-        verbose_name_plural = _('user pages')
+        verbose_name = _('user home page')
+        verbose_name_plural = _('user home pages')
+
+
+class UserFormField(AbstractFormField):
+    page = ParentalKey(
+        'home.UserFormPage',
+        on_delete=models.CASCADE,
+        related_name='form_fields'
+    )
+
+
+class UserFormPage(AbstractForm):
+    intro = RichTextField(
+        blank=True
+    )
+    thank_you_text = RichTextField(
+        blank=True
+    )
+
+    content_panels = AbstractForm.content_panels + [
+        FormSubmissionsPanel(),
+        FieldPanel('intro'),
+        InlinePanel('form_fields', label="Form fields")
+    ]
+
+    parent_page_types = [
+        'home.UserIndexPage'
+    ]
+
+    child_page_types = []
+
+    def __str__(self):
+        if self.owner:
+            return f"{self.owner.username}'s form page."
+        return f"Form page with no owner."
+
+    class Meta:
+        verbose_name = _('user form page')
+        verbose_name_plural = _('user form pages')
 
 
 class HomePage(Page):
@@ -129,14 +167,32 @@ class HomePage(Page):
     Represents the homepage of the website.
 
     Attributes:
-        body (RichTextField): The body of the homepage.
+        intro (TextField): The introduction of the page.
+        body (RichTextField): The body of the page.
     """
+    intro = models.TextField(
+        blank=True
+    )
     body = RichTextField(
         blank=True
     )
 
-    parent_page_types = ['wagtailcore.Page']
-    child_page_types = ['home.UserIndexPage']
+    content_panels = Page.content_panels + [
+        FieldPanel('intro'),
+        FieldPanel('body'),
+    ]
+
+    parent_page_types = [
+        'wagtailcore.Page'
+    ]
+
+    child_page_types = [
+        'home.UserIndexPage',
+        'blog.BlogIndexPage',
+        'blog.TagIndexPage',
+        'company.CompanyIndexPage',
+        'support.ContactFormPage',
+    ]
 
     def __str__(self):
         return self.title

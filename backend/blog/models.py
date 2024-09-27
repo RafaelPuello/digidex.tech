@@ -9,10 +9,20 @@ from wagtail.search import index
 
 
 class BlogIndexPage(Page):
-    intro = RichTextField(blank=True)
+    intro = RichTextField(
+        blank=True
+    )
 
     content_panels = Page.content_panels + [
         FieldPanel('intro'),
+    ]
+
+    parent_page_types = [
+        'home.HomePage'
+    ]
+
+    child_page_types = [
+        'blog.BlogPage',
     ]
 
     def get_context(self, request):
@@ -30,26 +40,47 @@ class BlogPageTag(TaggedItemBase):
     )
 
 
-class BlogTagIndexPage(Page):
+class TagIndexPage(Page):
+
+    parent_page_types = [
+        'home.HomePage'
+    ]
+
+    child_page_types = []
 
     def get_context(self, request):
-
-        # Filter by tag
+        """
+        Filter blog pages by tag and update template context
+        """
         tag = request.GET.get('tag')
         blogpages = BlogPage.objects.filter(tags__name=tag)
 
-        # Update template context
         context = super().get_context(request)
         context['blogpages'] = blogpages
         return context
 
 
 class BlogPage(Page):
-    date = models.DateField("Post date")
-    intro = models.CharField(max_length=250)
-    body = RichTextField(blank=True)
+    date = models.DateField(
+        "Post date"
+    )
+    intro = models.CharField(
+        max_length=250
+    )
+    body = RichTextField(
+        blank=True
+    )
 
-    tags = ClusterTaggableManager(through=BlogPageTag, blank=True)
+    tags = ClusterTaggableManager(
+        through=BlogPageTag,
+        blank=True
+    )
+
+    parent_page_types = [
+        'blog.BlogIndexPage'
+    ]
+
+    child_page_types = []
 
     def main_image(self):
         gallery_item = self.gallery_images.first()
@@ -65,10 +96,11 @@ class BlogPage(Page):
     ]
 
     content_panels = Page.content_panels + [
-        MultiFieldPanel([
-            FieldPanel('date'),
-            FieldPanel('tags'),
-        ], heading="Blog information"),
+        MultiFieldPanel(
+            [
+                FieldPanel('date'),
+                FieldPanel('tags')
+            ], heading="Blog information"),
         FieldPanel('intro'),
         FieldPanel('body'),
         InlinePanel('gallery_images', label="Gallery images"),
@@ -76,11 +108,20 @@ class BlogPage(Page):
 
 
 class BlogPageGalleryImage(Orderable):
-    page = ParentalKey(BlogPage, on_delete=models.CASCADE, related_name='gallery_images')
-    image = models.ForeignKey(
-        'wagtailimages.Image', on_delete=models.CASCADE, related_name='+'
+    page = ParentalKey(
+        BlogPage,
+        on_delete=models.CASCADE,
+        related_name='gallery_images'
     )
-    caption = models.CharField(blank=True, max_length=250)
+    image = models.ForeignKey(
+        'wagtailimages.Image',
+        on_delete=models.CASCADE,
+        related_name='+'
+    )
+    caption = models.CharField(
+        blank=True,
+        max_length=250
+    )
 
     panels = [
         FieldPanel('image'),

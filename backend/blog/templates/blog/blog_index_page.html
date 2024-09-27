@@ -3,7 +3,7 @@
 
 {% block content %}
   <section class="section-top">
-    <div style="opacity:0" class="content">
+    <div class="content">
       <div class="block-top">
         <h1 class="heading-top">{{ page.title }}</h1>
         <p class="paragraph-top">{{ page.intro|richtext }}</p>
@@ -11,16 +11,19 @@
     </div>
   </section>
   <section class="section">
-    <div style="opacity:0" class="content">
+    <div class="content">
       <div class="collection-list-wrapper-posts large w-dyn-list">
         <div role="list" class="collection-list-posts large w-dyn-items">
           <div role="listitem" class="w-dyn-item">
             <div class="block-post large">
               <a href="#" class="link-post-thumbnail large w-inline-block">
                 {% with post.main_image as main_image %}
-                    {% if main_image %}{% image main_image fill-160x100 loading="lazy", class="image-post-thumbnail large" %}{% endif %}
+                  {% if main_image %}
+                    {% image main_image original class="image-post-thumbnail large" %}
+                  {% else %}
+                    <img alt="Featured blog post placeholder" loading="lazy" decoding="async" src="{% static 'blog/image-placeholder.svg' %}" class="image-post-thumbnail">
+                  {% endif %}
                 {% endwith %}
-                <img alt="" loading="eager" src="" class="image-post-thumbnail large">
               </a>
               <div class="post large">
                 <div class="date"></div>
@@ -31,7 +34,7 @@
                 <a href="#" class="link-block w-inline-block">
                   <div class="text-link">Read more</div>
                   <div class="block-icon-link">
-                    <img src="images/bx-arrow-to-right_blue.svg" loading="eager" alt="" class="icon-link">
+                    <img src="{% static 'base/images/bx-arrow-to-right_green.svg' %}" loading="lazy" decoding="async" alt="Green Arrow Pointing Right" class="icon-link">
                   </div>
                 </a>
               </div>
@@ -47,7 +50,11 @@
                 <div class="block-post">
                   <a href="{% pageurl post %}" class="link-post-thumbnail w-inline-block">
                     {% with post.main_image as main_image %}
-                      {% if main_image %}{% image main_image fill-160x100 loading="lazy", class="image-post-thumbnail" %}{% endif %}
+                      {% if main_image %}
+                        {% image main_image original class="image-post-thumbnail" %}
+                      {% else %}
+                        <img alt="Blog Post Placeholder" loading="eager" decoding="async" src="{% static 'blog/image-placeholder.svg' %}" class="image-post-thumbnail">
+                      {% endif %}
                     {% endwith %}
                   </a>
                   <div class="post">
@@ -59,7 +66,7 @@
                     <a href="{% pageurl post %}" class="link-block w-inline-block">
                       <div class="text-link">Read more</div>
                       <div class="block-icon-link">
-                        <img src="{% static 'base/images/bx-arrow-to-right_blue.svg' %}" loading="eager" alt="" class="icon-link">
+                        <img src="{% static 'base/images/bx-arrow-to-right_green.svg' %}" loading="lazy" decoding="async" alt="Green Arrow Pointing Right" class="icon-link">
                       </div>
                     </a>
                   </div>

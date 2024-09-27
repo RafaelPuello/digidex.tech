@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load static wagtailcore_tags wagtailuserbar wagtailimages_tags navigation_tags %}
 
+{% block extra_css %}{% endblock  %}
+
 {% block body %}
   <header role="banner">
     <div class="navbar w-nav">
@@ -15,6 +17,9 @@
             </a>
           {% endif %}
           <nav role="navigation" class="nav-menu w-nav-menu">
+            {% for menuitem in site_root.get_children.live.in_menu %}
+              <a href="{% pageurl menuitem %}" class="nav-link w-nav-link">{{ menuitem.slug.title }}</a>
+            {% endfor %}
             <div class="button-mobile">
               {% get_navigation_buttons %}
             </div>
