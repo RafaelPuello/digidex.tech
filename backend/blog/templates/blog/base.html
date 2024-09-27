@@ -1,4 +1,14 @@
-{% extends "home/base.html" %}
+{% extends "base.html" %}
 {% load static %}
 
-{% block extra_css %}<link rel="stylesheet" type="text/css" href="{% static 'blog/blog.css' %}">{% endblock  %}
+{% block extra_css %}
+  <link rel="stylesheet" type="text/css" href="{% static 'blog/blog.css' %}">
+{% endblock  %}
+
+{% block body %}
+  <main role="main">
+    {% block content %}{% endblock %}
+  </main>
+{% endblock body %}
+
+{% block extra_body %}{% endblock %}

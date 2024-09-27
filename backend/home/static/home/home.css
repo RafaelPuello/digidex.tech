@@ -1,0 +1,137 @@
+.section-hero {
+  justify-content: center;
+  align-items: center;
+  padding: 3.5em 2em 3.75em;
+  display: flex;
+}
+
+.grid-hero {
+  grid-column-gap: 0em;
+  grid-row-gap: 0em;
+  grid-template-rows: auto;
+  grid-template-columns: 1.2fr 1fr;
+  align-items: center;
+  height: auto;
+}
+
+.block-hero {
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  display: flex;
+}
+
+.heading-hero {
+  max-width: 11.5em;
+  margin-bottom: .38em;
+}
+
+.paragraph-hero {
+  max-width: 26em;
+  margin-bottom: 2em;
+  font-size: 1.125em;
+  line-height: 160%;
+}
+
+.button-hero {
+  grid-column-gap: .5em;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.features-lottie {
+  z-index: 20;
+  grid-row-gap: 2.7em;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  display: flex;
+  position: absolute;
+  inset: 0%;
+}
+
+.feature-lottie-block {
+  grid-column-gap: .6em;
+  background-color: var(--accent-b1);
+  -webkit-backdrop-filter: blur(30px);
+  backdrop-filter: blur(30px);
+  border-radius: .64em;
+  justify-content: center;
+  align-items: center;
+  margin-right: 43%;
+  padding: .8em 1.1em;
+  display: flex;
+}
+
+.feature-lottie-block.a2 {
+  margin-right: 5%;
+}
+
+.feature-lottie-block.a3 {
+  margin-right: 58%;
+}
+
+.feature-lottie-block.a4 {
+  margin-right: 15%;
+}
+
+.text-feature-lottie {
+  color: var(--accent-a1);
+  letter-spacing: -.02em;
+  font-size: 1em;
+  font-weight: 500;
+  line-height: 120%;
+}
+
+.icon-feature-lottie {
+  width: 1.5em;
+  height: 1.5em;
+}
+
+@media screen and (max-width: 991px) {
+  .paragraph-hero {
+    font-size: 1em;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .section-hero {
+    padding-bottom: 3em;
+  }
+
+  .grid-hero {
+    grid-column-gap: 2.5em;
+    grid-row-gap: 2.5em;
+    grid-template-columns: 1fr;
+  }
+
+  .block-hero {
+    text-align: center;
+    align-items: center;
+  }
+}
+
+@media screen and (max-width: 479px) {
+  .section-hero {
+    padding: 3em 1.5em 2.5em;
+  }
+
+  .button-hero {
+    grid-row-gap: .5em;
+    flex-direction: column;
+  }
+
+  .features-lottie {
+    grid-row-gap: 1.5em;
+  }
+
+  .feature-lottie-block {
+    margin-right: 31%;
+  }
+
+  .feature-lottie-block.a3 {
+    margin-right: 38%;
+  }
+}
