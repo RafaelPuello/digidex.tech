@@ -105,9 +105,7 @@ class UserIndexPage(Page):
         'home.HomePage'
     ]
 
-    child_page_types = [
-        'home.UserFormPage'
-    ]
+    child_page_types = []
 
     @staticmethod
     def get_root_page():
@@ -122,44 +120,6 @@ class UserIndexPage(Page):
     class Meta:
         verbose_name = _('user home page')
         verbose_name_plural = _('user home pages')
-
-
-class UserFormField(AbstractFormField):
-    page = ParentalKey(
-        'home.UserFormPage',
-        on_delete=models.CASCADE,
-        related_name='form_fields'
-    )
-
-
-class UserFormPage(AbstractForm):
-    intro = RichTextField(
-        blank=True
-    )
-    thank_you_text = RichTextField(
-        blank=True
-    )
-
-    content_panels = AbstractForm.content_panels + [
-        FormSubmissionsPanel(),
-        FieldPanel('intro'),
-        InlinePanel('form_fields', label="Form fields")
-    ]
-
-    parent_page_types = [
-        'home.UserIndexPage'
-    ]
-
-    child_page_types = []
-
-    def __str__(self):
-        if self.owner:
-            return f"{self.owner.username}'s form page."
-        return f"Form page with no owner."
-
-    class Meta:
-        verbose_name = _('user form page')
-        verbose_name_plural = _('user form pages')
 
 
 class HomePage(Page):
