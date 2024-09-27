@@ -1,7 +1,7 @@
 {% extends "company/base.html" %}
 {% load static wagtailcore_tags %}
 
-
+{% block content %}
   <section class="section-top">
     <div class="content">
       <div class="block-top">
@@ -58,9 +58,9 @@
             <div class="line-h"></div>
           </div>
           <div class="block-lottie">
-            <div data-w-id="ef8907ed-ca22-ade3-43fc-33a830f84102" data-is-ix2-target="1" class="lottie-animation-1" data-animation-type="lottie" data-src="documents/Lottie-B1-White.json" data-loop="0" data-direction="1" data-autoplay="0" data-renderer="svg" data-default-duration="2.5" data-duration="0"></div>
-            <div class="lottie-animation-2" data-w-id="ef8907ed-ca22-ade3-43fc-33a830f84103" data-animation-type="lottie" data-src="documents/Lottie-B2-Blue.json" data-loop="1" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-default-duration="16" data-duration="0"></div>
-            <div class="lottie-animation-2-blur" data-w-id="ef8907ed-ca22-ade3-43fc-33a830f84104" data-animation-type="lottie" data-src="documents/Lottie-B2-Blue.json" data-loop="1" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-default-duration="16" data-duration="0"></div>
+            <div data-w-id="ef8907ed-ca22-ade3-43fc-33a830f84102" data-is-ix2-target="1" class="lottie-animation-1" data-animation-type="lottie" data-src="{% static 'company/documents/Lottie-B1-White.json' %}" data-loop="0" data-direction="1" data-autoplay="0" data-renderer="svg" data-default-duration="2.5" data-duration="0"></div>
+            <div class="lottie-animation-2" data-w-id="ef8907ed-ca22-ade3-43fc-33a830f84103" data-animation-type="lottie" data-src="{% static 'company/documents/Lottie-B2-Blue.json' %}" data-loop="1" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-default-duration="16" data-duration="0"></div>
+            <div class="lottie-animation-2-blur" data-w-id="ef8907ed-ca22-ade3-43fc-33a830f84104" data-animation-type="lottie" data-src="{% static 'company/documents/Lottie-B2-Blue.json' %}" data-loop="1" data-direction="1" data-autoplay="1" data-is-ix2-target="0" data-renderer="svg" data-default-duration="16" data-duration="0"></div>
           </div>
         </div>
         <div class="block-right">
@@ -70,9 +70,10 @@
               <h6 class="heading-name">Raphael</h6>
               <div class="text-role">Founder<br></div>
             </div>
-            <img src="images/signature.svg" loading="eager" alt="" class="signature">
+            <img src="{% static 'company/images/signature.svg' %}" loading="eager" alt="" class="signature">
           </div>
         </div>
       </div>
     </div>
   </section>
+{% endblock content %}
