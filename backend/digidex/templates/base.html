@@ -1,4 +1,4 @@
-{% load static wagtailcore_tags wagtailimages_tags navigation_tags %}
+{% load static wagtailuserbar wagtailcore_tags wagtailimages_tags navigation_tags %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -42,12 +42,53 @@
         </div>
       </section>
     {% endif %}
+    <header role="banner">
+      <div class="navbar w-nav">
+        <div class="nav-block">
+          <div class="nav">
+            {% get_site_root as site_root %}
+            {% if user.is_authenticated %}
+              {% wagtailuserbar 'top-left' %}
+            {% else %}
+              <a href="{% pageurl site_root %}" class="brand w-nav-brand">
+                <img src="{% static 'base/images/logos/logo.svg' %}" alt="Digidex Logo" class="logo">
+              </a>
+            {% endif %}
+            <nav role="navigation" class="nav-menu w-nav-menu">
+              {% for menuitem in site_root.get_children.live.in_menu %}
+                <a href="{% pageurl menuitem %}" class="nav-link w-nav-link">{{ menuitem.slug.title }}</a>
+              {% endfor %}
+              <div class="button-mobile">
+                {% get_navigation_buttons %}
+              </div>
+            </nav>
+          </div>
+          <div class="nav">
+            <div class="button-desktop">
+              {% get_navigation_buttons %}
+            </div>
+            <div class="menu-button w-nav-button">
+              <div class="icon-menu w-icon-nav-menu"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
     {% block body %}
       <a href="/" class="brand-center w-nav-brand">
         <img src="{% static 'base/images/logos/logo.svg' %}" alt="Digidex Logo" class="logo">
       </a>
       {% block content %}{% endblock content %}
     {% endblock  %}
-    {% block extra_body %}{% endblock  %}
+    <footer role="contentinfo">
+      <section class="section-footer">
+        <div class="content">
+          <div class="block-footer"></div>
+          <div class="block-footer-down">
+            <div class="text-footer-down">All rights reserved. Built with <a href="https://wagtail.org/" target="_blank" class="link-footer-down">Wagtail</a><br></div>
+          </div>
+        </div>
+      </section>
+    </footer>
   </body>
 </html>
