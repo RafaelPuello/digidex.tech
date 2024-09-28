@@ -5,10 +5,66 @@ from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
+from wagtail.images import get_image_model
+from wagtail.documents import get_document_model
+from wagtail.models import (
+    DraftStateMixin,
+    RevisionMixin,
+    LockableMixin,
+    TranslatableMixin,
+    PreviewableMixin,
+    Collection 
+)
+from wagtail.fields import RichTextField
 
 from . import (NTAG213, NTAG_IC_CHOICES, NTAG_EEPROM_SIZES)
 from .validators import validate_serial_number, validate_integrated_circuit
 from .managers import NFCTagManager
+
+
+class NFCTagType(
+    DraftStateMixin,
+    RevisionMixin,
+    LockableMixin,
+    TranslatableMixin,
+    PreviewableMixin,
+    models.Model
+):
+    """
+    Model representing the type of NFC tag.
+
+    Attributes:
+        name (str): The name of the NFC tag type.
+        description (str): A description of the NFC tag type.
+        collection (ForeignKey): The collection associated with the NFC tag type.
+    """
+    name = models.CharField(
+        max_length=255,
+        unique=True
+    )
+    description = RichTextField(
+        null=True
+    )
+    collection = models.ForeignKey(
+        Collection,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        null=True,
+        blank=True
+    )
+
+    def get_documents(self):
+        return get_document_model().objects.filter(collection=self.collection)
+
+    def get_images(self):
+        return get_image_model().objects.filter(collection=self.collection)
+
+    def __str__(self):
+        return self.name
+
+    class Meta(TranslatableMixin.Meta):
+        verbose_name = _("nfc tag type")
+        verbose_name_plural = _("nfc tag types")
 
 
 class AbstractNFCTag(models.Model):
@@ -42,6 +98,13 @@ class AbstractNFCTag(models.Model):
     )
     active = models.BooleanField(
         default=True
+    )
+    nfc_tag_type = models.ForeignKey(
+        NFCTagType,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='ntags'
     )
     content_type = models.ForeignKey(
         ContentType,
@@ -96,6 +159,7 @@ class AbstractNFCTag(models.Model):
 
 
 class NFCTag(AbstractNFCTag):
+
     def get_url(self):
         try:
             from wagtail.models import Page
