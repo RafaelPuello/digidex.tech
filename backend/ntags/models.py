@@ -87,6 +87,7 @@ class AbstractNFCTag(models.Model):
         return self.serial_number
 
     class Meta:
+        abstract = True
         verbose_name = _("ntag")
         verbose_name_plural = _("ntags")
         indexes = [

@@ -4,12 +4,91 @@ from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from wagtail.models import Page, Collection
 from wagtail.fields import RichTextField
-from wagtail.admin.panels import (
-    FieldPanel,
-    InlinePanel,
-    TabbedInterface,
-    ObjectList
-)
+from wagtail.admin.panels import FieldPanel, TabbedInterface, ObjectList
+
+
+class HomePage(Page):
+    """
+    Represents the homepage of the website.
+
+    Attributes:
+        intro (TextField): The introduction of the page.
+        body (RichTextField): The body of the page.
+    """
+    intro = models.TextField(
+        blank=True
+    )
+    body = RichTextField(
+        blank=True
+    )
+
+    parent_page_types = [
+        'wagtailcore.Page'
+    ]
+    child_page_types = [
+        'home.UserIndexPage',
+        'blog.BlogIndexPage',
+        'blog.TagIndexPage',
+        'company.CompanyIndexPage',
+        'support.ContactFormPage',
+    ]
+
+    content_panels = Page.content_panels + [
+        FieldPanel('intro'),
+        FieldPanel('body'),
+    ]
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = _('home page')
+        verbose_name_plural = _('home pages')
+
+
+class UserIndexPage(Page):
+    """
+    Represents a user's index page.
+
+    Attributes:
+        user_collection (UserIndexCollection): The user collection that the page belongs to.
+    """
+    user_collection = models.OneToOneField(
+        'home.UserIndexCollection',
+        on_delete=models.PROTECT,
+        related_name='page'
+    )
+
+    parent_page_types = [
+        'home.HomePage'
+    ]
+    child_page_types = []
+
+    shared_panels = []
+    private_panels = [
+        FieldPanel('user_collection')
+    ]
+
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(shared_panels, heading='Details'),
+            ObjectList(private_panels, heading='Admin only', permission="superuser"),
+        ]
+    )
+
+    @staticmethod
+    def get_root_page():
+        root = HomePage.objects.first()
+        if not root:
+            raise Exception("home page not found. Please ensure a home page exists.")
+        return root
+
+    def __str__(self):
+        return f"{self.user_collection} and  page"
+
+    class Meta:
+        verbose_name = _('user home page')
+        verbose_name_plural = _('user home pages')
 
 
 class UserIndexCollection(models.Model):
@@ -69,87 +148,3 @@ class UserIndexCollection(models.Model):
     class Meta:
         verbose_name = _('user collection')
         verbose_name_plural = _('user collections')
-
-
-class UserIndexPage(Page):
-    """
-    Represents a user's index page.
-
-    Attributes:
-        user_collection (UserIndexCollection): The user collection that the page belongs to.
-    """
-
-    parent_page_types = ['home.HomePage']
-    child_page_types = []
-
-    user_collection = models.OneToOneField(
-        UserIndexCollection,
-        on_delete=models.PROTECT,
-        related_name='page'
-    )
-
-    shared_panels = [
-    ]
-
-    private_panels = [
-        FieldPanel('user_collection')
-    ]
-
-    edit_handler = TabbedInterface([
-        ObjectList(shared_panels, heading='Details'),
-        ObjectList(private_panels, heading='Admin only', permission="superuser"),
-        # ObjectList(Page.promote_panels, heading='Promote'),
-        # ObjectList(Page.settings_panels, heading='Settings'), # The default settings are now displayed in the sidebar but need to be in the `TabbedInterface`.
-    ])
-
-    @staticmethod
-    def get_root_page():
-        root = HomePage.objects.first()
-        if not root:
-            raise Exception("home page not found. Please ensure a home page exists.")
-        return root
-
-    def __str__(self):
-        return f"{self.user_collection} and  page"
-
-    class Meta:
-        verbose_name = _('user home page')
-        verbose_name_plural = _('user home pages')
-
-
-class HomePage(Page):
-    """
-    Represents the homepage of the website.
-
-    Attributes:
-        intro (TextField): The introduction of the page.
-        body (RichTextField): The body of the page.
-    """
-
-    parent_page_types = ['wagtailcore.Page']
-    child_page_types = [
-        'home.UserIndexPage',
-        'blog.BlogIndexPage',
-        'blog.TagIndexPage',
-        'company.CompanyIndexPage',
-        'support.ContactFormPage',
-    ]
-
-    intro = models.TextField(
-        blank=True
-    )
-    body = RichTextField(
-        blank=True
-    )
-
-    content_panels = Page.content_panels + [
-        FieldPanel('intro'),
-        FieldPanel('body'),
-    ]
-
-    def __str__(self):
-        return self.title
-
-    class Meta:
-        verbose_name = _('home page')
-        verbose_name_plural = _('home pages')

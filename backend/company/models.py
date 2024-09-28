@@ -2,11 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from wagtail.models import Page, Collection
 from wagtail.fields import StreamField
-from wagtail.admin.panels import (
-    FieldPanel,
-    TabbedInterface,
-    ObjectList
-)
+from wagtail.admin.panels import FieldPanel
 
 from .blocks import PortfolioStreamBlock
 
@@ -19,10 +15,6 @@ class CompanyIndexPage(Page):
         intro (TextField): The introduction of the page.
         body (RichTextField): The body of the page.
     """
-
-    parent_page_types = ['home.HomePage']
-    child_page_types = []
-
     intro = models.TextField(
         blank=True
     )
@@ -38,6 +30,11 @@ class CompanyIndexPage(Page):
         on_delete=models.PROTECT,
         related_name='+'
     )
+
+    parent_page_types = [
+        'home.HomePage'
+    ]
+    child_page_types = []
 
     content_panels = Page.content_panels + [
         FieldPanel('intro'),
