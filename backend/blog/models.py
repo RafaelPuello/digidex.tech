@@ -13,16 +13,15 @@ class BlogIndexPage(Page):
         blank=True
     )
 
-    content_panels = Page.content_panels + [
-        FieldPanel('intro'),
-    ]
-
     parent_page_types = [
         'home.HomePage'
     ]
-
     child_page_types = [
-        'blog.BlogPage',
+        'blog.BlogPage'
+    ]
+
+    content_panels = Page.content_panels + [
+        FieldPanel('intro'),
     ]
 
     def get_context(self, request):
@@ -41,11 +40,9 @@ class BlogPageTag(TaggedItemBase):
 
 
 class TagIndexPage(Page):
-
     parent_page_types = [
         'home.HomePage'
     ]
-
     child_page_types = []
 
     def get_context(self, request):
@@ -79,7 +76,6 @@ class BlogPage(Page):
     parent_page_types = [
         'blog.BlogIndexPage'
     ]
-
     child_page_types = []
 
     def main_image(self):

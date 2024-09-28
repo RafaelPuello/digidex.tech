@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
-from .models import NFCTagScan, NFCTagMemory
-from . import get_nfc_tag_model
+from .models import NFCTag, NFCTagScan, NFCTagMemory
 
 
 class NFCTagScanSerializer(serializers.ModelSerializer):
@@ -43,7 +42,7 @@ class NFCTagSerializer(serializers.ModelSerializer):
         pass
 
     class Meta:
-        model = get_nfc_tag_model()
+        model = NFCTag
         fields = [
             'id', 'serial_number', 'integrated_circuit', 'active', 'user',
             'created_at', 'last_modified', 'scans', 'eeprom'
