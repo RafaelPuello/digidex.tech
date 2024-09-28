@@ -10,9 +10,6 @@ from wagtail.admin.panels import (
     TabbedInterface,
     ObjectList
 )
-from wagtail.contrib.forms.models import AbstractForm, AbstractFormField
-from wagtail.contrib.forms.panels import FormSubmissionsPanel
-from modelcluster.fields import ParentalKey
 
 
 class UserIndexCollection(models.Model):
@@ -81,6 +78,10 @@ class UserIndexPage(Page):
     Attributes:
         user_collection (UserIndexCollection): The user collection that the page belongs to.
     """
+
+    parent_page_types = ['home.HomePage']
+    child_page_types = []
+
     user_collection = models.OneToOneField(
         UserIndexCollection,
         on_delete=models.PROTECT,
@@ -100,12 +101,6 @@ class UserIndexPage(Page):
         # ObjectList(Page.promote_panels, heading='Promote'),
         # ObjectList(Page.settings_panels, heading='Settings'), # The default settings are now displayed in the sidebar but need to be in the `TabbedInterface`.
     ])
-
-    parent_page_types = [
-        'home.HomePage'
-    ]
-
-    child_page_types = []
 
     @staticmethod
     def get_root_page():
@@ -130,6 +125,16 @@ class HomePage(Page):
         intro (TextField): The introduction of the page.
         body (RichTextField): The body of the page.
     """
+
+    parent_page_types = ['wagtailcore.Page']
+    child_page_types = [
+        'home.UserIndexPage',
+        'blog.BlogIndexPage',
+        'blog.TagIndexPage',
+        'company.CompanyIndexPage',
+        'support.ContactFormPage',
+    ]
+
     intro = models.TextField(
         blank=True
     )
@@ -140,18 +145,6 @@ class HomePage(Page):
     content_panels = Page.content_panels + [
         FieldPanel('intro'),
         FieldPanel('body'),
-    ]
-
-    parent_page_types = [
-        'wagtailcore.Page'
-    ]
-
-    child_page_types = [
-        'home.UserIndexPage',
-        'blog.BlogIndexPage',
-        'blog.TagIndexPage',
-        'company.CompanyIndexPage',
-        'support.ContactFormPage',
     ]
 
     def __str__(self):

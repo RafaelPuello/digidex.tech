@@ -9,20 +9,16 @@ from wagtail.search import index
 
 
 class BlogIndexPage(Page):
+
+    parent_page_types = ['home.HomePage']
+    child_page_types = ['blog.BlogPage']
+
     intro = RichTextField(
         blank=True
     )
 
     content_panels = Page.content_panels + [
         FieldPanel('intro'),
-    ]
-
-    parent_page_types = [
-        'home.HomePage'
-    ]
-
-    child_page_types = [
-        'blog.BlogPage',
     ]
 
     def get_context(self, request):
@@ -42,10 +38,7 @@ class BlogPageTag(TaggedItemBase):
 
 class TagIndexPage(Page):
 
-    parent_page_types = [
-        'home.HomePage'
-    ]
-
+    parent_page_types = ['home.HomePage']
     child_page_types = []
 
     def get_context(self, request):
@@ -61,6 +54,10 @@ class TagIndexPage(Page):
 
 
 class BlogPage(Page):
+
+    parent_page_types = ['blog.BlogIndexPage']
+    child_page_types = []
+
     date = models.DateField(
         "Post date"
     )
@@ -75,12 +72,6 @@ class BlogPage(Page):
         through=BlogPageTag,
         blank=True
     )
-
-    parent_page_types = [
-        'blog.BlogIndexPage'
-    ]
-
-    child_page_types = []
 
     def main_image(self):
         gallery_item = self.gallery_images.first()
