@@ -39,3 +39,7 @@ LOGGING = {
         },
     },
 }
+
+
+# Wagtail-ntag Configuration (BASE)
+NFC_TAG_FILTER_METHOD = 'uid'
