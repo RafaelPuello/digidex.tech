@@ -9,10 +9,10 @@ from .models import NFCTag, NFCTagType, NFCTagScan, NFCTagMemory
 @hooks.register("register_icons")
 def register_icons(icons):
     return icons + [
-        'nearfieldcommunication/icons/nfc-icon.svg',
-        'nearfieldcommunication/icons/nfc-types.svg',
-        'nearfieldcommunication/icons/nfc-scan.svg',
-        'nearfieldcommunication/icons/nfc-memory.svg',
+        'ntags/icons/nfc-icon.svg',
+        'ntags/icons/nfc-types.svg',
+        'ntags/icons/nfc-scan.svg',
+        'ntags/icons/nfc-memory.svg',
     ]
 
 
