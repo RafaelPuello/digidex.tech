@@ -27,6 +27,11 @@ class ContactFormPage(AbstractEmailForm):
         blank=True
     )
 
+    parent_page_types = [
+        'home.HomePage'
+    ]
+    child_page_types = []
+
     content_panels = AbstractEmailForm.content_panels + [
         FormSubmissionsPanel(),
         FieldPanel('intro'),
@@ -40,9 +45,3 @@ class ContactFormPage(AbstractEmailForm):
             FieldPanel('subject'),
         ], "Email"),
     ]
-
-    parent_page_types = [
-        'home.HomePage'
-    ]
-
-    child_page_types = []

@@ -2,8 +2,7 @@ from rest_framework import status, viewsets, permissions
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 
-from . import get_nfc_tag_model
-from .models import NFCTagScan
+from .models import NFCTag, NFCTagScan
 from .serializers import NFCTagSerializer, NFCTagScanSerializer
 
 
@@ -11,7 +10,7 @@ class NFCTagViewSet(viewsets.ModelViewSet):
     """
     A viewset for viewing and editing NFC Tags.
     """
-    queryset = get_nfc_tag_model().objects.all()
+    queryset = NFCTag.objects.all()
     serializer_class = NFCTagSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     authentication_classes = [JWTAuthentication]
@@ -20,7 +19,7 @@ class NFCTagViewSet(viewsets.ModelViewSet):
     meta_fields = ['id']
 
     def get_queryset(self):
-        return get_nfc_tag_model().objects.filter(user=self.request.user)
+        return NFCTag.objects.filter(user=self.request.user)
 
     def create(self, request, *args, **kwargs):
         """
@@ -31,7 +30,7 @@ class NFCTagViewSet(viewsets.ModelViewSet):
         if not serial_number:
             return Response({"error": "Serial Number not provided."}, status=status.HTTP_400_BAD_REQUEST)
 
-        ntag, created = get_nfc_tag_model().objects.update_or_create(
+        ntag, created = NFCTag.objects.update_or_create(
             serial_number=serial_number
         )
 
@@ -75,8 +74,8 @@ class NFCTagScanViewSet(viewsets.ModelViewSet):
             return Response({"error": "NFC Tag ID not provided."}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            ntag = get_nfc_tag_model().objects.get(pk=ntag_id)
-        except get_nfc_tag_model().DoesNotExist:
+            ntag = NFCTag.objects.get(pk=ntag_id)
+        except NFCTag.DoesNotExist:
             return Response({"error": "Invalid NFC Tag ID."}, status=status.HTTP_400_BAD_REQUEST)
 
         ntag_scan = NFCTagScan.objects.create(
