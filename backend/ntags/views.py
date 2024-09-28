@@ -15,7 +15,8 @@ def link(request):
 
     try:
         ntag = NFCTag.objects.get_from_mirror(mirrored_values)
-        return redirect(ntag.url)
+        return redirect(ntag.get_edit_url())
+        # return redirect(ntag.url)
 
     except Exception as e:
         messages.error(request, str(e))

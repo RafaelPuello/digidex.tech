@@ -167,6 +167,11 @@ class NFCTag(AbstractNFCTag):
                 return self.content_object.url
         except ImportError:
             raise ImportError("Wagtail is not installed.")
+
+    def get_edit_url(self):
+        from wagtail.snippets.views.snippets import SnippetViewSet
+        viewset = SnippetViewSet._registry[type(self)]
+        return viewset.url_helper.get_action_url('edit', instance_pk=self.pk)
         
 
 class NFCTagMemory(models.Model):
