@@ -22,29 +22,6 @@ NTAG_EEPROM_SIZES = {
     NTAG216: 924,
 }
 
-
-def get_nfc_tag_model_string():
-    """
-    Returns the dotted app.Model name for the NFCTag model as a string.
-    """
-    return getattr(settings, 'NFC_TAG_MODEL', 'ntags.NFCTag')
-
-
-def get_nfc_tag_model():
-    """
-    Returns the NFCTag model that is active in this project.
-    """
-    from django.apps import apps
-
-    model_string = get_nfc_tag_model_string()
-    try:
-        return apps.get_model(model_string, require_ready=False)
-    except ValueError:
-        raise ValueError('NFC_TAG_MODEL must be of the form "app_label.model_name"')
-    except LookupError:
-        raise ValueError('NFC_TAG_MODEL refers to model "{}" that has not been installed'.format(model_string))
-
-
 def get_nfc_tag_filter_method():
     """
     Returns the method to filter NFC tags that is active in this project.
