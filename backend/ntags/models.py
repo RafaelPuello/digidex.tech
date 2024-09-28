@@ -61,6 +61,13 @@ class AbstractNFCTag(models.Model):
 
     objects = NFCTagManager()
 
+    @property
+    def url(self):
+        return self.get_url()
+
+    def get_url(self):
+        raise NotImplementedError("Method 'get_url' must be implemented in a subclass.")
+
     def log_scan(self, counter):
         return NFCTagScan.objects.create(
             ntag=self,
@@ -88,11 +95,14 @@ class AbstractNFCTag(models.Model):
 
 
 class NFCTag(AbstractNFCTag):
-    """
-    Concrete model for NFC Tags.
-    """
-    pass
-
+    def get_url(self):
+        try:
+            from wagtail.models import Page
+            if isinstance(self.content_object, Page):
+                return self.content_object.url
+        except ImportError:
+            raise ImportError("Wagtail is not installed.")
+        
 
 class NFCTagMemory(models.Model):
     """
