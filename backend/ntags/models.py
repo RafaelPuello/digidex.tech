@@ -5,6 +5,7 @@ from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
+from django.urls import reverse
 from wagtail.images import get_image_model
 from wagtail.documents import get_document_model
 from wagtail.models import (
@@ -13,7 +14,8 @@ from wagtail.models import (
     LockableMixin,
     TranslatableMixin,
     PreviewableMixin,
-    Collection 
+    Collection,
+    Page
 )
 from wagtail.fields import RichTextField
 
@@ -161,18 +163,28 @@ class AbstractNFCTag(models.Model):
 class NFCTag(AbstractNFCTag):
 
     def get_url(self):
-        try:
-            from wagtail.models import Page
-            if isinstance(self.content_object, Page):
-                return self.content_object.url
-        except ImportError:
-            raise ImportError("Wagtail is not installed.")
+        if self.content_object:
+            return self.get_page_url()
+        return self.get_edit_url()
+
+    def get_page_url(self):
+        if hasattr(self.content_object, 'url'):
+            return self.content_object.url
+
+    def get_admin_url(self, action):
+        """
+        Generic method to generate admin URLs for the snippet instance.
+        """
+        viewset = self.snippet_viewset
+        url_name = viewset.get_url_name(action)
+        return reverse(url_name, args=[self.pk])
 
     def get_edit_url(self):
-        from wagtail.snippets.views.snippets import SnippetViewSet
-        viewset = SnippetViewSet._registry[type(self)]
-        return viewset.url_helper.get_action_url('edit', instance_pk=self.pk)
-        
+        return self.get_admin_url('edit')
+
+    def get_usage_url(self):
+        return self.get_admin_url('usage')
+
 
 class NFCTagMemory(models.Model):
     """

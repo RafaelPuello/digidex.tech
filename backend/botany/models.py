@@ -16,6 +16,44 @@ from wagtail.documents import get_document_model
 from wagtail.search import index
 
 
+from wagtail.models import Page
+from wagtail.admin.panels import FieldPanel
+
+
+class InventoryBox(Page):
+    """
+    Represents an inventory box that can contain multiple plants.
+    """
+    name = models.CharField(
+        max_length=255,
+        unique=True
+    )
+    description = models.TextField(
+        blank=True
+    )
+    collection = models.ForeignKey(
+        Collection,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        null=True,
+        blank=True
+    )
+
+    content_panels = Page.content_panels + [
+        FieldPanel('name'),
+        FieldPanel('description'),
+    ]
+
+    def get_documents(self):
+        return get_document_model().objects.filter(collection=self.collection)
+
+    def get_images(self):
+        return get_image_model().objects.filter(collection=self.collection)
+
+    def __str__(self):
+        return self.name
+
+
 class Plant(
     index.Indexed,
     DraftStateMixin,
@@ -79,7 +117,7 @@ class Plant(
         return get_image_model().objects.filter(collection=self.collection)
 
     def get_preview_template(self, request, mode_name):
-        return "demo/previews/advert.html"
+        return "botany/previews/plant.html"
 
     def save(self, *args, **kwargs):
         if not self.slug:

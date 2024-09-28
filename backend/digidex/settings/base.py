@@ -381,9 +381,7 @@ WAGTAILSEARCH_BACKENDS = {
 
 # ------------------------------------------------------------------------
 # Wagtail-ntag Configuration (BASE)
-NFC_TAG_MODEL = 'ntags.NFCTag'
-
-NFC_TAG_FILTER_METHOD = 'uid_counter'
+NFC_TAG_FILTER_METHOD = 'uid'
 
 try:
     from .local import *  # noqa

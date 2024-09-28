@@ -61,7 +61,7 @@ class NFCTagSnippetViewSet(SnippetViewSet):
     base_url_path = "nfc-tags"
 
     shared_panels = [
-        FieldPanel("label")
+        FieldPanel("label"),
     ]
     private_panels = [
         FieldPanel("user"),
