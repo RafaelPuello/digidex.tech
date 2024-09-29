@@ -2,13 +2,17 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 
-from home.models import UserIndexCollection
+from .models import UserIndexCollection
 
 User = get_user_model()
 
 def user_setup(user):
     user_collection = UserIndexCollection.get_for_user(user)
-    user_collection.create_user_page()
+    user_collection.set_permissions()
+
+    user_page = user_collection.create_user_page()
+    user_page.set_permissions()
+    return
 
 
 @receiver(post_save, sender=User)

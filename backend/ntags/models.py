@@ -99,7 +99,7 @@ class AbstractNFCTag(models.Model):
         null=True
     )
     active = models.BooleanField(
-        default=False
+        default=True
     )
     nfc_tag_type = models.ForeignKey(
         NFCTagType,

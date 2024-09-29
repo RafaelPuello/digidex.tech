@@ -1,8 +1,9 @@
 from django.db import models
 from django.conf import settings
+from django.contrib.auth.models import Permission
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
-from wagtail.models import Page, Collection
+from wagtail.models import Page, Collection, GroupPagePermission, GroupCollectionPermission
 from wagtail.fields import RichTextField
 from wagtail.admin.panels import FieldPanel, TabbedInterface, ObjectList
 
@@ -83,8 +84,18 @@ class UserIndexPage(Page):
             raise Exception("home page not found. Please ensure a home page exists.")
         return root
 
+    def set_permissions(self):
+        group = self.owner.get_user_group()
+        permission = Permission.objects.get(codename='add_page')
+        GroupPagePermission.objects.create(
+            group=group,
+            page=self,
+            permission=permission
+        )
+        return
+
     def __str__(self):
-        return f"{self.user_collection} and  page"
+        return f"{self.user_collection} and page"
 
     class Meta:
         verbose_name = _('user home page')
@@ -141,6 +152,22 @@ class UserIndexCollection(models.Model):
         except Collection.DoesNotExist:
             collection = root.add_child(instance=Collection(name=str(user.uuid)))
         return cls.objects.get_or_create(user=user, collection=collection)[0]
+
+    def set_permissions(self):
+        PERMISSIONS = (
+            'add_image', 'change_image', 'choose_image',
+            'add_document', 'change_document', 'choose_document'
+        )
+
+        group = self.user.get_user_group()
+        for perm in PERMISSIONS:
+            permission = Permission.objects.get(codename=perm)
+            GroupCollectionPermission.objects.create(
+                group=group,
+                collection=self.collection,
+                permission=permission
+            )
+        return
 
     def __str__(self):
         return f"{self.user.username}'s collection"
