@@ -19,6 +19,23 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 EMAIL_SUBJECT_PREFIX = ACCOUNT_EMAIL_SUBJECT_PREFIX = f"[{SITE_NAME}] "
 
 # ------------------------------------------------------------------------
+# Storage Configuration (DEV)
+# ------------------------------------------------------------------------
+MEDIA_URL = '/media/'
+STATIC_URL = '/static/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+STATICFILES_DIRS = [
+    os.path.join(PROJECT_DIR, 'staticfiles'),
+]
+
+STATICFILES_FINDERS = [
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+]
+
+# ------------------------------------------------------------------------
 # Security Configuration (DEV)
 # ------------------------------------------------------------------------
 SECURE_PROXY_SSL_HEADER = None
