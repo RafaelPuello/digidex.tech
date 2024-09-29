@@ -12,6 +12,7 @@ from wagtail.admin.wagtail_hooks import (
     SiteHistoryReportMenuItem,
     AgingPagesReportMenuItem,
     PageTypesReportMenuItem,
+    ExplorerMenuItem
 )
 
 
@@ -34,7 +35,8 @@ def construct_main_menu_items(request, menu_items):
         CollectionsMenuItem,
         SnippetsMenuItem,
         ImagesMenuItem,
-        DocumentsMenuItem
+        DocumentsMenuItem,
+        ExplorerMenuItem
     )
 
     if not request.user.is_superuser:
