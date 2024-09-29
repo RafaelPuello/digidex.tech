@@ -125,7 +125,7 @@ class UserIndexCollection(models.Model):
         root_page = UserIndexPage.get_root_page()
         user_slug = slugify(self.user.username)
         try:
-            return root_page.get_children().get(slug=user_slug)
+            return root_page.get_children().get(slug=user_slug).specific()
         except Page.DoesNotExist:
             user_page = UserIndexPage(
                 title=self.user.username,
