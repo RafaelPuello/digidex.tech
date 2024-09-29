@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     "base",
     "ntags",
     "home",
+    "botany",
     "blog",
     "company",
     "support",

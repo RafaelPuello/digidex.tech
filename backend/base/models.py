@@ -1,7 +1,52 @@
 from django.db import models
-from wagtail.models import Orderable
+from wagtail.models import Orderable, Collection
 from wagtail.documents.models import Document, AbstractDocument
 from wagtail.images.models import Image, AbstractImage, AbstractRendition
+
+
+from django.db import models
+from wagtail.models import Collection
+from wagtail.documents.models import Document, AbstractDocument
+from wagtail.images.models import Image, AbstractImage, AbstractRendition
+
+
+class CollectionMixin(models.Model):
+    """
+    An abstract model that adds a collection field and manages collection creation and permissions.
+    """
+    collection = models.OneToOneField(
+        Collection,
+        on_delete=models.PROTECT,
+        related_name='+',
+        null=True,
+        blank=True
+    )
+
+    @staticmethod
+    def get_root_collection():
+        """
+        Gets or creates the root collection for storing user collections.
+        """
+        root = Collection.get_first_root_node()
+        if not root:
+            raise Exception("Root collection not found. Please ensure a root collection exists.")
+        return root
+
+    @classmethod
+    def get_or_create_collection(cls, name, parent):
+        """
+        Retrieves or creates a collection with the given name under the parent collection.
+        """
+        try:
+            # Try to retrieve an existing collection
+            collection = parent.get_children().get(name=name)
+        except Collection.DoesNotExist:
+            # If not found, create a new child collection
+            collection = parent.add_child(instance=Collection(name=name))
+        return collection
+
+    class Meta:
+        abstract = True
 
 
 class BaseDocument(Orderable, AbstractDocument):

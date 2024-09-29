@@ -1,19 +1,12 @@
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Group
 
 
-def assign_base_editor_permissions(group):
+def get_trainer_group():
     """
-    Assigns the necessary base permissions for the given group.
+    Creates a group for the Trainers if it does not already exist.
+
+    Returns:
+        Group: The created or retrieved group instance.
     """
-
-    permissions = Permission.objects.filter(
-        codename__in=[
-            "add_document", "change_document", "delete_document",
-            "add_image", "change_image", "delete_image",
-            "access_admin"
-        ]
-    )
-
-    group.permissions.add(*permissions)
-    group.save()
+    group, created = Group.objects.create(name="Trainers")
     return group

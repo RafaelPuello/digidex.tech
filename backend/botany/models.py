@@ -1,26 +1,18 @@
 import uuid
 from django.db import models
-from django.conf import settings
 from django.utils.text import slugify
-from modelcluster.models import ClusterableModel
-from wagtail.models import (
-    Collection,
-    RevisionMixin,
-    DraftStateMixin,
-    LockableMixin,
-    TranslatableMixin,
-    PreviewableMixin
-)
+from django.utils.translation import gettext_lazy as _
+from modelcluster.fields import ParentalKey
+from wagtail.models import Page, TranslatableMixin, PreviewableMixin
 from wagtail.images import get_image_model
 from wagtail.documents import get_document_model
 from wagtail.search import index
-
-
-from wagtail.models import Page
 from wagtail.admin.panels import FieldPanel
 
+from base.models import CollectionMixin
 
-class InventoryBox(Page):
+
+class InventoryBox(CollectionMixin, Page):
     """
     Represents an inventory box that can contain multiple plants.
     """
@@ -31,18 +23,29 @@ class InventoryBox(Page):
     description = models.TextField(
         blank=True
     )
-    collection = models.ForeignKey(
-        Collection,
-        on_delete=models.SET_NULL,
-        related_name='+',
-        null=True,
-        blank=True
+    uuid = models.UUIDField(
+        default=uuid.uuid4,
+        editable=False,
+        unique=True,
+        db_index=True
     )
+
+    parent_page_types = [
+        'home.UserIndexPage'
+    ]
+    child_page_types = []
 
     content_panels = Page.content_panels + [
         FieldPanel('name'),
         FieldPanel('description'),
     ]
+
+    def get_parent_collection(self):
+        return self.owner.index_collection.collection
+
+    def get_collection(self):
+        parent_collection = self.get_parent_collection()
+        return self.get_or_create_collection(name=self.uuid, parent=parent_collection)
 
     def get_documents(self):
         return get_document_model().objects.filter(collection=self.collection)
@@ -50,35 +53,30 @@ class InventoryBox(Page):
     def get_images(self):
         return get_image_model().objects.filter(collection=self.collection)
 
+    def save(self, *args, **kwargs):
+        if not self.collection:
+            self.collection = self.get_collection()
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = _('box')
+        verbose_name_plural = _('boxes')
+
 
 class Plant(
+    CollectionMixin,
     index.Indexed,
-    DraftStateMixin,
-    RevisionMixin,
-    LockableMixin,
     TranslatableMixin,
     PreviewableMixin,
-    ClusterableModel
+    models.Model
 ):
-    """
-    Represents a plant in the database.
-
-    Attributes:
-        owner (ForeignKey): The user who owns the plant.
-        name (str): The name of the plant.
-        description (str): A description of the plant.
-        uuid (uuid): A unique identifier for the plant.
-        slug (str): A unique slug for the plant.
-        collection (ForeignKey): The collection associated with the plant.
-    """
-    owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,
+    box = ParentalKey(
+        InventoryBox,
         related_name='plants',
-        null=True
+        on_delete=models.CASCADE
     )
     name = models.CharField(
         max_length=255,
@@ -97,18 +95,18 @@ class Plant(
         max_length=255,
         db_index=True
     )
-    collection = models.ForeignKey(
-        Collection,
-        on_delete=models.SET_NULL,
-        related_name='+',
-        null=True,
-        blank=True
-    )
 
     search_fields = [
         index.SearchField('name'),
         index.AutocompleteField('name'),
     ]
+
+    def get_parent_collection(self):
+        return self.box.collection
+
+    def get_collection(self):
+        parent_collection = self.get_parent_collection()
+        return self.get_or_create_collection(name=self.uuid, parent=parent_collection)
 
     def get_documents(self):
         return get_document_model().objects.filter(collection=self.collection)
@@ -122,17 +120,19 @@ class Plant(
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
+        if not self.collection:
+            self.collection = self.get_collection()
         super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
 
     class Meta(TranslatableMixin.Meta):
-        verbose_name = 'plant'
-        verbose_name_plural = 'plants'
+        verbose_name = _('plant')
+        verbose_name_plural = _('plants')
         indexes = [
-            models.Index(fields=['owner', 'name']),
+            models.Index(fields=['box', 'name']),
         ]
         constraints = [
-            models.UniqueConstraint(fields=['owner', 'name'], name='unique_owner_plant')
+            models.UniqueConstraint(fields=['box', 'name'], name='unique_plant_name_in_box')
         ]

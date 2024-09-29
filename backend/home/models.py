@@ -7,6 +7,8 @@ from wagtail.models import Page, Collection, GroupPagePermission, GroupCollectio
 from wagtail.fields import RichTextField
 from wagtail.admin.panels import FieldPanel, TabbedInterface, ObjectList
 
+from base.models import CollectionMixin
+
 
 class HomePage(Page):
     """
@@ -102,7 +104,7 @@ class UserIndexPage(Page):
         verbose_name_plural = _('user home pages')
 
 
-class UserIndexCollection(models.Model):
+class UserIndexCollection(CollectionMixin, models.Model):
     """
     Represents a user's collection.
 
@@ -113,12 +115,7 @@ class UserIndexCollection(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
-        related_name='collection'
-    )
-    collection = models.OneToOneField(
-        Collection,
-        on_delete=models.PROTECT,
-        related_name='+'
+        related_name='index_collection'
     )
 
     def create_user_page(self):
@@ -137,21 +134,26 @@ class UserIndexCollection(models.Model):
             user_page.save_revision().publish()
             return user_page
 
-    @staticmethod
-    def get_root_collection():
-        root = Collection.get_first_root_node()
+    @classmethod
+    def get_parent_collection(cls):
+        root = cls.get_root_collection()
         if not root:
             raise Exception("Root collection not found. Please ensure a root collection exists.")
-        return root
+        return cls.get_or_create_collection(name='Users', parent=root)
+
+    @classmethod
+    def get_collection_for_user(cls, user):
+        parent_collection = cls.get_parent_collection()
+        return cls.get_or_create_collection(name=str(user.uuid), parent=parent_collection)
 
     @classmethod
     def get_for_user(cls, user):
-        root = cls.get_root_collection()
-        try:
-            collection = root.get_children().get(name=str(user.uuid))
-        except Collection.DoesNotExist:
-            collection = root.add_child(instance=Collection(name=str(user.uuid)))
-        return cls.objects.get_or_create(user=user, collection=collection)[0]
+        collection = cls.get_collection_for_user(user)
+        instance, created = cls.objects.update_or_create(
+            user=user,
+            defaults={'collection': collection}
+        )
+        return instance
 
     def set_permissions(self):
         PERMISSIONS = (
@@ -168,6 +170,15 @@ class UserIndexCollection(models.Model):
                 permission=permission
             )
         return
+
+    def save(self, *args, **kwargs):
+        if not self.collection:
+            self.collection = self.get_collection_for_user(self.user)
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        parent_collection = self.get_parent_collection()
+        super().delete(*args, **kwargs)
 
     def __str__(self):
         return f"{self.user.username}'s collection"
