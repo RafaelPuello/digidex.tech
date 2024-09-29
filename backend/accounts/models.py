@@ -31,14 +31,19 @@ class User(AbstractUser):
         db_index=True,
     )
 
+    def get_user_group(self):
+        group, created = Group.objects.get_or_create(name=self.uuid)
+        if created:
+            self.groups.add(group)
+        return group
+
+    def delete_user_group(self):
+        group = self.get_user_group()
+        group.delete()
+
     def delete(self, *args, **kwargs):
-        """
-        Deletes the user and the associated group.
-        """
-    
         with transaction.atomic():
-            user_group = Group.objects.get(name=self.uuid)
-            user_group.delete()
+            self.delete_user_group()
             super().delete(*args, **kwargs)
 
     def __str__(self):

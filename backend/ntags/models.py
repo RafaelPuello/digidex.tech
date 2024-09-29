@@ -99,7 +99,7 @@ class AbstractNFCTag(models.Model):
         null=True
     )
     active = models.BooleanField(
-        default=True
+        default=False
     )
     nfc_tag_type = models.ForeignKey(
         NFCTagType,
@@ -172,9 +172,6 @@ class NFCTag(AbstractNFCTag):
             return self.content_object.url
 
     def get_admin_url(self, action):
-        """
-        Generic method to generate admin URLs for the snippet instance.
-        """
         viewset = self.snippet_viewset
         url_name = viewset.get_url_name(action)
         return reverse(url_name, args=[self.pk])

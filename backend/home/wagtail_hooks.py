@@ -14,8 +14,6 @@ from wagtail.admin.wagtail_hooks import (
     PageTypesReportMenuItem,
 )
 
-from .viewsets import PageContentChooserViewSet
-
 
 @hooks.register('construct_explorer_page_queryset')
 def show_relevant_pages_only(parent_page, pages, request):

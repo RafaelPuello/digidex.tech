@@ -6,11 +6,13 @@ from home.models import UserIndexCollection
 
 User = get_user_model()
 
+def user_setup(user):
+    user_collection = UserIndexCollection.get_for_user(user)
+    user_collection.create_user_page()
+
+
 @receiver(post_save, sender=User)
 def create_user_collection_and_page(sender, instance, created, **kwargs):
     if created:
-        # Create the UserIndexCollection for the new user
-        user_collection = UserIndexCollection.get_for_user(user=instance)
-        
-        # Create the UserIndexPage associated with the UserIndexCollection
-        user_collection.create_user_page()
+        user_setup(instance)
+    
