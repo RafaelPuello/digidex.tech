@@ -1,43 +1,24 @@
 {% extends "botany/base.html" %}
-{% load wagtailcore_tags %}
+{% load static %}
 
 {% block content %}
   <section class="section-top padding-0">
     <div class="content">
       <div class="block-top">
-        <div class="date-top">{{ page.date }}</div>
-        <h1 class="heading-top">{{ page.title }}</h1>
-        <p class="paragraph-top blog-post">{{ page.intro }}</p>
+        <div class="date-top"></div>
+        <h1 class="heading-top"></h1>
+        <p class="paragraph-top blog-post"></p>
       </div>
     </div>
   </section>
   <section class="section">
     <div class="content narrow">
-      {% for item in page.gallery_images.all %}
-        <div>
-          {% image item.image original class="image-main-post" %}
-          <p>{{ item.caption }}</p>
-        </div>
-      {% empty %}
-        <img alt="Blog Post Placeholder" loading="eager" decoding="async" src="{% static 'blog/image-placeholder.svg' %}" class="image-main-post">
-      {% endfor %}
+      <img alt="Blog Post Placeholder" loading="eager" decoding="async" src="{% static 'botany/plant-placeholder.svg' %}" class="image-main-post">
       <div class="post-body">
-        <div class="rich-text-block w-dyn-bind-empty w-richtext">{{ page.body|richtext }}</div>
+        <div class="rich-text-block w-dyn-bind-empty w-richtext"></div>
       </div>
     </div>
     <p>
-      <a href="{{ page.get_parent.url }}">Return to blog</a>
+      <a href="#">Return to ...</a>
     </p>
-    {% with tags=page.tags.all %}
-      {% if tags %}
-        <div class="tags">
-          <h3>Tags</h3>
-          {% for tag in tags %}
-            <a href="{% slugurl 'tags' %}?tag={{ tag }}">
-              <button type="button">{{ tag }}</button>
-            </a>
-          {% endfor %}
-        </div>
-      {% endif %}
-    {% endwith %}
 {% endblock content %}

@@ -28,10 +28,9 @@ class BoxModelViewSet(PageListingViewSet):
     add_to_admin_menu=True
 
 
-inventory_boxes_listing_viewset = BoxModelViewSet("inventory_boxes")
 @hooks.register("register_admin_viewset")
 def register_inventory_box_listing_viewset():
-    return inventory_boxes_listing_viewset
+    return BoxModelViewSet('inventory')
 
 
 class PlantSnippetViewSet(SnippetViewSet):
@@ -43,10 +42,11 @@ class PlantSnippetViewSet(SnippetViewSet):
     menu_label = "Plants"
     menu_name = "plants"
     menu_order = 120
-    list_per_page = 50
     copy_view_enabled = False
-    inspect_view_enabled = True
     admin_url_namespace = "inventory_plants"
+    list_display = ["name", "description"]
+    list_per_page = 50
+    admin_url_namespace = "plants"
     base_url_path = "inventory/plants"
     add_to_admin_menu=True
 
