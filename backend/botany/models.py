@@ -36,7 +36,7 @@ class InventoryBox(CollectionMixin, Page):
     ]
 
     def get_context(self, request, *args, **kwargs):
-        context =  super().get_context(request, *args, **kwargs)
+        context = super().get_context(request, *args, **kwargs)
         context['plants'] = self.get_plants()
         return context
 
