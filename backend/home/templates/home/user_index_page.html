@@ -31,28 +31,32 @@
       </div>
     </div>
   </section>
-  <div class="collection-list-wrapper-posts w-dyn-list">
-    <div role="list" class="collection-list-posts w-dyn-items">
-      <div role="listitem" class="w-dyn-item">
-        <div class="block-post">
-          <a href="#" class="link-post-thumbnail w-inline-block">
-            <img alt="Plant Thumbnail Placeholder" loading="eager" decoding="async" src="{% static 'botany/plant-placeholder.svg' %}" class="image-post-thumbnail">
-          </a>
-          <div class="post">
-            <div class="date"></div>
-            <a href="#" class="link-heading-post w-inline-block">
-              <h4 class="heading-post"></h4>
+  <section class="section">
+  <div class="content">
+    <div class="collection-list-wrapper-posts w-dyn-list">
+      <div role="list" class="collection-list-posts w-dyn-items">
+        <div role="listitem" class="w-dyn-item">
+          <div class="block-post">
+            <a href="#" class="link-post-thumbnail w-inline-block">
+              <img alt="Plant Thumbnail Placeholder" loading="eager" decoding="async" src="{% static 'botany/plant-placeholder.svg' %}" class="image-post-thumbnail">
             </a>
-            <p class="paragraph-post"></p>
-            <a href="#" class="link-block w-inline-block">
-              <div class="text-link">Read more</div>
-              <div class="block-icon-link">
-                <img src="{% static 'base/images/bx-arrow-to-right_green.svg' %}" loading="lazy" decoding="async" alt="Green Arrow Pointing Right" class="icon-link">
-              </div>
-            </a>
+            <div class="post">
+              <div class="date"></div>
+              <a href="#" class="link-heading-post w-inline-block">
+                <h4 class="heading-post"></h4>
+              </a>
+              <p class="paragraph-post"></p>
+              <a href="#" class="link-block w-inline-block">
+                <div class="text-link">Read more</div>
+                <div class="block-icon-link">
+                  <img src="{% static 'base/images/bx-arrow-to-right_green.svg' %}" loading="lazy" decoding="async" alt="Green Arrow Pointing Right" class="icon-link">
+                </div>
+              </a>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+  </section>
 {% endblock content %}
