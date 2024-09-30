@@ -24,6 +24,7 @@ filetype==1.2.0
 flake8==7.1.1
 gunicorn==23.0.0
 idna==3.10
+iniconfig==2.0.0
 jmespath==1.0.1
 l18n==2021.3
 laces==0.1.1
@@ -35,6 +36,7 @@ openpyxl==3.1.5
 packaging==24.1
 pillow==10.4.0
 pillow_heif==0.18.0
+pluggy==1.5.0
 psycopg2-binary==2.9.9
 pycodestyle==2.12.1
 pycparser==2.22
@@ -42,6 +44,8 @@ pyDes==2.0.1
 pyflakes==3.2.0
 PyJWT==2.9.0
 pyserial==3.5
+pytest==8.3.3
+pytest-django==4.9.0
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
 pytz==2024.2
