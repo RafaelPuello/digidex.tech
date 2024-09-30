@@ -1,41 +1,17 @@
 {% extends "botany/base.html" %}
-{% load static %}
+{% load static wagtailcore_tags %}
 
 {% block content %}
   <section class="section-top">
     <div class="content">
       <div class="block-top">
-        <h1 class="heading-top"></h1>
-        <p class="paragraph-top"></p>
+        <h1 class="heading-top">{{ page.title }}</h1>
+        <p class="paragraph-top">{{ page.description|richtext }}</p>
       </div>
     </div>
   </section>
   <section class="section">
     <div class="content">
-      <div class="collection-list-wrapper-posts large w-dyn-list">
-        <div role="list" class="collection-list-posts large w-dyn-items">
-          <div role="listitem" class="w-dyn-item">
-            <div class="block-post large">
-              <a href="#" class="link-post-thumbnail large w-inline-block">
-                <img alt="Featured plant thumbnail placeholder" loading="lazy" decoding="async" src="{% static 'botany/plant-placeholder.svg' %}" class="image-post-thumbnail">
-              </a>
-              <div class="post large">
-                <div class="date"></div>
-                <a href="#" class="link-heading-post large w-inline-block">
-                  <h3 class="heading-post"></h3>
-                </a>
-                <p class="paragraph-post large"></p>
-                <a href="#" class="link-block w-inline-block">
-                  <div class="text-link">Read more</div>
-                  <div class="block-icon-link">
-                    <img src="{% static 'base/images/bx-arrow-to-right_green.svg' %}" loading="lazy" decoding="async" alt="Green Arrow Pointing Right" class="icon-link">
-                  </div>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
       <div class="collection-list-wrapper-posts w-dyn-list">
         <div role="list" class="collection-list-posts w-dyn-items">
           <div role="listitem" class="w-dyn-item">

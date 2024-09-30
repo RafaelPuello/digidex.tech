@@ -2,12 +2,12 @@ import uuid
 from django.db import models
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
-from modelcluster.fields import ParentalKey
-from wagtail.models import Page, TranslatableMixin, PreviewableMixin
+from wagtail.models import Page, TranslatableMixin, PreviewableMixin, Orderable
+from wagtail.fields import RichTextField
 from wagtail.images import get_image_model
 from wagtail.documents import get_document_model
 from wagtail.search import index
-from wagtail.admin.panels import FieldPanel
+from wagtail.admin.panels import FieldPanel, InlinePanel
 
 from base.models import CollectionMixin
 
@@ -16,11 +16,7 @@ class InventoryBox(CollectionMixin, Page):
     """
     Represents an inventory box that can contain multiple plants.
     """
-    name = models.CharField(
-        max_length=255,
-        unique=True
-    )
-    description = models.TextField(
+    description = RichTextField(
         blank=True
     )
     uuid = models.UUIDField(
@@ -36,9 +32,17 @@ class InventoryBox(CollectionMixin, Page):
     child_page_types = []
 
     content_panels = Page.content_panels + [
-        FieldPanel('name'),
         FieldPanel('description'),
     ]
+
+    def get_plants(self):
+        return Plant.objects.filter(box=self)
+
+    def get_documents(self):
+        return get_document_model().objects.filter(collection=self.collection)
+
+    def get_images(self):
+        return get_image_model().objects.filter(collection=self.collection)
 
     def get_parent_collection(self):
         return self.owner.index_collection.collection
@@ -47,19 +51,13 @@ class InventoryBox(CollectionMixin, Page):
         parent_collection = self.get_parent_collection()
         return self.get_or_create_collection(name=self.uuid, parent=parent_collection)
 
-    def get_documents(self):
-        return get_document_model().objects.filter(collection=self.collection)
-
-    def get_images(self):
-        return get_image_model().objects.filter(collection=self.collection)
-
     def save(self, *args, **kwargs):
         if not self.collection:
             self.collection = self.get_collection()
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.name
+        return self.title
 
     class Meta:
         verbose_name = _('box')
@@ -67,13 +65,14 @@ class InventoryBox(CollectionMixin, Page):
 
 
 class Plant(
+    Orderable,
     CollectionMixin,
     index.Indexed,
     TranslatableMixin,
     PreviewableMixin,
     models.Model
 ):
-    box = ParentalKey(
+    box = models.ForeignKey(
         InventoryBox,
         related_name='plants',
         on_delete=models.CASCADE
@@ -82,7 +81,7 @@ class Plant(
         max_length=255,
         db_index=True
     )
-    description = models.TextField(
+    description = RichTextField(
         blank=True
     )
     uuid = models.UUIDField(
@@ -115,7 +114,7 @@ class Plant(
         return get_image_model().objects.filter(collection=self.collection)
 
     def get_preview_template(self, request, mode_name):
-        return "botany/previews/plant.html"
+        return "botany/inventory_plant.html"
 
     def save(self, *args, **kwargs):
         if not self.slug:

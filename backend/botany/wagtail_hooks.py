@@ -51,6 +51,7 @@ class PlantSnippetViewSet(SnippetViewSet):
     add_to_admin_menu=True
 
     public_panels = [
+        FieldPanel("box"),
         FieldPanel("name"),
         FieldPanel("description"),
     ]
