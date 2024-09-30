@@ -1,8 +1,6 @@
-from .base import *  # Import all the base settings
+from .base import *  # noqa
 
 DEBUG = False
-
-
 
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.MD5PasswordHasher',
