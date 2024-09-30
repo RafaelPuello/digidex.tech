@@ -21,23 +21,23 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('backend/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
 
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r backend/requirements.txt
 
       - name: Check for Formatting with Flake8
         run: |
-          flake8 .
+          flake8 backend/.
 
       - name: Check for Security Issues with Bandit
         run: |
-          bandit -r .
+          bandit -r backend/.
 
       - name: Test with Pytest
         run: |
-          pytest
+          pytest backend/.
