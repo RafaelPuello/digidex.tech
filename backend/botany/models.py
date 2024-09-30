@@ -90,7 +90,8 @@ class Plant(
         blank=True
     )
     date = models.DateField(
-        "Post date"
+        null=True,
+        blank=True
     )
     uuid = models.UUIDField(
         default=uuid.uuid4,
