@@ -30,9 +30,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Navigate to Working Directory
-        run: |
-          cd backend/
+          - name: Set Environment Variables
+          run: |
+            echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
+            echo "DJANGO_SETTINGS_MODULE=digidex.settings.testing" >> $GITHUB_ENV
+  
+      - name: Navigate to Project Directory
+        working-directory: ./backend>
+        run: pwd
 
       - name: Check for Formatting with Flake8
         run: |
