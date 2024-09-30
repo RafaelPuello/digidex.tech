@@ -89,6 +89,9 @@ class Plant(
     description = RichTextField(
         blank=True
     )
+    date = models.DateField(
+        "Post date"
+    )
     uuid = models.UUIDField(
         default=uuid.uuid4,
         editable=False,
