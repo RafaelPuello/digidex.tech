@@ -18,7 +18,7 @@ from wagtail.models import (
 )
 from wagtail.fields import RichTextField
 
-from . import (NTAG213, NTAG_IC_CHOICES, NTAG_EEPROM_SIZES)
+from . import (NTAG213, NTAG_IC_CHOICES)
 from .validators import validate_serial_number, validate_integrated_circuit
 from .managers import NFCTagManager
 
@@ -206,25 +206,6 @@ class NFCTagMemory(models.Model):
     last_modified = models.DateTimeField(
         auto_now=True
     )
-
-    @classmethod
-    def get_for_ntag(cls, ntag):
-        """
-        Retrieves or creates the EEPROM object for the given NFC tag.
-        """
-
-        columns = 4
-        rows = NTAG_EEPROM_SIZES[ntag.integrated_circuit] // columns
-
-        # Create a 2D NumPy array filled with zeros (assuming NumPy is used)
-        eeprom_2d = None  # np.zeros((rows, columns), dtype=np.uint8)
-        eeprom_bytes = eeprom_2d.tobytes()
-
-        ntag_eeprom, created = cls.objects.get_or_create(
-            ntag=ntag,
-            defaults={'eeprom': eeprom_bytes}
-        )
-        return ntag_eeprom, eeprom_2d.view()
 
     def __str__(self):
         return str(self.ntag)

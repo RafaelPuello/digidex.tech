@@ -23,11 +23,11 @@ EMAIL_SUBJECT_PREFIX = ACCOUNT_EMAIL_SUBJECT_PREFIX = f"[{SITE_NAME}] "
 # ------------------------------------------------------------------------
 MEDIA_URL = '/media/'
 STATIC_URL = '/static/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # noqa: F405
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # noqa: F405
 
 STATICFILES_DIRS = [
-    os.path.join(PROJECT_DIR, 'staticfiles'),
+    os.path.join(PROJECT_DIR, 'staticfiles'),  # noqa: F405
 ]
 
 STATICFILES_FINDERS = [

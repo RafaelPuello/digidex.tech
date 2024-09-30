@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
-from wagtail.models import Page, GroupPagePermission, GroupCollectionPermission
+from wagtail.models import Page, GroupCollectionPermission
 from wagtail.fields import RichTextField
 from wagtail.admin.panels import FieldPanel, TabbedInterface, ObjectList
 
@@ -87,13 +87,18 @@ class UserIndexPage(Page):
         return root
 
     def set_permissions(self):
-        group = self.owner.get_user_group()
-        permission = Permission.objects.get(codename='add_page')
-        GroupPagePermission.objects.create(
-            group=group,
-            page=self,
-            permission=permission
+        PAGE_PERMISSIONS = (
+            'add_page', 'publish_page'
         )
+
+        group = self.owner.get_user_group()
+        for perm in PAGE_PERMISSIONS:
+            permission = Permission.objects.get(codename=perm)
+            GroupCollectionPermission.objects.create(
+                group=group,
+                collection=self,
+                permission=permission
+            )
         return
 
     def __str__(self):
@@ -156,13 +161,13 @@ class UserIndexCollection(CollectionMixin, models.Model):
         return instance
 
     def set_permissions(self):
-        PERMISSIONS = (
+        COLLECTION_PERMISSIONS = (
             'add_image', 'change_image', 'choose_image',
             'add_document', 'change_document', 'choose_document'
         )
 
         group = self.user.get_user_group()
-        for perm in PERMISSIONS:
+        for perm in COLLECTION_PERMISSIONS:
             permission = Permission.objects.get(codename=perm)
             GroupCollectionPermission.objects.create(
                 group=group,
@@ -175,10 +180,6 @@ class UserIndexCollection(CollectionMixin, models.Model):
         if not self.collection:
             self.collection = self.get_collection_for_user(self.user)
         super().save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        parent_collection = self.get_parent_collection()
-        super().delete(*args, **kwargs)
 
     def __str__(self):
         return f"{self.user.username}'s collection"

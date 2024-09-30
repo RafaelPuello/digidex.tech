@@ -1,5 +1,3 @@
-import os
-
 from .base import *  # noqa
 
 # ------------------------------------------------------------------------
@@ -17,11 +15,11 @@ WAGTAILADMIN_BASE_URL = f"{SITE_PROTOCOL}://{SITE_HOSTNAME}"
 # ------------------------------------------------------------------------
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
-EMAIL_HOST = os.getenv("EMAIL_HOST")
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-EMAIL_PORT = os.getenv("EMAIL_PORT")
-EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS")
+EMAIL_HOST = os.getenv("EMAIL_HOST")  # noqa: F405
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")  # noqa: F405
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")  # noqa: F405
+EMAIL_PORT = os.getenv("EMAIL_PORT")  # noqa: F405
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS")  # noqa: F405
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 EMAIL_SUBJECT_PREFIX = ACCOUNT_EMAIL_SUBJECT_PREFIX = f"[{SITE_NAME}] "
@@ -31,13 +29,13 @@ EMAIL_SUBJECT_PREFIX = ACCOUNT_EMAIL_SUBJECT_PREFIX = f"[{SITE_NAME}] "
 # ------------------------------------------------------------------------
 AWS_S3_FILE_OVERWRITE = False
 
-AWS_ACCESS_KEY_ID = os.getenv("SPACES_ACCESS_KEY")
-AWS_SECRET_ACCESS_KEY = os.getenv("SPACES_SECRET_KEY")
-AWS_S3_REGION_NAME = os.getenv("SPACES_REGION_NAME")
+AWS_ACCESS_KEY_ID = os.getenv("SPACES_ACCESS_KEY")  # noqa: F405
+AWS_SECRET_ACCESS_KEY = os.getenv("SPACES_SECRET_KEY")  # noqa: F405
+AWS_S3_REGION_NAME = os.getenv("SPACES_REGION_NAME")  # noqa: F405
 AWS_S3_ENDPOINT_URL = f'https://{AWS_S3_REGION_NAME}.digitaloceanspaces.com'
 
-AWS_STORAGE_BUCKET_NAME_MEDIA = os.getenv("MEDIA_SPACES_BUCKET_NAME")
-AWS_STORAGE_BUCKET_NAME_STATIC = os.getenv("STATIC_SPACES_BUCKET_NAME")
+AWS_STORAGE_BUCKET_NAME_MEDIA = os.getenv("MEDIA_SPACES_BUCKET_NAME")  # noqa: F405
+AWS_STORAGE_BUCKET_NAME_STATIC = os.getenv("STATIC_SPACES_BUCKET_NAME")  # noqa: F405
 
 STORAGES = {
     'default': {
@@ -96,7 +94,7 @@ STATICFILES_FINDERS = [
 SESSION_COOKIE_SECURE = True
 
 SECURE_HSTS_PRELOAD = True
-CSRF_TRUSTED_ORIGINS = os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",")
+CSRF_TRUSTED_ORIGINS = os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",")  # noqa: F405
 CSRF_COOKIE_SECURE = True
 
 SECURE_SSL_REDIRECT = True
@@ -104,14 +102,14 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", SITE_PROTOCOL)
 
 DEFAULT_HSTS_SECONDS = 30 * 24 * 60 * 60  # 30 days
 SECURE_HSTS_SECONDS = int(
-    os.environ.get("SECURE_HSTS_SECONDS", DEFAULT_HSTS_SECONDS)
-)  # noqa
+    os.environ.get("SECURE_HSTS_SECONDS", DEFAULT_HSTS_SECONDS)  # noqa: F405
+)
 SECURE_HSTS_INCLUDE_SUBDOMAINS = False
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
 # Referrer-policy header settings.
-REFERRER_POLICY = os.environ.get(  # noqa
+REFERRER_POLICY = os.environ.get(  # noqa: F405
     "SECURE_REFERRER_POLICY", "no-referrer-when-downgrade"
 ).strip()
 

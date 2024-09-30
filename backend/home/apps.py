@@ -8,4 +8,4 @@ class HomeConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
 
     def ready(self):
-        import home.signals
+        import home.signals  # noqa: F401

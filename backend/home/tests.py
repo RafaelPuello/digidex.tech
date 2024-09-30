@@ -17,7 +17,7 @@ class HomePageTests(WagtailPageTestCase):
             is_default_site=True,
             site_name="testserver",
         )
-        home = HomePage(title="Home")
+        home = HomePage(title="Home Test", slug="home-test")
         root.add_child(instance=home)
         cls.page = home
 
@@ -35,8 +35,8 @@ class HomePageTests(WagtailPageTestCase):
         self.assertPageIsEditable(
             self.page,
             post_data={
-                "title": "Fabulous events",
-                "slug": "events",
+                "title": "Udpated Home Page",
+                "slug": "home-test",
                 "show_featured": True,
                 "show_expired": False,
                 "action-publish": "",

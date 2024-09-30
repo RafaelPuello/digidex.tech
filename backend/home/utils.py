@@ -8,5 +8,5 @@ def get_trainer_group():
     Returns:
         Group: The created or retrieved group instance.
     """
-    group, created = Group.objects.create(name="Trainers")
+    group, created = Group.objects.get_or_create(name="Trainers")
     return group
