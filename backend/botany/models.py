@@ -35,6 +35,11 @@ class InventoryBox(CollectionMixin, Page):
         FieldPanel('description'),
     ]
 
+    def get_context(self, request, *args, **kwargs):
+        context =  super().get_context(request, *args, **kwargs)
+        context['plants'] = self.get_plants()
+        return context
+
     def get_plants(self):
         return Plant.objects.filter(box=self)
 
@@ -93,6 +98,12 @@ class Plant(
     slug = models.SlugField(
         max_length=255,
         db_index=True
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+    last_modified = models.DateTimeField(
+        auto_now=True
     )
 
     search_fields = [
