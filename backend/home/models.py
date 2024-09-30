@@ -79,6 +79,17 @@ class UserIndexPage(Page):
         ]
     )
 
+    def get_context(self, request):
+        context = super().get_context(request)
+        context['inventory'] = self.get_inventory()
+        return context
+
+    def get_inventory(self):
+        return self.get_boxes().prefetch_related('plants')
+
+    def get_boxes(self):
+        return self.get_children().live().specific()
+
     @staticmethod
     def get_root_page():
         root = HomePage.objects.first()

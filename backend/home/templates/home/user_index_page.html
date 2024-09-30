@@ -2,32 +2,57 @@
 {% load static wagtailimages_tags %}
 
 {% block content %}
-    <section class="section">
-        <div class="content">
-            <div class="collection-list-wrapper-posts w-dyn-list">
-                <div role="list" class="collection-list-posts w-dyn-items">
-                    {% for entity in entities %}
-                    <div role="listitem" class="w-dyn-item">
-                        <div class="block-post" data-id="{{ entity.uuid }}" data-name="{{ entity.title }}"
-                            data-description="{{ entity.description }}">
-                            <img src="{{ entity.image.thumbnail }}" loading="lazy" decoding="async"
-                                alt="Asset Thumbnail Placeholder" class="image-post-thumbnail">
-                            <div class="post">
-                                <h4 class="heading-post">{{ entity.title }}</h4>
-                                <p class="paragraph-post">{{ entity.description }}</p>
-                                <div class="block-button">
-                                    <a href="{{ entity.url }}" class="button-small w-button">View</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% empty %}
-                    <div class="empty-state w-dyn-empty">
-                        <div class="text-empty">No entities found.</div>
-                    </div>
-                    {% endfor %}
-                </div>
+  <section class="section-top">
+    <div class="content">
+      <div class="block-top">
+        <h1 class="heading-top">{{ page.title }}</h1>
+      </div>
+      <div class="block-categories">
+        <a href="#" aria-current="page" class="link-category w-inline-block w--current">
+            <img alt="green switcher toggle" loading="eager" decoding="async" src="{% static 'base/images/switcher.svg' %}" class="icon-category">
+          <div class="text-category">All</div>
+        </a>
+        <div class="collection-list-wrapper-categories w-dyn-list">
+          {% for box in inventory %}
+            <div role="list" class="collection-list-categories w-dyn-items">
+              <div role="listitem" class="collection-item-categories w-dyn-item">
+                <a href="{{ box.url }}" class="link-category w-inline-block">
+                  <img alt="Inventory Box Icon" loading="eager" decoding="async" src="{% static 'base/images/star.svg' %}" class="icon-category">
+                  <div class="text-category">box.title</div>
+                </a>
+              </div>
             </div>
+          {% empty %}
+            <div class="empty-state w-dyn-empty">
+              <div class="text-empty">No boxes found.</div>
+            </div>
+          {% endfor %}
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
+  <div class="collection-list-wrapper-posts w-dyn-list">
+    <div role="list" class="collection-list-posts w-dyn-items">
+      <div role="listitem" class="w-dyn-item">
+        <div class="block-post">
+          <a href="#" class="link-post-thumbnail w-inline-block">
+            <img alt="Plant Thumbnail Placeholder" loading="eager" decoding="async" src="{% static 'botany/plant-placeholder.svg' %}" class="image-post-thumbnail">
+          </a>
+          <div class="post">
+            <div class="date"></div>
+            <a href="#" class="link-heading-post w-inline-block">
+              <h4 class="heading-post"></h4>
+            </a>
+            <p class="paragraph-post"></p>
+            <a href="#" class="link-block w-inline-block">
+              <div class="text-link">Read more</div>
+              <div class="block-icon-link">
+                <img src="{% static 'base/images/bx-arrow-to-right_green.svg' %}" loading="lazy" decoding="async" alt="Green Arrow Pointing Right" class="icon-link">
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock content %}
