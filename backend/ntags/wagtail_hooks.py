@@ -22,6 +22,7 @@ class NFCTagSnippetViewSet(SnippetViewSet):
     icon = "tag"
     menu_label = "Tags"
     menu_name = "tags"
+    menu_order = 130
     copy_view_enabled = False
     list_filter = {"nfc_tag_type": ["exact"], "label": ["icontains"]}
     list_display = ["label", "nfc_tag_type", "serial_number"]
