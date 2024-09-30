@@ -32,12 +32,12 @@ jobs:
 
       - name: Check for Formatting with Flake8
         run: |
-          flake8 backend/.
+          flake8 backend/
 
       - name: Check for Security Issues with Bandit
         run: |
-          bandit -r backend/.
+          bandit -r backend/
 
       - name: Test with Pytest
         run: |
-          pytest backend/.
+          pytest backend/
