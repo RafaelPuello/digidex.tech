@@ -21,11 +21,13 @@
                   <img alt="Plant Thumbnail Placeholder" loading="eager" decoding="async" src="{% static 'botany/plant-placeholder.svg' %}" class="image-post-thumbnail">
                 </a>
                 <div class="post">
-                  <div class="date">{{ plant.date }}</div>
+                  {% if plant.date %}
+                    <div class="date">{{ plant.date }}</div>
+                  {% endif %}
                   <a href="{{ plant.slug }}" class="link-heading-post w-inline-block">
                     <h4 class="heading-post">{{ plant.name }}</h4>
                   </a>
-                  <p class="paragraph-post"></p>
+                  <p class="paragraph-post">{{ plant.description|richtext }}</p>
                   <a href="{{ plant.slug }}" class="link-block w-inline-block">
                     <div class="text-link">Read more</div>
                     <div class="block-icon-link">
