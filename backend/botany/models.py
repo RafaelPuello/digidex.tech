@@ -7,7 +7,7 @@ from wagtail.fields import RichTextField
 from wagtail.images import get_image_model
 from wagtail.documents import get_document_model
 from wagtail.search import index
-from wagtail.admin.panels import FieldPanel, InlinePanel
+from wagtail.admin.panels import FieldPanel
 
 from base.models import CollectionMixin
 

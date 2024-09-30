@@ -25,7 +25,7 @@ class BoxModelViewSet(PageListingViewSet):
     inspect_view_enabled = True
     admin_url_namespace = "boxes"
     base_url_path = "inventory/boxes"
-    add_to_admin_menu=True
+    add_to_admin_menu = True
 
 
 @hooks.register("register_admin_viewset")
@@ -48,7 +48,7 @@ class PlantSnippetViewSet(SnippetViewSet):
     list_per_page = 50
     admin_url_namespace = "plants"
     base_url_path = "inventory/plants"
-    add_to_admin_menu=True
+    add_to_admin_menu = True
 
     public_panels = [
         FieldPanel("box"),
@@ -65,5 +65,6 @@ class PlantSnippetViewSet(SnippetViewSet):
             ObjectList(private_panels, heading='Admin only', permission="superuser"),
         ]
     )
+
 
 register_snippet(PlantSnippetViewSet)

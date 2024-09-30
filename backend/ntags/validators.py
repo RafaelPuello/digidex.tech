@@ -15,6 +15,7 @@ def validate_serial_number(value):
             params={'value': value},
         )
 
+
 def validate_integrated_circuit(value):
     """
     Validates the NTAG integrated circuit type.

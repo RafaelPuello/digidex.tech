@@ -50,7 +50,7 @@ class NFCTagSnippetViewSet(SnippetViewSet):
         qs = super().get_queryset(request)
         if qs is None:
             qs = self.model.objects.all()
-        
+
         user = request.user
         if user.is_superuser:
             return qs

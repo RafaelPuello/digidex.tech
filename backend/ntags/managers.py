@@ -62,6 +62,6 @@ class NFCTagManager(models.Manager):
         uid, counter = uid_counter.split('x')
 
         try:
-            return self.get(serial_number=uid) #  .scans.get(counter=counter)
+            return self.get(serial_number=uid)  # .scans.get(counter=counter)
         except self.model.DoesNotExist:
             raise self.model.DoesNotExist(_('NFC Tag Scan not found.'))

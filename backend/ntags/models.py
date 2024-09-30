@@ -14,8 +14,7 @@ from wagtail.models import (
     LockableMixin,
     TranslatableMixin,
     PreviewableMixin,
-    Collection,
-    Page
+    Collection
 )
 from wagtail.fields import RichTextField
 
@@ -120,7 +119,7 @@ class AbstractNFCTag(models.Model):
         blank=True
     )
     content_object = GenericForeignKey(
-        'content_type', 
+        'content_type',
         'object_id'
     )
 
@@ -218,7 +217,7 @@ class NFCTagMemory(models.Model):
         rows = NTAG_EEPROM_SIZES[ntag.integrated_circuit] // columns
 
         # Create a 2D NumPy array filled with zeros (assuming NumPy is used)
-        eeprom_2d = None #  np.zeros((rows, columns), dtype=np.uint8)
+        eeprom_2d = None  # np.zeros((rows, columns), dtype=np.uint8)
         eeprom_bytes = eeprom_2d.tobytes()
 
         ntag_eeprom, created = cls.objects.get_or_create(
@@ -233,7 +232,6 @@ class NFCTagMemory(models.Model):
     class Meta:
         verbose_name = _("eeprom")
         verbose_name_plural = _("eeproms")
-
 
 
 class NFCTagScan(models.Model):

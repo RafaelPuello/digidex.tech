@@ -8,6 +8,7 @@ from .models import UserIndexCollection
 
 User = get_user_model()
 
+
 @transaction.atomic
 def user_setup(user):
     group = get_trainer_group()
@@ -25,4 +26,3 @@ def user_setup(user):
 def create_user_collection_and_page(sender, instance, created, **kwargs):
     if created:
         user_setup(instance)
-    

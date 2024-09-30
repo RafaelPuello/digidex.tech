@@ -7,5 +7,5 @@ class BaseConfig(AppConfig):
     name = 'base'
 
 
-class CustomImagesAppConfig(WagtailImagesAppConfig):
+class BaseImagesAppConfig(WagtailImagesAppConfig):
     default_attrs = {"decoding": "async", "loading": "lazy"}

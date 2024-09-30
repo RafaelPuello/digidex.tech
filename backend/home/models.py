@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
-from wagtail.models import Page, Collection, GroupPagePermission, GroupCollectionPermission
+from wagtail.models import Page, GroupPagePermission, GroupCollectionPermission
 from wagtail.fields import RichTextField
 from wagtail.admin.panels import FieldPanel, TabbedInterface, ObjectList
 

@@ -4,12 +4,6 @@ from wagtail.documents.models import Document, AbstractDocument
 from wagtail.images.models import Image, AbstractImage, AbstractRendition
 
 
-from django.db import models
-from wagtail.models import Collection
-from wagtail.documents.models import Document, AbstractDocument
-from wagtail.images.models import Image, AbstractImage, AbstractRendition
-
-
 class CollectionMixin(models.Model):
     """
     An abstract model that adds a collection field and manages collection creation and permissions.
