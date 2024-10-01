@@ -22,8 +22,9 @@ EMAIL_SUBJECT_PREFIX = ACCOUNT_EMAIL_SUBJECT_PREFIX = f"[{SITE_NAME}] "
 # Storage Configuration (DEV)
 # ------------------------------------------------------------------------
 MEDIA_URL = '/media/'
-STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # noqa: F405
+
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # noqa: F405
 
 STATICFILES_DIRS = [

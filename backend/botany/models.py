@@ -14,9 +14,9 @@ from wagtail.contrib.routable_page.models import RoutablePageMixin, path
 from base.models import GalleryImageMixin
 
 
-class InventoryBox(RoutablePageMixin, Page):
+class UserBoxPage(RoutablePageMixin, Page):
     """
-    Represents an inventory box that can contain multiple plants.
+    Represents a box page that can contain multiple plants.
     """
     description = RichTextField(
         blank=True
@@ -73,7 +73,7 @@ class Plant(
     PreviewableMixin
 ):
     box = models.ForeignKey(
-        InventoryBox,
+        UserBoxPage,
         related_name='plants',
         on_delete=models.CASCADE
     )

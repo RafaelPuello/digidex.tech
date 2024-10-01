@@ -1,6 +1,6 @@
 BOTANY_PERMISSIONS = [
     'add_plant', 'change_plant', 'delete_plant', 'view_plant',
-    'add_inventorybox', 'change_inventorybox', 'delete_inventorybox', 'view_inventorybox'
+    'add_userboxpage', 'change_userboxpage', 'delete_userboxpage', 'view_userboxpage'
 ]
 
 

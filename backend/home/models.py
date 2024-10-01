@@ -32,6 +32,7 @@ class HomePage(Page):
         'home.UserIndexPage',
         'blog.BlogIndexPage',
         'blog.TagIndexPage',
+        'botany.UserBoxPage',
         'company.CompanyIndexPage',
         'support.ContactFormPage',
     ]

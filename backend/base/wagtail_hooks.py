@@ -32,10 +32,7 @@ def construct_main_menu_items(request, menu_items):
     Hide menu items for non-superusers.
     """
     HIDDEN_MAIN_MENU_ITEMS = (
-        CollectionsMenuItem,
         SnippetsMenuItem,
-        ImagesMenuItem,
-        DocumentsMenuItem,
         ExplorerMenuItem
     )
 
