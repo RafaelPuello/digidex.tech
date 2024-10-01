@@ -1,6 +1,6 @@
 from wagtail import hooks
 from wagtail.admin.viewsets.pages import PageListingViewSet
-from wagtail.admin.panels import TabbedInterface, FieldPanel, ObjectList
+from wagtail.admin.panels import TabbedInterface, FieldPanel, InlinePanel, ObjectList
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet
 
@@ -54,6 +54,7 @@ class PlantSnippetViewSet(SnippetViewSet):
         FieldPanel("box"),
         FieldPanel("name"),
         FieldPanel("description"),
+        InlinePanel("gallery_images", label="Images"),
     ]
 
     private_panels = [

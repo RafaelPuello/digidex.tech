@@ -81,14 +81,15 @@ class UserIndexPage(Page):
 
     def get_context(self, request):
         context = super().get_context(request)
-        context['inventory'] = self.get_inventory()
+        context['boxes'] = self.get_boxes()
+        context['plants'] = self.get_plants()
         return context
-
-    def get_inventory(self):
-        return self.get_boxes().prefetch_related('plants')
 
     def get_boxes(self):
         return self.get_children().live().specific()
+
+    def get_plants(self):
+        return self.get_boxes().prefetch_related('plants')
 
     @staticmethod
     def get_root_page():

@@ -7,6 +7,8 @@ from wagtail.fields import RichTextField
 from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
 from wagtail.search import index
 
+from base.models import GalleryImageMixin
+
 
 class BlogIndexPage(Page):
     intro = RichTextField(
@@ -103,23 +105,9 @@ class BlogPage(Page):
     ]
 
 
-class BlogPageGalleryImage(Orderable):
+class BlogPageGalleryImage(GalleryImageMixin):
     page = ParentalKey(
         BlogPage,
         on_delete=models.CASCADE,
         related_name='gallery_images'
     )
-    image = models.ForeignKey(
-        'wagtailimages.Image',
-        on_delete=models.CASCADE,
-        related_name='+'
-    )
-    caption = models.CharField(
-        blank=True,
-        max_length=250
-    )
-
-    panels = [
-        FieldPanel('image'),
-        FieldPanel('caption'),
-    ]

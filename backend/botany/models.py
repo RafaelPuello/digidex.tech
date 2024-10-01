@@ -1,7 +1,10 @@
 import uuid
 from django.db import models
+from django.db.models import Prefetch
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+from modelcluster.models import ClusterableModel
+from modelcluster.fields import ParentalKey
 from wagtail.models import Page, TranslatableMixin, PreviewableMixin, Orderable
 from wagtail.fields import RichTextField
 from wagtail.images import get_image_model
@@ -9,10 +12,10 @@ from wagtail.documents import get_document_model
 from wagtail.search import index
 from wagtail.admin.panels import FieldPanel
 
-from base.models import CollectionMixin
+from base.models import GalleryImageMixin
 
 
-class InventoryBox(CollectionMixin, Page):
+class InventoryBox(Page):
     """
     Represents an inventory box that can contain multiple plants.
     """
@@ -37,29 +40,23 @@ class InventoryBox(CollectionMixin, Page):
 
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
-        context['plants'] = self.get_plants()
+        context['plants'] = self.get_plants_with_images()
         return context
+
+    def get_plants_with_images(self):
+        return self.get_plants().prefetch_related(
+            Prefetch(
+                'collection__images',
+                queryset=get_image_model().objects.all(),
+                to_attr='image_gallery'
+            )
+        )
 
     def get_plants(self):
         return Plant.objects.filter(box=self)
 
-    def get_documents(self):
-        return get_document_model().objects.filter(collection=self.collection)
-
-    def get_images(self):
-        return get_image_model().objects.filter(collection=self.collection)
-
     def get_parent_collection(self):
         return self.owner.index_collection.collection
-
-    def get_collection(self):
-        parent_collection = self.get_parent_collection()
-        return self.get_or_create_collection(name=self.uuid, parent=parent_collection)
-
-    def save(self, *args, **kwargs):
-        if not self.collection:
-            self.collection = self.get_collection()
-        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title
@@ -71,11 +68,10 @@ class InventoryBox(CollectionMixin, Page):
 
 class Plant(
     Orderable,
-    CollectionMixin,
+    ClusterableModel,
     index.Indexed,
     TranslatableMixin,
-    PreviewableMixin,
-    models.Model
+    PreviewableMixin
 ):
     box = models.ForeignKey(
         InventoryBox,
@@ -115,18 +111,28 @@ class Plant(
         index.AutocompleteField('name'),
     ]
 
-    def get_parent_collection(self):
-        return self.box.collection
+    @property
+    def image(self, rendition=None):
+        if rendition is None:
+            return self.main_image()
+        pass  # TODO: Implement image rendition filtering
 
-    def get_collection(self):
-        parent_collection = self.get_parent_collection()
-        return self.get_or_create_collection(name=self.uuid, parent=parent_collection)
+    def main_image(self):
+        gallery_item = self.gallery_images.first()
+        if gallery_item:
+            return gallery_item.image
+        else:
+            return None
 
-    def get_documents(self):
-        return get_document_model().objects.filter(collection=self.collection)
+    @property
+    def images(self):
+        return self.get_images()
 
     def get_images(self):
-        return get_image_model().objects.filter(collection=self.collection)
+        return self.gallery_images.all()
+
+    def get_parent_collection(self):
+        return self.box.collection
 
     def get_preview_template(self, request, mode_name):
         return "botany/inventory_plant.html"
@@ -134,8 +140,6 @@ class Plant(
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
-        if not self.collection:
-            self.collection = self.get_collection()
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -150,3 +154,14 @@ class Plant(
         constraints = [
             models.UniqueConstraint(fields=['box', 'name'], name='unique_plant_name_in_box')
         ]
+
+
+class PlantGalleryImage(GalleryImageMixin):
+    plant = ParentalKey(
+        Plant,
+        on_delete=models.CASCADE,
+        related_name='gallery_images'
+    )
+
+    class Meta(GalleryImageMixin.Meta):
+        abstract = False
