@@ -3,7 +3,7 @@ from .base import *  # noqa
 # ------------------------------------------------------------------------
 # Site Configuration (PROD)
 # ------------------------------------------------------------------------
-SITE_NAME = WAGTAIL_SITE_NAME = "DigiDex"
+WAGTAIL_SITE_NAME = "DigiDex"
 SITE_PROTOCOL = "https"
 SITE_HOSTNAME = "digidex.tech"
 
@@ -22,7 +22,7 @@ EMAIL_PORT = os.getenv("EMAIL_PORT")  # noqa: F405
 EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS")  # noqa: F405
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-EMAIL_SUBJECT_PREFIX = ACCOUNT_EMAIL_SUBJECT_PREFIX = f"[{SITE_NAME}] "
+EMAIL_SUBJECT_PREFIX = ACCOUNT_EMAIL_SUBJECT_PREFIX = f"[{WAGTAIL_SITE_NAME}] "
 
 # ------------------------------------------------------------------------
 # Storage Configuration (PROD)
