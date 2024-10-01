@@ -35,6 +35,8 @@ mccabe==0.7.0
 mdurl==0.1.2
 ndeflib==0.3.3
 nfcpy==1.0.4
+numpy==2.1.1
+opencv-python==4.10.0.84
 openpyxl==3.1.5
 packaging==24.1
 pbr==6.1.0
