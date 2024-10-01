@@ -8,7 +8,6 @@ from modelcluster.fields import ParentalKey
 from wagtail.models import Page, TranslatableMixin, PreviewableMixin, Orderable
 from wagtail.fields import RichTextField
 from wagtail.images import get_image_model
-from wagtail.documents import get_document_model
 from wagtail.search import index
 from wagtail.admin.panels import FieldPanel
 
