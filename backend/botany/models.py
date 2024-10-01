@@ -1,20 +1,20 @@
 import uuid
 from django.db import models
-from django.db.models import Prefetch
+from django.shortcuts import get_object_or_404
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from modelcluster.models import ClusterableModel
 from modelcluster.fields import ParentalKey
 from wagtail.models import Page, TranslatableMixin, PreviewableMixin, Orderable
 from wagtail.fields import RichTextField
-from wagtail.images import get_image_model
 from wagtail.search import index
 from wagtail.admin.panels import FieldPanel
+from wagtail.contrib.routable_page.models import RoutablePageMixin, path
 
 from base.models import GalleryImageMixin
 
 
-class InventoryBox(Page):
+class InventoryBox(RoutablePageMixin, Page):
     """
     Represents an inventory box that can contain multiple plants.
     """
@@ -37,19 +37,19 @@ class InventoryBox(Page):
         FieldPanel('description'),
     ]
 
+    @path('<slug:plant_slug>/')
+    def plant_details(self, request, plant_slug):
+        plant = get_object_or_404(Plant, slug=plant_slug, box=self)
+        return self.render(
+            request,
+            context_overrides={'plant': plant},
+            template="botany/inventory_plant.html"
+        )
+
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
-        context['plants'] = self.get_plants_with_images()
+        context['plants'] = self.get_plants()
         return context
-
-    def get_plants_with_images(self):
-        return self.get_plants().prefetch_related(
-            Prefetch(
-                'collection__images',
-                queryset=get_image_model().objects.all(),
-                to_attr='image_gallery'
-            )
-        )
 
     def get_plants(self):
         return Plant.objects.filter(box=self)
@@ -111,12 +111,12 @@ class Plant(
     ]
 
     @property
-    def image(self, rendition=None):
+    def main_image(self, rendition=None):
         if rendition is None:
-            return self.main_image()
-        pass  # TODO: Implement image rendition filtering
+            return self.get_main_image()
+        pass  # TODO: Implement image rendition
 
-    def main_image(self):
+    def get_main_image(self):
         gallery_item = self.gallery_images.first()
         if gallery_item:
             return gallery_item.image
@@ -149,9 +149,11 @@ class Plant(
         verbose_name_plural = _('plants')
         indexes = [
             models.Index(fields=['box', 'name']),
+            models.Index(fields=['box', 'slug']),
         ]
         constraints = [
-            models.UniqueConstraint(fields=['box', 'name'], name='unique_plant_name_in_box')
+            models.UniqueConstraint(fields=['box', 'name'], name='unique_plant_name_in_box'),
+            models.UniqueConstraint(fields=['box', 'slug'], name='unique_plant_slug_in_box')
         ]
 
 
