@@ -8,7 +8,7 @@ from modelcluster.fields import ParentalKey
 from wagtail.models import Page, TranslatableMixin, PreviewableMixin, Orderable
 from wagtail.fields import RichTextField
 from wagtail.search import index
-from wagtail.admin.panels import FieldPanel
+from wagtail.admin.panels import InlinePanel, FieldPanel, TabbedInterface, TitleFieldPanel, ObjectList
 from wagtail.contrib.routable_page.models import RoutablePageMixin, path
 
 from base.models import GalleryImageMixin
@@ -33,9 +33,17 @@ class UserBoxPage(RoutablePageMixin, Page):
     ]
     child_page_types = []
 
-    content_panels = Page.content_panels + [
+    content_panels = [
+        TitleFieldPanel('title', classname="title"),
+        FieldPanel('slug'),
         FieldPanel('description'),
     ]
+
+    edit_handler = TabbedInterface([
+        ObjectList(content_panels, heading='Details'),
+        ObjectList(Page.promote_panels, heading='Promote', permission="superuser"),
+        ObjectList(Page.settings_panels, heading='Settings', permission="superuser"),
+    ])
 
     @path('<slug:plant_slug>/')
     def plant_details(self, request, plant_slug):
