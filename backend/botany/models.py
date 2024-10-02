@@ -130,11 +130,18 @@ class Plant(
     def get_images(self):
         return self.gallery_images.all()
 
+    @property
+    def url(self):
+        return self.get_url()
+
+    def get_url(self):
+        return self.box.url + self.slug + '/'
+
     def get_parent_collection(self):
         return self.box.collection
 
     def get_preview_template(self, request, mode_name):
-        return "botany/inventory_plant.html"
+        return "botany/user_plant.html"
 
     def save(self, *args, **kwargs):
         if not self.slug:

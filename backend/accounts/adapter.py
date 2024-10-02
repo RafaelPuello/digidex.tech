@@ -1,4 +1,5 @@
 from allauth.account.adapter import DefaultAccountAdapter
+from django.utils.text import slugify
 
 
 class UserAccountAdapter(DefaultAccountAdapter):
@@ -12,7 +13,9 @@ class UserAccountAdapter(DefaultAccountAdapter):
         Note that URLs passed explicitly (e.g. by passing along a next GET parameter)
         take precedence over the value returned here.
         """
-        return "/dashboard/"
+        if request.user.is_superuser:
+            return "/dashboard/"
+        return f"/{slugify(request.user.username)}/"
 
     def is_open_for_signup(self, request):
         """

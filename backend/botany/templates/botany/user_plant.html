@@ -17,14 +17,16 @@
   </section>
   <section class="section">
     <div class="content narrow">
-      {% for item in plant.gallery_images.all %}
-        <div>
-          {% image item.image original class="image-main-post" %}
-          <p>{{ item.caption }}</p>
-        </div>
-      {% empty %}
-        <img alt="Plant Image Placeholder" loading="eager" decoding="async" src="{% static 'botany/plant-placeholder.svg' %}" class="image-main-post">
-      {% endfor %}
+      <figure class="w-richtext-align-fullwidth w-richtext-figure-type-image">
+        {% for item in plant.gallery_images.all %}
+          {% image item.image max-1200x880 %}
+          {% if item.caption %}
+            <figcaption>{{ item.caption }}</figcaption>
+          {% endif %}
+        {% empty %}
+          <img alt="Plant Image Placeholder" loading="eager" decoding="async" src="{% static 'botany/plant-placeholder.svg' %}" class="image-main-post">
+        {% endfor %}
+      </figure>
       <div class="post-body">
         <div class="rich-text-block w-dyn-bind-empty w-richtext">{{ page.body|richtext }}</div>
       </div>

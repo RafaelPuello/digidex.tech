@@ -38,10 +38,10 @@
           <div role="list" class="collection-list-posts w-dyn-items">
             <div role="listitem" class="w-dyn-item">
               <div class="block-post">
-                <a href="{{ plant.slug }}" class="link-post-thumbnail w-inline-block">
+                <a href="{{ plant.url }}" class="link-post-thumbnail w-inline-block">
                   {% with plant.main_image as main_image %}
                     {% if main_image %}
-                      {% image main_image original class="image-main-post" %}
+                      {% image main_image fill-320x240 class="image-main-post" %} <!-- Large should be 600x400 -->
                       {% if main_image.caption %}
                         <p>{{ main_image.caption }}</p>
                       {% endif %}
@@ -54,12 +54,12 @@
                   {% if plant.date %}
                     <div class="date">{{ plant.date }}</div>
                   {% endif %}
-                  <a href="{{ plant.slug }}" class="link-heading-post w-inline-block">
+                  <a href="{{ plant.url }}" class="link-heading-post w-inline-block">
                     <h4 class="heading-post">{{ plant.name }}</h4>
                   </a>
                   <p class="paragraph-post">{{ plant.description|richtext }}</p>
-                  <a href="{{ plant.slug }}" class="link-block w-inline-block">
-                    <div class="text-link">Read more</div>
+                  <a href="{{ plant.url }}" class="link-block w-inline-block">
+                    <div class="text-link">View Details</div>
                     <div class="block-icon-link">
                       <img src="{% static 'base/images/bx-arrow-to-right_green.svg' %}" loading="lazy" decoding="async" alt="Green Arrow Pointing Right" class="icon-link">
                     </div>

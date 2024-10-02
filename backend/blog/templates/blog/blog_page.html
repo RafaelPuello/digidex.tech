@@ -13,14 +13,16 @@
   </section>
   <section class="section">
     <div class="content narrow">
-      {% for item in page.gallery_images.all %}
-        <div>
-          {% image item.image original class="image-main-post" %}
-          <p>{{ item.caption }}</p>
-        </div>
-      {% empty %}
-        <img alt="Blog Post Placeholder" loading="eager" decoding="async" src="{% static 'blog/image-placeholder.svg' %}" class="image-main-post">
-      {% endfor %}
+        <figure style="max-width:882pxpx" class="w-richtext-align-fullwidth w-richtext-figure-type-image">
+          {% for item in page.gallery_images.all %}
+            {% image item.image original %}
+            {% if item.caption %}
+              <figcaption>{{ item.caption }}</figcaption>
+            {% endif %}
+          {% empty %}
+            <img alt="Blog Post Placeholder" loading="eager" decoding="async" src="{% static 'blog/image-placeholder.svg' %}" class="image-main-post">
+          {% endfor %}
+        </figure>
       <div class="post-body">
         <div class="rich-text-block w-dyn-bind-empty w-richtext">{{ page.body|richtext }}</div>
       </div>
