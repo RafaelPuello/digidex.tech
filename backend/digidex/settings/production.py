@@ -116,9 +116,9 @@ REFERRER_POLICY = os.environ.get(  # noqa: F405
 # ------------------------------------------------------------------------
 # Logging Configuration (PROD)
 # ------------------------------------------------------------------------
-LOG_DIR = os.path.join(PROJECT_DIR, 'logs')
-if not os.path.exists(LOG_DIR):
-    os.makedirs(LOG_DIR)
+LOG_DIR = os.path.join(PROJECT_DIR, 'logs')  # noqa: F405
+if not os.path.exists(LOG_DIR):  # noqa: F405
+    os.makedirs(LOG_DIR)  # noqa: F405
 
 
 LOGGING = {
@@ -143,7 +143,7 @@ LOGGING = {
         'file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(LOG_DIR, 'error.log'),
+            'filename': os.path.join(LOG_DIR, 'error.log'),  # noqa: F405
             'formatter': 'verbose',
         },
     },

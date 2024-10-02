@@ -8,7 +8,7 @@ from modelcluster.fields import ParentalKey
 from wagtail.models import Page, TranslatableMixin, PreviewableMixin, Orderable
 from wagtail.fields import RichTextField
 from wagtail.search import index
-from wagtail.admin.panels import InlinePanel, FieldPanel, TabbedInterface, TitleFieldPanel, ObjectList
+from wagtail.admin.panels import FieldPanel, TabbedInterface, TitleFieldPanel, ObjectList
 from wagtail.contrib.routable_page.models import RoutablePageMixin, path
 
 from base.models import GalleryImageMixin

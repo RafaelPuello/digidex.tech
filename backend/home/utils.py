@@ -10,16 +10,3 @@ def get_trainer_group():
     """
     group, created = Group.objects.get_or_create(name="Trainers")
     return group
-
-def get_page_for_user(user):
-    """
-    Returns the user's home page.
-
-    Args:
-        user (User): The user whose home page is to be retrieved.
-
-    Returns:
-        UserIndexPage: The user's home page.
-    """
-    from home.models import UserIndexPage
-    return UserIndexPage.objects.get_or_create(owner=user)
