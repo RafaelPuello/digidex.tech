@@ -89,10 +89,10 @@ class UserIndexPage(Page):
     def get_boxes(self, num=None):
         """
         Get and manipulate the box queryset for the user index page.
-        
+
         Args:
             num (int): The number of boxes to return. If None, return all boxes.
-        
+
         Returns:
             QuerySet: The plant queryset.
         """
@@ -113,10 +113,10 @@ class UserIndexPage(Page):
     def get_plants(self, num=None):
         """
         Get and manipulate the plant queryset for the user index page.
-    
+
         Args:
             num (int): The number of plants to return. If None, return all plants.
-        
+
         Returns:
             QuerySet: The plant queryset.
         """

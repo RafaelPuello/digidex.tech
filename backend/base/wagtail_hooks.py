@@ -1,12 +1,9 @@
 from wagtail import hooks
-from wagtail.admin.wagtail_hooks import (
-    CollectionsMenuItem,
-    LockedPagesMenuItem,
-)
+from wagtail.admin.wagtail_hooks import LockedPagesMenuItem
 from wagtail.admin.site_summary import PagesSummaryItem
 from wagtail.snippets.wagtail_hooks import SnippetsMenuItem
-from wagtail.images.wagtail_hooks import ImagesMenuItem, ImagesSummaryItem
-from wagtail.documents.wagtail_hooks import DocumentsMenuItem, DocumentsSummaryItem
+from wagtail.images.wagtail_hooks import ImagesSummaryItem
+from wagtail.documents.wagtail_hooks import DocumentsSummaryItem
 from wagtail.admin.wagtail_hooks import (
     WorkflowReportMenuItem,
     SiteHistoryReportMenuItem,
