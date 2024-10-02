@@ -1,14 +1,8 @@
-{% extends "base.html" %}
+{% extends "base/base.html" %}
 {% load static %}
 
 {% block extra_css %}
   <link rel="stylesheet" type="text/css" href="{% static 'company/company.css' %}">
 {% endblock  %}
 
-{% block body %}
-  <main role="main">
-    {% block content %}{% endblock %}
-  </main>
-{% endblock body %}
-
-{% block extra_body %}{% endblock %}
+{% block content %}{% endblock %}
