@@ -43,7 +43,7 @@ class UserBoxPage(RoutablePageMixin, Page):
         return self.render(
             request,
             context_overrides={'plant': plant},
-            template="botany/inventory_plant.html"
+            template="botany/user_plant.html"
         )
 
     def get_context(self, request, *args, **kwargs):

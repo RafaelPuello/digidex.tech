@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
-from wagtail.models import Page, GroupCollectionPermission
+from wagtail.models import Page, GroupCollectionPermission, GroupPagePermission
 from wagtail.fields import RichTextField
 from wagtail.admin.panels import FieldPanel, TabbedInterface, ObjectList
 
@@ -82,15 +82,57 @@ class UserIndexPage(Page):
 
     def get_context(self, request):
         context = super().get_context(request)
-        context['boxes'] = self.get_boxes()
-        context['plants'] = self.get_plants()
+        context['boxes'] = self.get_boxes(10)
+        context['plants'] = self.get_plants(30)
         return context
 
-    def get_boxes(self):
-        return self.get_children().live().specific()
+    def get_boxes(self, num=None):
+        """
+        Get and manipulate the box queryset for the user index page.
+        
+        Args:
+            num (int): The number of boxes to return. If None, return all boxes.
+        
+        Returns:
+            QuerySet: The plant queryset.
+        """
+        from botany.models import UserBoxPage
+        boxes_q = UserBoxPage.objects.descendant_of(self).live().specific()
 
-    def get_plants(self):
-        return self.get_boxes().prefetch_related('plants')
+        if not boxes_q.exists():
+            return boxes_q.none()
+
+        if num is not None:
+            if isinstance(num, int) and num > 0:
+                return boxes_q[:num]
+            else:
+                raise ValueError("The 'num' parameter must be a positive, non-zero integer.")
+
+        return boxes_q
+
+    def get_plants(self, num=None):
+        """
+        Get and manipulate the plant queryset for the user index page.
+    
+        Args:
+            num (int): The number of plants to return. If None, return all plants.
+        
+        Returns:
+            QuerySet: The plant queryset.
+        """
+        from botany.models import Plant
+        plants_q = Plant.objects.filter(box__in=self.get_boxes())
+
+        if not plants_q.exists():
+            return plants_q.none()
+
+        if num is not None:
+            if isinstance(num, int) and num > 0:
+                return plants_q[:num]
+            else:
+                raise ValueError("The 'num' parameter must be a positive, non-zero integer.")
+
+        return plants_q[:30]
 
     @staticmethod
     def get_root_page():
@@ -107,9 +149,9 @@ class UserIndexPage(Page):
         group = self.owner.get_user_group()
         for perm in PAGE_PERMISSIONS:
             permission = Permission.objects.get(codename=perm)
-            GroupCollectionPermission.objects.create(
+            GroupPagePermission.objects.create(
                 group=group,
-                collection=self,
+                page=self,
                 permission=permission
             )
         return
