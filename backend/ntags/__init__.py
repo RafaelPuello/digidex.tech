@@ -26,7 +26,6 @@ def get_nfc_tag_filter_method():
     """
     Returns the method to filter NFC tags that is active in this project.
     """
-
     filter_method =  getattr(settings, 'NFC_TAG_FILTER_METHOD', 'uid')
     if filter_method not in NTAG_FILTER_METHODS:
         raise ValueError('Invalid filter method for NFC tags. Valid options are: {}'.format(NTAG_FILTER_METHODS))

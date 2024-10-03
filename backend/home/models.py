@@ -141,6 +141,25 @@ class UserIndexPage(Page):
             raise Exception("home page not found. Please ensure a home page exists.")
         return root
 
+    @classmethod
+    def get_for_user(cls, user):
+        root = cls.get_root_page(user)
+        slug = slugify(user.username)
+    
+        try:
+            return root.get_children().get(slug=slug).specific
+        except Page.DoesNotExist:
+            collection = UserIndexCollection.get_for_user(user)
+            user_page = UserIndexPage(
+                title=user.username,
+                slug=slug,
+                owner=user,
+                user_collection=self
+            )
+            root_page.add_child(instance=user_page)
+            user_page.save_revision().publish()
+            return user_page
+
     def set_permissions(self):
         PAGE_PERMISSIONS = (
             'add_page', 'publish_page'
@@ -202,13 +221,13 @@ class UserIndexCollection(CollectionMixin, models.Model):
         return cls.get_or_create_collection(name='Users', parent=root)
 
     @classmethod
-    def get_collection_for_user(cls, user):
+    def get_user_collection(cls, user):
         parent_collection = cls.get_parent_collection()
         return cls.get_or_create_collection(name=str(user.uuid), parent=parent_collection)
 
     @classmethod
     def get_for_user(cls, user):
-        collection = cls.get_collection_for_user(user)
+        collection = cls.get_user_collection(user)
         instance, created = cls.objects.update_or_create(
             user=user,
             defaults={'collection': collection}

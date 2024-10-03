@@ -7,10 +7,9 @@ class NFCTagScanSerializer(serializers.ModelSerializer):
     """
     Serializer for the NFCTagScan model, representing scans of an NFC tag.
     """
-    scanned_by = serializers.SlugRelatedField(
-        slug_field='username',
-        read_only=True
-    )
+    def create(self, validated_data):
+        instance = NFCTagScan.objects.create(**validated_data)
+        return instance
 
     class Meta:
         model = NFCTagScan
@@ -44,6 +43,8 @@ class NFCTagSerializer(serializers.ModelSerializer):
     class Meta:
         model = NFCTag
         fields = [
-            'id', 'serial_number', 'integrated_circuit', 'active', 'user',
-            'created_at', 'last_modified', 'scans', 'eeprom'
+            'id', 'serial_number', 'integrated_circuit',
+            'user', 'label',
+            'active', 'created_at', 'last_modified',
+            'scans', 'eeprom'
         ]
