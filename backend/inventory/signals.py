@@ -4,7 +4,7 @@ from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 
 from .utils import get_trainer_group
-from .models import UserIndexCollection
+from .models import InventoryIndexCollection
 
 User = get_user_model()
 
@@ -14,7 +14,7 @@ def user_setup(user):
     group = get_trainer_group()
     user.groups.add(group)
 
-    user_collection = UserIndexCollection.get_for_user(user)
+    user_collection = InventoryIndexCollection.get_for_user(user)
     user_collection.set_permissions()
 
     user_page = user_collection.create_user_page()

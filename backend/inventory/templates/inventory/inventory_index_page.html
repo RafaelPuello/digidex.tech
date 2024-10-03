@@ -1,4 +1,4 @@
-{% extends "botany/base.html" %}
+{% extends "inventory/base.html" %}
 {% load static wagtailcore_tags wagtailimages_tags %}
 
 {% block content %}
@@ -6,7 +6,24 @@
     <div class="content">
       <div class="block-top">
         <h1 class="heading-top">{{ page.title }}</h1>
-        <p class="paragraph-top">{{ page.description|richtext }}</p>
+      </div>
+      <div class="block-categories">
+        <a href="#" aria-current="page" class="link-category w-inline-block w--current">
+            <img alt="green switcher toggle" loading="eager" decoding="async" src="{% static 'base/images/switcher.svg' %}" class="icon-category">
+          <div class="text-category">All</div>
+        </a>
+        <div class="collection-list-wrapper-categories w-dyn-list">
+          {% for box in boxes %}
+            <div role="list" class="collection-list-categories w-dyn-items">
+              <div role="listitem" class="collection-item-categories w-dyn-item">
+                <a href="{{ box.url }}" class="link-category w-inline-block">
+                  <img alt="Inventory Box Icon" loading="eager" decoding="async" src="{% static 'base/images/star.svg' %}" class="icon-category">
+                  <div class="text-category">{{ box.title }}</div>
+                </a>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
       </div>
     </div>
   </section>
@@ -16,11 +33,11 @@
         {% for plant in plants %}
           <div role="list" class="collection-list-posts w-dyn-items">
             <div role="listitem" class="w-dyn-item">
-              <div class="block-post"> <!-- -->
+              <div class="block-post">
                 <a href="{{ plant.url }}" class="link-post-thumbnail w-inline-block">
                   {% with plant.main_image as main_image %}
                     {% if main_image %}
-                      {% image main_image fill-380x240 class="image-main-post" %} <!-- Large should be 600x400 -->
+                      {% image main_image fill-320x240 class="image-main-post" %} <!-- Large should be 600x400 -->
                       {% if main_image.caption %}
                         <p>{{ main_image.caption }}</p>
                       {% endif %}

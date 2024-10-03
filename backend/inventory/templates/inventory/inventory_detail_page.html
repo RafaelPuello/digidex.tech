@@ -1,0 +1,34 @@
+{% extends "inventory/base.html" %}
+{% load static wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+  <section class="section-top padding-0">
+    <div class="content">
+      <div class="block-top">
+        {% if plant.date %}
+          <div class="date-top">{{ plant.date }}</div>
+        {% endif %}
+        <h1 class="heading-top">{{ plant.name }}</h1>
+        {% if plant.description %}
+          <p class="paragraph-top blog-post">{{ plant.description }}</p>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+  <section class="section">
+    <div class="content narrow">
+      <figure class="w-richtext-align-fullwidth w-richtext-figure-type-image">
+        {% for item in plant.gallery_images.all %}
+          {% image item.image max-1200x880 %}
+          {% if item.caption %}
+            <figcaption>{{ item.caption }}</figcaption>
+          {% endif %}
+        {% empty %}
+          <img alt="Plant Image Placeholder" loading="eager" decoding="async" src="{% static 'botany/plant-placeholder.svg' %}" class="image-main-post">
+        {% endfor %}
+      </figure>
+      <div class="post-body">
+        <div class="rich-text-block w-dyn-bind-empty w-richtext">{{ page.body|richtext }}</div>
+      </div>
+    </div>
+{% endblock content %}

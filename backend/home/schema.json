@@ -2,42 +2,9 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://digidex.tech/home.schema.json",
   "title": "Home Application Model Schema",
-  "description": "Schema for the Home application models, including HomePage, UserIndexCollection, and UserIndexPage.",
+  "description": "Schema for the Home application models.",
   "type": "object",
   "definitions": {
-    "UserIndexCollection": {
-      "type": "object",
-      "properties": {
-        "user": {
-          "type": "string",
-          "description": "The UUID of the associated user"
-        },
-        "collection": {
-          "type": "string",
-          "description": "The name of the associated collection"
-        }
-      },
-      "required": ["user", "collection"]
-    },
-    "UserIndexPage": {
-      "type": "object",
-      "properties": {
-        "user_collection": {
-          "type": "object",
-          "description": "The associated UserIndexCollection object",
-          "$ref": "#/definitions/UserIndexCollection"
-        },
-        "title": {
-          "type": "string",
-          "description": "The title of the user page"
-        },
-        "slug": {
-          "type": "string",
-          "description": "The slug of the user page"
-        }
-      },
-      "required": ["user_collection", "title", "slug"]
-    },
     "HomePage": {
       "type": "object",
       "properties": {
@@ -51,8 +18,6 @@
     }
   },
   "properties": {
-    "collection": { "$ref": "#/definitions/UserIndexCollection" },
-    "page": { "$ref": "#/definitions/UserIndexPage" },
     "home": { "$ref": "#/definitions/HomePage" }
   }
 }

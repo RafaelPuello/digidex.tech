@@ -1,0 +1,67 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://digidex.tech/inventory.schema.json",
+  "title": "Inventory Application Model Schema",
+  "description": "Models for managing user inventory.",
+  "type": "object",
+  "definitions": {
+    "InventoryIndexCollection": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "type": "string",
+          "description": "The UUID of the associated user"
+        },
+        "collection": {
+          "type": "string",
+          "description": "The name of the associated collection"
+        }
+      },
+      "required": ["user", "collection"]
+    },
+    "InventoryIndexPage": {
+      "type": "object",
+      "properties": {
+        "user_collection": {
+          "type": "object",
+          "description": "The associated InventoryIndexCollection object",
+          "$ref": "#/definitions/InventoryIndexCollection"
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the user page"
+        },
+        "slug": {
+          "type": "string",
+          "description": "The slug of the user page"
+        }
+      },
+      "required": ["user_collection", "title", "slug"]
+    },
+    "InventoryBoxPage": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the plant",
+          "maxLength": 255
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the plant",
+          "maxLength": 10000
+        },
+        "collection": {
+          "type": "string",
+          "description": "The collection of the plant"
+        }
+      },
+      "required": ["name"]
+    }
+  },
+  "properties": {
+    "collection": { "$ref": "#/definitions/InventoryIndexCollection" },
+    "inventory": { "$ref": "#/definitions/InventoryIndexPage" },
+    "boxes": { "$ref": "#/definitions/InventoryBoxPage" }
+  }
+}
