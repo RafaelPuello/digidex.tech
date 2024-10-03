@@ -2,20 +2,13 @@ from .base import *  # noqa
 
 DEBUG = True
 
-# ------------------------------------------------------------------------
-# Site Configuration (DEV)
-# ------------------------------------------------------------------------
-SITE_NAME = WAGTAIL_SITE_NAME = "DigiDex"
-SITE_PROTOCOL = "http"
-
-ALLOWED_HOSTS = [SITE_HOSTNAME]  # noqa: F405
-WAGTAILADMIN_BASE_URL = f"{SITE_PROTOCOL}://{SITE_HOSTNAME}"  # noqa: F405
+WAGTAIL_SITE_NAME += " (DEV)"
 
 # ------------------------------------------------------------------------
 # Email Configuration (DEV)
 # ------------------------------------------------------------------------
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-EMAIL_SUBJECT_PREFIX = ACCOUNT_EMAIL_SUBJECT_PREFIX = f"[{SITE_NAME}] "
+EMAIL_SUBJECT_PREFIX = ACCOUNT_EMAIL_SUBJECT_PREFIX = f"[{WAGTAIL_SITE_NAME}] "
 
 # ------------------------------------------------------------------------
 # Storage Configuration (DEV)

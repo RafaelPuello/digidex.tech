@@ -3,11 +3,11 @@ from .base import *  # noqa
 # ------------------------------------------------------------------------
 # Site Configuration (PROD)
 # ------------------------------------------------------------------------
-WAGTAIL_SITE_NAME = "DigiDex"
-SITE_PROTOCOL = "https"
+SITE_PROTOCOL += "s"
 
-ALLOWED_HOSTS = [SITE_HOSTNAME, f"www.{SITE_HOSTNAME}"]  # noqa: F405
 WAGTAILADMIN_BASE_URL = f"{SITE_PROTOCOL}://{SITE_HOSTNAME}"  # noqa: F405
+
+ALLOWED_HOSTS += [f"www.{SITE_HOSTNAME}"]  # noqa: F405
 
 # ------------------------------------------------------------------------
 # Email Configuration (PROD)

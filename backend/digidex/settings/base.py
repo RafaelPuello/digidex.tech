@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DEBUG = False  # Overwritten in development.py
+DEBUG = False
 
 SECRET_KEY = os.getenv('SECRET_KEY')
 
@@ -17,7 +17,15 @@ PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 
+WAGTAIL_SITE_NAME = "DigiDex"
+
+SITE_PROTOCOL = "http"
+
 SITE_HOSTNAME = os.getenv('SITE_HOSTNAME')
+
+ALLOWED_HOSTS = [SITE_HOSTNAME]  # noqa: F405
+
+WAGTAILADMIN_BASE_URL = f"{SITE_PROTOCOL}://{SITE_HOSTNAME}"  # noqa: F405
 
 INSTALLED_APPS = [
     "taggit",

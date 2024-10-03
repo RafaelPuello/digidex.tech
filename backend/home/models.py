@@ -136,27 +136,44 @@ class UserIndexPage(Page):
 
     @staticmethod
     def get_root_page():
+        """
+        Gets the root page for the site used in wagtail project.
+        """
         root = HomePage.objects.first()
         if not root:
             raise Exception("home page not found. Please ensure a home page exists.")
         return root
 
     @classmethod
+    def get_parent_page(cls):
+        """
+        Gets the parent page 'Inventory' to group all user pages.
+        Each user page will be a child of this page.
+        """
+        return cls.get_root_page()  # TODO: Update to actual parent page
+
+    @classmethod
     def get_for_user(cls, user):
-        root = cls.get_root_page(user)
-        slug = slugify(user.username)
-    
+        """
+        Gets the user collection and names it after the slug
+        assigned by slugifying the given user's username.
+        """
+        user_collection = UserIndexCollection.get_for_user(user)
+
         try:
-            return root.get_children().get(slug=slug).specific
-        except Page.DoesNotExist:
-            collection = UserIndexCollection.get_for_user(user)
-            user_page = UserIndexPage(
+            return cls.objects.get(user_collection=user_collection)
+        except cls.DoesNotExist:
+            # Create unsaved page
+            user_page = cls(
                 title=user.username,
-                slug=slug,
+                slug=slugify(user.username),
                 owner=user,
-                user_collection=self
+                user_collection=user_collection
             )
-            root_page.add_child(instance=user_page)
+            # Add it to the parent page
+            parent_page = cls.get_parent_page()
+            parent_page.add_child(instance=user_page)
+            # Save, publish, and return the page
             user_page.save_revision().publish()
             return user_page
 
@@ -197,24 +214,12 @@ class UserIndexCollection(CollectionMixin, models.Model):
         related_name='index_collection'
     )
 
-    def create_user_page(self):
-        root_page = UserIndexPage.get_root_page()
-        user_slug = slugify(self.user.username)
-        try:
-            return root_page.get_children().get(slug=user_slug).specific
-        except Page.DoesNotExist:
-            user_page = UserIndexPage(
-                title=self.user.username,
-                slug=user_slug,
-                owner=self.user,
-                user_collection=self
-            )
-            root_page.add_child(instance=user_page)
-            user_page.save_revision().publish()
-            return user_page
-
     @classmethod
     def get_parent_collection(cls):
+        """
+        Gets the parent collection 'Users' to group all user collections.
+        Each user collection will be a child of this collection.
+        """
         root = cls.get_root_collection()
         if not root:
             raise Exception("Root collection not found. Please ensure a root collection exists.")
@@ -222,16 +227,30 @@ class UserIndexCollection(CollectionMixin, models.Model):
 
     @classmethod
     def get_user_collection(cls, user):
+        """
+        Gets the user collection and names it after the uuid assigned to the user
+        for the given user.
+        """
         parent_collection = cls.get_parent_collection()
         return cls.get_or_create_collection(name=str(user.uuid), parent=parent_collection)
 
     @classmethod
     def get_for_user(cls, user):
-        collection = cls.get_user_collection(user)
-        instance, created = cls.objects.update_or_create(
-            user=user,
-            defaults={'collection': collection}
-        )
+        """
+        Gets mapping between each user and their collection. It's easier to work
+        with collections like this instead of inheriting from the
+        collection model and adding a user field.
+        """
+        try:
+            instance = cls.objects.get(
+                user=user
+            )
+        except cls.DoesNotExist:
+            user_collection = cls.get_user_collection(user)
+            instance = cls.objects.create(
+                user=user,
+                collection=user_collection
+            )
         return instance
 
     def set_permissions(self):
