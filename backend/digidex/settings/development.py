@@ -8,8 +8,8 @@ DEBUG = True
 SITE_NAME = WAGTAIL_SITE_NAME = "DigiDex"
 SITE_PROTOCOL = "http"
 
-ALLOWED_HOSTS = [SITE_HOSTNAME]
-WAGTAILADMIN_BASE_URL = f"{SITE_PROTOCOL}://{SITE_HOSTNAME}"
+ALLOWED_HOSTS = [SITE_HOSTNAME]  # noqa: F405
+WAGTAILADMIN_BASE_URL = f"{SITE_PROTOCOL}://{SITE_HOSTNAME}"  # noqa: F405
 
 # ------------------------------------------------------------------------
 # Email Configuration (DEV)

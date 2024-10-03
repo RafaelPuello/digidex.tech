@@ -6,8 +6,8 @@ from .base import *  # noqa
 WAGTAIL_SITE_NAME = "DigiDex"
 SITE_PROTOCOL = "https"
 
-ALLOWED_HOSTS = [SITE_HOSTNAME, f"www.{SITE_HOSTNAME}"]
-WAGTAILADMIN_BASE_URL = f"{SITE_PROTOCOL}://{SITE_HOSTNAME}"
+ALLOWED_HOSTS = [SITE_HOSTNAME, f"www.{SITE_HOSTNAME}"]  # noqa: F405
+WAGTAILADMIN_BASE_URL = f"{SITE_PROTOCOL}://{SITE_HOSTNAME}"  # noqa: F405
 
 # ------------------------------------------------------------------------
 # Email Configuration (PROD)
