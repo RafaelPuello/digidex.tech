@@ -7,7 +7,6 @@ DEBUG = True
 # ------------------------------------------------------------------------
 SITE_NAME = WAGTAIL_SITE_NAME = "DigiDex"
 SITE_PROTOCOL = "http"
-SITE_HOSTNAME = "localhost"  # 'dev.digidex.tech'
 
 ALLOWED_HOSTS = [SITE_HOSTNAME]
 WAGTAILADMIN_BASE_URL = f"{SITE_PROTOCOL}://{SITE_HOSTNAME}"

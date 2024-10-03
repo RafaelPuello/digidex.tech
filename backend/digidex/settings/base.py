@@ -17,6 +17,8 @@ PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 
+SITE_HOSTNAME = os.getenv('SITE_HOSTNAME')
+
 INSTALLED_APPS = [
     "taggit",
 
@@ -317,7 +319,10 @@ WAGTAILSEARCH_BACKENDS = {
 }
 
 # ------------------------------------------------------------------------
-
+# Wagtail-ntag Configuration (PROD)
+# ------------------------------------------------------------------------
+NFC_TAG_FILTER_METHOD = 'uid_counter'
+NFC_TAGGABLE_MODELS = ['botany.Plant']
 try:
     from .local import *  # noqa
 except ImportError:

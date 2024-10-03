@@ -5,7 +5,6 @@ from .base import *  # noqa
 # ------------------------------------------------------------------------
 WAGTAIL_SITE_NAME = "DigiDex"
 SITE_PROTOCOL = "https"
-SITE_HOSTNAME = "digidex.tech"
 
 ALLOWED_HOSTS = [SITE_HOSTNAME, f"www.{SITE_HOSTNAME}"]
 WAGTAILADMIN_BASE_URL = f"{SITE_PROTOCOL}://{SITE_HOSTNAME}"
@@ -77,7 +76,7 @@ WAGTAIL_REDIRECTS_FILE_STORAGE = "cache"
 # Storage-URL Configuration (BASE)
 # ------------------------------------------------------------------------
 MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME_MEDIA}.{AWS_S3_ENDPOINT_URL}/'
-STATIC_URL = 'cdn."digidex.tech"/'
+STATIC_URL = 'cdn.digidex.tech/'
 
 # ------------------------------------------------------------------------
 # Storage-Staticfiles Configuration (BASE)
@@ -155,6 +154,3 @@ LOGGING = {
         },
     },
 }
-
-# Wagtail-ntag Configuration (BASE)
-NFC_TAG_FILTER_METHOD = 'uid_counter'
