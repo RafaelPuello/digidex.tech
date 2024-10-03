@@ -11,19 +11,18 @@ def assign_botany_user_permissions(group):
     return assign_group_permissions(group, BOTANY_PERMISSIONS)
 
 
-def setup_botany_user(user):
+def setup_botany_user(user, num_boxes=5):
     from home.models import UserIndexPage
     user_index_page = UserIndexPage.get_for_user(user)
 
-    # Create 10 UserBoxPages for the user
-    for i in range(1, 11):
+    # Create n UserBoxPages for the user
+    for i in range(1, num_boxes+1):
         user_box_page = UserBoxPage(
             title=f"Box {i}",
             slug=f"box-{i}",
-            owner=user
+            owner=user,
+            live=False
         )
-
-        user_index_page.add_child(instance=user_box_page)
-        user_box_page.save_revision().publish()
-
-    print(f"10 UserBoxPages have been created for user: {user.username}")
+        user_index_page.add_child(instance=user_box_page)   
+        print(f"Box {i} created.")
+    print("Botany user setup complete.")

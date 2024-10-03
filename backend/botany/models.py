@@ -89,7 +89,7 @@ class Plant(
         max_length=255,
         db_index=True
     )
-    description = RichTextField(
+    description = models.TextField(
         blank=True
     )
     date = models.DateField(
