@@ -1,6 +1,7 @@
 from wagtail.admin.panels import TabbedInterface, FieldPanel, InlinePanel, ObjectList
-from wagtail.snippets.views.snippets import SnippetViewSet
+from wagtail.admin.views.generic.chooser import ChooseView
 from wagtail.snippets.views.chooser import SnippetChooserViewSet
+from wagtail.snippets.views.snippets import SnippetViewSet
 
 from .models import Plant
 
@@ -12,8 +13,15 @@ class PlantChooserViewSet(SnippetChooserViewSet):
     edit_item_text = "Edit this plant"
     form_fields = ["name", "description"]
 
-    def get_object_list(self):
-        return Plant.objects.filter(box__owner=self.request.user)
+    def __init__(self, *args, **kwargs):
+        # import requests
+        # from django.conf import settings
+        # r = requests.get(f"{settings.WAGTAILADMIN_BASE_URL}/api/users/")
+        # r.raise_for_status()
+        # results = r.json()
+        # return results
+        super().__init__(*args, **kwargs)
+
 
 
 class PlantViewSet(SnippetViewSet):

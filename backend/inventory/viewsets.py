@@ -1,5 +1,3 @@
-import requests
-from django.conf import settings
 from wagtail.admin.views.generic.chooser import ChooseView
 from wagtail.admin.viewsets.chooser import ChooserViewSet
 from wagtail.admin.viewsets.pages import PageListingViewSet
@@ -22,6 +20,8 @@ class BoxListingViewSet(PageListingViewSet):
 
 class BoxChooserView(ChooseView):
     def get_object_list(self):
+        # import requests
+        # from django.conf import settings
         # r = requests.get(f"{settings.WAGTAILADMIN_BASE_URLquit}/api/users/")
         # r.raise_for_status()
         # results = r.json()

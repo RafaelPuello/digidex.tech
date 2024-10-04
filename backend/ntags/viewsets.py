@@ -1,15 +1,16 @@
 from rest_framework import status, viewsets, permissions
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
+from wagtail.admin.panels import TabbedInterface, FieldPanel, ObjectList
+from wagtail.snippets.views.snippets import SnippetViewSet
 
+from base.widgets import ContentObjectChooserWidget
 from .models import NFCTag, NFCTagScan
 from .serializers import NFCTagSerializer, NFCTagScanSerializer
 
 
 class NFCTagViewSet(viewsets.ModelViewSet):
-    """
-    A viewset for viewing and editing NFC Tags.
-    """
+
     queryset = NFCTag.objects.all()
     serializer_class = NFCTagSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -85,3 +86,52 @@ class NFCTagScanViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(ntag_scan, context={'request': request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class NFCTagSnippetViewSet(SnippetViewSet):
+
+    model = NFCTag
+    icon = "tag"
+    menu_label = "Tags"
+    menu_name = "tags"
+    menu_order = 130
+    copy_view_enabled = False
+    list_filter = {"nfc_tag_type": ["exact"], "label": ["icontains"]}
+    list_display = ["label", "nfc_tag_type", "serial_number"]
+    list_per_page = 25
+    admin_url_namespace = "nfc_tags"
+    base_url_path = "nfc-tags"
+
+    shared_panels = [
+        FieldPanel("label"),
+        FieldPanel("content_type"),
+        FieldPanel(
+            'object_id',
+            widget=ContentObjectChooserWidget(
+                linked_fields={'content_type': '#id_content_type',}
+                )
+            ),
+    ]
+    private_panels = [
+        FieldPanel("user"),
+        FieldPanel("nfc_tag_type"),
+        FieldPanel("active"),
+    ]
+
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(shared_panels, heading='Details'),
+            ObjectList(private_panels, heading='Admin only', permission="superuser"),
+        ]
+    )
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if qs is None:
+            qs = self.model.objects.all()
+
+        user = request.user
+        if user.is_superuser:
+            return qs
+        else:
+            return qs.filter(user=user)

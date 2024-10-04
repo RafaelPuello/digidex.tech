@@ -1,0 +1,3 @@
+from .viewsets import content_object_chooser_viewset
+
+ContentObjectChooserWidget = content_object_chooser_viewset.widget_class
