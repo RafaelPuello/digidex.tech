@@ -1,17 +1,16 @@
-# views.py
-
 import re
 from queryish.rest import APIModel
+from pygbif import species as species
 from wagtail.admin.viewsets.chooser import ChooserViewSet
 
 
-class Pokemon(APIModel):
+class PlantSpecies(APIModel):
     class Meta:
         base_url = "https://pokeapi.co/api/v2/pokemon/"
         detail_url = "https://pokeapi.co/api/v2/pokemon/%s/"
         fields = ["id", "name"]
         pagination_style = "offset-limit"
-        verbose_name_plural = "pokemon"
+        verbose_name_plural = "plant species"
 
     @classmethod
     def from_query_data(cls, data):
@@ -31,11 +30,9 @@ class Pokemon(APIModel):
         return self.name
 
 
-class PokemonChooserViewSet(ChooserViewSet):
-    model = Pokemon
-
-    choose_one_text = "Choose a pokemon"
-    choose_another_text = "Choose another pokemon"
+class PlantSpeciesChooserViewSet(ChooserViewSet):
+    model = PlantSpecies
+    choose_one_text = "Choose a plant"
 
 
-pokemon_chooser_viewset = PokemonChooserViewSet("pokemon_chooser")
+plant_species_chooser_viewset = PlantSpeciesChooserViewSet("plant_species")
