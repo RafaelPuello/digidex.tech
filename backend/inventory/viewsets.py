@@ -1,5 +1,8 @@
-from wagtail.admin.viewsets.pages import PageListingViewSet
+import requests
+from django.conf import settings
+from wagtail.admin.views.generic.chooser import ChooseView
 from wagtail.admin.viewsets.chooser import ChooserViewSet
+from wagtail.admin.viewsets.pages import PageListingViewSet
 
 from .models import InventoryBoxPage
 
@@ -17,15 +20,22 @@ class BoxListingViewSet(PageListingViewSet):
     add_to_admin_menu = True
 
 
+class BoxChooserView(ChooseView):
+    def get_object_list(self):
+        # r = requests.get(f"{settings.WAGTAILADMIN_BASE_URLquit}/api/users/")
+        # r.raise_for_status()
+        # results = r.json()
+        # return results
+        return InventoryBoxPage.objects.filter(owner=self.request.user)
+
+
 class BoxChooserViewSet(ChooserViewSet):
     model = InventoryBoxPage
     icon = "desktop"
     choose_one_text = "Choose a box"
     edit_item_text = "Edit this box"
     form_fields = ["title", "slug", "description"]
-
-    def get_object_list(self):
-        return InventoryBoxPage.objects.filter(owner=self.request.user)
+    choose_view_class = BoxChooserView
 
 
 box_listing_viewset = BoxListingViewSet('boxes')

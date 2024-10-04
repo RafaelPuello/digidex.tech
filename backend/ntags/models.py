@@ -170,16 +170,16 @@ class NFCTag(AbstractNFCTag):
         if hasattr(self.content_object, 'url'):
             return self.content_object.url
 
-    def get_admin_url(self, action):
-        viewset = self.snippet_viewset
-        url_name = viewset.get_url_name(action)
-        return reverse(url_name, args=[self.pk])
-
     def get_edit_url(self):
         return self.get_admin_url('edit')
 
     def get_usage_url(self):
         return self.get_admin_url('usage')
+
+    def get_admin_url(self, action):
+        viewset = self.snippet_viewset
+        url_name = viewset.get_url_name(action)
+        return reverse(url_name, args=[self.pk])
 
 
 class NFCTagMemory(models.Model):
@@ -198,7 +198,7 @@ class NFCTagMemory(models.Model):
         related_name='eeprom'
     )
     eeprom = models.BinaryField(
-        max_length=888,
+        max_length=924,
     )
     created_at = models.DateTimeField(
         auto_now_add=True

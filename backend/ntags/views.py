@@ -7,7 +7,7 @@ from .models import NFCTag
 
 def link(request):
     """
-    Handles the initial logic for an NFC tag link.
+    Link an NTAG using the ASCII Mirror embedded in the NTAG's URL.
     """
     mirrored_values = request.GET.get('m', None)
     if not mirrored_values:
