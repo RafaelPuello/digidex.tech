@@ -15,15 +15,86 @@ from wagtail.models import Page, GroupCollectionPermission, GroupPagePermission
 from wagtail.admin.panels import FieldPanel, TabbedInterface, ObjectList
 
 from base.models import CollectionMixin
+from base.utils import assign_wagtail_group_permissions
+
+
+COLLECTION_PERMISSIONS = (
+    'add_image', 'change_image', 'choose_image',
+    'add_document', 'change_document', 'choose_document'
+)
+
+PAGE_PERMISSIONS = (
+    'add_page', 'publish_page'
+)
+
+class InventoryIndexCollection(CollectionMixin, models.Model):
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name='index_collection'
+    )
+
+    @classmethod
+    def get_parent_collection(cls):
+        """
+        Gets the parent collection 'Users' to group all user collections.
+        Each user collection will be a child of this collection.
+        """
+        root = cls.get_root_collection()
+        if not root:
+            raise Exception("Root collection not found. Please ensure a root collection exists.")
+        return cls.get_or_create_collection(name='Users', parent=root)
+
+    @classmethod
+    def get_user_collection(cls, user):
+        """
+        Gets the user collection and names it after the uuid assigned to the user
+        for the given user.
+        """
+        parent_collection = cls.get_parent_collection()
+        return cls.get_or_create_collection(name=str(user.uuid), parent=parent_collection)
+
+    @classmethod
+    def get_for_user(cls, user):
+        """
+        Gets mapping between each user and their collection. It's easier to work
+        with collections like this instead of inheriting from the
+        collection model and adding a user field.
+        """
+        try:
+            _instance = cls.objects.get(
+                user=user
+            )
+            return _instance
+        except cls.DoesNotExist:
+            user_collection = cls.get_user_collection(user)
+            _instance = cls.objects.create(
+                user=user,
+                collection=user_collection
+            )
+            group = user.get_user_group()
+            assign_wagtail_group_permissions(group, _instance, COLLECTION_PERMISSIONS)
+            return _instance
+
+    def get_user_page(self):
+        return InventoryIndexPage.get_for_user(self.user)
+
+    def save(self, *args, **kwargs):
+        if not self.collection:
+            self.collection = self.get_for_user(self.user)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.user.username}'s collection"
+
+    class Meta:
+        verbose_name = _('index collection')
+        verbose_name_plural = _('index collections')
 
 
 class InventoryIndexPage(Page):
-    """
-    Represents a user's inventory index page.
 
-    Attributes:
-        user_collection (InventoryIndexCollection): The user collection that the page belongs to.
-    """
     user_collection = models.OneToOneField(
         'inventory.InventoryIndexCollection',
         on_delete=models.PROTECT,
@@ -131,7 +202,7 @@ class InventoryIndexPage(Page):
             return cls.objects.get(user_collection=user_collection)
         except cls.DoesNotExist:
             # Create unsaved page
-            user_page = cls(
+            _instance = cls(
                 title=user.username,
                 slug=slugify(user.username),
                 owner=user,
@@ -139,25 +210,12 @@ class InventoryIndexPage(Page):
             )
             # Add it to the parent page
             parent_page = cls.get_parent_page()
-            parent_page.add_child(instance=user_page)
+            parent_page.add_child(instance=_instance)
             # Save, publish, and return the page
-            user_page.save_revision().publish()
-            return user_page
-
-    def set_permissions(self):
-        PAGE_PERMISSIONS = (
-            'add_page', 'publish_page'
-        )
-
-        group = self.owner.get_user_group()
-        for perm in PAGE_PERMISSIONS:
-            permission = Permission.objects.get(codename=perm)
-            GroupPagePermission.objects.create(
-                group=group,
-                page=self,
-                permission=permission
-            )
-        return
+            _instance.save_revision().publish()
+            group = user.get_user_group()
+            assign_wagtail_group_permissions(group, _instance, PAGE_PERMISSIONS)
+            return _instance
 
     def __str__(self):
         return f"{self.user_collection} and page"
@@ -165,91 +223,6 @@ class InventoryIndexPage(Page):
     class Meta:
         verbose_name = _('user home page')
         verbose_name_plural = _('user home pages')
-
-
-class InventoryIndexCollection(CollectionMixin, models.Model):
-    """
-    Represents a user's collection.
-
-    Attributes:
-        user (User): The user who owns the collection.
-        collection (Collection): The collection that belongs to the user.
-    """
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.PROTECT,
-        related_name='index_collection'
-    )
-
-    @classmethod
-    def get_parent_collection(cls):
-        """
-        Gets the parent collection 'Users' to group all user collections.
-        Each user collection will be a child of this collection.
-        """
-        root = cls.get_root_collection()
-        if not root:
-            raise Exception("Root collection not found. Please ensure a root collection exists.")
-        return cls.get_or_create_collection(name='Users', parent=root)
-
-    @classmethod
-    def get_user_collection(cls, user):
-        """
-        Gets the user collection and names it after the uuid assigned to the user
-        for the given user.
-        """
-        parent_collection = cls.get_parent_collection()
-        return cls.get_or_create_collection(name=str(user.uuid), parent=parent_collection)
-
-    @classmethod
-    def get_for_user(cls, user):
-        """
-        Gets mapping between each user and their collection. It's easier to work
-        with collections like this instead of inheriting from the
-        collection model and adding a user field.
-        """
-        try:
-            instance = cls.objects.get(
-                user=user
-            )
-        except cls.DoesNotExist:
-            user_collection = cls.get_user_collection(user)
-            instance = cls.objects.create(
-                user=user,
-                collection=user_collection
-            )
-        return instance
-
-    def get_user_page(self):
-        return InventoryIndexPage.get_for_user(self.user)
-
-    def set_permissions(self):
-        COLLECTION_PERMISSIONS = (
-            'add_image', 'change_image', 'choose_image',
-            'add_document', 'change_document', 'choose_document'
-        )
-
-        group = self.user.get_user_group()
-        for perm in COLLECTION_PERMISSIONS:
-            permission = Permission.objects.get(codename=perm)
-            GroupCollectionPermission.objects.create(
-                group=group,
-                collection=self.collection,
-                permission=permission
-            )
-        return
-
-    def save(self, *args, **kwargs):
-        if not self.collection:
-            self.collection = self.get_collection_for_user(self.user)
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return f"{self.user.username}'s collection"
-
-    class Meta:
-        verbose_name = _('user collection')
-        verbose_name_plural = _('user collections')
 
 
 class InventoryBoxPage(RoutablePageMixin, Page):

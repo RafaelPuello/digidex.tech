@@ -31,15 +31,35 @@ class User(AbstractUser):
         db_index=True,
     )
 
+    def get_page(self):
+        from inventory.models import InventoryIndexPage
+        return InventoryIndexPage.get_for_user(self)
+
+    def get_collection(self):
+        from inventory.models import InventoryIndexCollection
+        return InventoryIndexCollection.get_for_user(self)
+
+    def get_boxes(self):
+        from inventory.models import InventoryBoxPage
+        return InventoryBoxPage.objects.filter(owner=self)
+
     def get_user_group(self):
-        group, created = Group.objects.get_or_create(name=self.uuid)
-        if created:
-            self.groups.add(group)
-        return group
+        return self.get_group(self.uuid)
 
     def delete_user_group(self):
         group = self.get_user_group()
         group.delete()
+
+    def add_to_group(self, group_name):
+        group = self.get_group(group_name)
+        if not self.groups.filter(id=group.id).exists():
+            self.groups.add(group)
+
+    def get_group(self, group_name):
+        group, created = Group.objects.get_or_create(name=group_name)
+        if created:
+            pass
+        return group
 
     def delete(self, *args, **kwargs):
         with transaction.atomic():

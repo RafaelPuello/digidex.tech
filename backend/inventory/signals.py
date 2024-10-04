@@ -1,28 +1,13 @@
-from django.db import transaction
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 
-from .utils import get_trainer_group
-from .models import InventoryIndexCollection
+from .utils import setup_user_inventory
 
 User = get_user_model()
 
 
-@transaction.atomic
-def user_setup(user):
-    group = get_trainer_group()
-    user.groups.add(group)
-
-    user_collection = InventoryIndexCollection.get_for_user(user)
-    user_collection.set_permissions()
-
-    user_page = user_collection.get_user_page()
-    user_page.set_permissions()
-    return
-
-
 @receiver(post_save, sender=User)
-def create_user_collection_and_page(sender, instance, created, **kwargs):
+def user_setup(sender, instance, created, **kwargs):
     if created:
-        user_setup(instance)
+        setup_user_inventory(instance)
