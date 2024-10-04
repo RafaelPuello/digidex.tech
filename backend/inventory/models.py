@@ -220,6 +220,9 @@ class InventoryIndexCollection(CollectionMixin, models.Model):
             )
         return instance
 
+    def get_user_page(self):
+        return InventoryIndexPage.get_for_user(self.user)
+
     def set_permissions(self):
         COLLECTION_PERMISSIONS = (
             'add_image', 'change_image', 'choose_image',
@@ -285,7 +288,7 @@ class InventoryBoxPage(RoutablePageMixin, Page):
         return self.render(
             request,
             context_overrides={'plant': plant},
-            template="botany/user_plant.html"
+            template="inventory/inventory_index_page.html"
         )
 
     def get_context(self, request, *args, **kwargs):

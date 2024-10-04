@@ -17,7 +17,7 @@ def user_setup(user):
     user_collection = InventoryIndexCollection.get_for_user(user)
     user_collection.set_permissions()
 
-    user_page = user_collection.create_user_page()
+    user_page = user_collection.get_user_page()
     user_page.set_permissions()
     return
 
