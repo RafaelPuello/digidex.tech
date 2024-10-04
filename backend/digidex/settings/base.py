@@ -331,6 +331,7 @@ WAGTAILSEARCH_BACKENDS = {
 # Wagtail-ntag Configuration (PROD)
 # ------------------------------------------------------------------------
 NFC_TAG_FILTER_METHOD = 'uid_counter'
+
 NFC_TAGGABLE_MODELS = ['botany.Plant']
 try:
     from .local import *  # noqa

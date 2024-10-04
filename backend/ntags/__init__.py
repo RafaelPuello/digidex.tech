@@ -30,3 +30,9 @@ def get_nfc_tag_filter_method():
     if filter_method not in NTAG_FILTER_METHODS:
         raise ValueError('Invalid filter method for NFC tags. Valid options are: {}'.format(NTAG_FILTER_METHODS))
     return filter_method
+
+def get_nfc_taggable_models():
+    """
+    Returns the models that are taggable by NFC tags.
+    """
+    return getattr(settings, 'NFC_TAGGABLE_MODELS', [])

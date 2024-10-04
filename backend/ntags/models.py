@@ -31,14 +31,7 @@ class NFCTagType(
     PreviewableMixin,
     models.Model
 ):
-    """
-    Model representing the type of NFC tag.
 
-    Attributes:
-        name (str): The name of the NFC tag type.
-        description (str): A description of the NFC tag type.
-        collection (ForeignKey): The collection associated with the NFC tag type.
-    """
     name = models.CharField(
         max_length=255,
         unique=True
@@ -68,10 +61,20 @@ class NFCTagType(
         verbose_name_plural = _("nfc tag types")
 
 
-class AbstractNFCTag(models.Model):
-    """
-    Abstract base model for NFC Tags.
-    """
+def get_content_type_options():
+    from . import get_nfc_taggable_models
+    taggable_models = get_nfc_taggable_models()
+
+    conditions = [
+        models.Q(app_label=app_label, model=model_name.lower()) for app_label, model_name in (model.split('.') for model in taggable_models)
+        ]
+    return models.Q() if not conditions else conditions[0] if len(conditions) == 1 else models.Q(*conditions, _connector=models.Q.OR)
+
+
+class BaseNFCTag(models.Model):
+
+    limited_options = get_content_type_options
+
     serial_number = models.CharField(
         max_length=32,
         editable=False,
@@ -112,6 +115,7 @@ class AbstractNFCTag(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
+        limit_choices_to=limited_options,
         related_name='ntags'
     )
     object_id = models.PositiveIntegerField(
@@ -125,18 +129,22 @@ class AbstractNFCTag(models.Model):
 
     objects = NFCTagManager()
 
-    @property
-    def url(self):
-        return self.get_url()
+    def __str__(self):
+        return self.serial_number
 
-    def get_url(self):
-        raise NotImplementedError("Method 'get_url' must be implemented in a subclass.")
+    def __gt__(self, other):
+        return self.serial_number > other.serial_number
 
-    def log_scan(self, counter):
-        return NFCTagScan.objects.create(
-            ntag=self,
-            counter=counter
-        )
+    def __lt__(self, other):
+        return self.serial_number < other.serial_number
+
+    class Meta:
+        abstract = True
+        verbose_name = _("ntag")
+        verbose_name_plural = _("ntags")
+        indexes = [
+            models.Index(fields=["content_type", "object_id"]),
+        ]
 
     def save(self, *args, **kwargs):
         if not self.label:
@@ -147,19 +155,25 @@ class AbstractNFCTag(models.Model):
                 self.label = f"NFC Tag {uuid4()}"
         super().save(*args, **kwargs)
 
-    def __str__(self):
-        return self.serial_number
+    def log_scan(self, counter, user):
+        raise NotImplementedError("Method 'log_scan' must be implemented in a subclass.")     
 
-    class Meta:
-        abstract = True
-        verbose_name = _("ntag")
-        verbose_name_plural = _("ntags")
-        indexes = [
-            models.Index(fields=["content_type", "object_id"]),
-        ]
+    @property
+    def url(self):
+        return self.get_url()
+
+    def get_url(self):
+        raise NotImplementedError("Method 'get_url' must be implemented in a subclass.")
 
 
-class NFCTag(AbstractNFCTag):
+class NFCTag(BaseNFCTag):
+
+    def log_scan(self, counter, user):
+        return NFCTagScan.objects.create(
+            ntag=self,
+            counter=counter,
+            scanned_by=user
+        )
 
     def get_url(self):
         if self.content_object:
@@ -183,9 +197,7 @@ class NFCTag(AbstractNFCTag):
 
 
 class NFCTagMemory(models.Model):
-    """
-    Model representing the EEPROM contents of an NFC tag.
-    """
+
     uuid = models.UUIDField(
         primary_key=True,
         default=uuid4,
@@ -216,9 +228,7 @@ class NFCTagMemory(models.Model):
 
 
 class NFCTagScan(models.Model):
-    """
-    Model representing a scan of an NFC tag.
-    """
+
     ntag = models.ForeignKey(
         NFCTag,
         on_delete=models.CASCADE,
