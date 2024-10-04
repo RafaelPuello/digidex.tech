@@ -260,7 +260,7 @@ class InventoryBoxPage(RoutablePageMixin, Page):
         return self.render(
             request,
             context_overrides={'plant': plant},
-            template="inventory/inventory_index_page.html"
+            template="inventory/inventory_detail_page.html"
         )
 
     def get_context(self, request, *args, **kwargs):
