@@ -39,19 +39,6 @@ class NFCTagType(
     description = RichTextField(
         null=True
     )
-    collection = models.ForeignKey(
-        Collection,
-        on_delete=models.SET_NULL,
-        related_name='+',
-        null=True,
-        blank=True
-    )
-
-    def get_documents(self):
-        return get_document_model().objects.filter(collection=self.collection)
-
-    def get_images(self):
-        return get_image_model().objects.filter(collection=self.collection)
 
     def __str__(self):
         return self.name
@@ -93,6 +80,7 @@ class BaseNFCTag(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
+        editable=False,
         related_name='ntags'
     )
     label = models.CharField(

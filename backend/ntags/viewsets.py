@@ -91,9 +91,9 @@ class NFCTagScanViewSet(viewsets.ModelViewSet):
 class NFCTagSnippetViewSet(SnippetViewSet):
 
     model = NFCTag
-    icon = "tag"
-    menu_label = "Tags"
-    menu_name = "tags"
+    icon = "nfc-icon"
+    menu_label = "NFC Tags"
+    menu_name = "ntags"
     menu_order = 130
     copy_view_enabled = False
     list_filter = {"nfc_tag_type": ["exact"], "label": ["icontains"]}
@@ -101,19 +101,17 @@ class NFCTagSnippetViewSet(SnippetViewSet):
     list_per_page = 25
     admin_url_namespace = "nfc_tags"
     base_url_path = "nfc-tags"
+    add_to_admin_menu = True
 
     shared_panels = [
         FieldPanel("label"),
         FieldPanel("content_type"),
         FieldPanel(
             'object_id',
-            widget=ContentObjectChooserWidget(
-                linked_fields={'content_type': '#id_content_type',}
-                )
+            widget=ContentObjectChooserWidget
             ),
     ]
     private_panels = [
-        FieldPanel("user"),
         FieldPanel("nfc_tag_type"),
         FieldPanel("active"),
     ]

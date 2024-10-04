@@ -1,5 +1,4 @@
 from wagtail.admin.panels import TabbedInterface, FieldPanel, InlinePanel, ObjectList
-from wagtail.admin.views.generic.chooser import ChooseView
 from wagtail.snippets.views.chooser import SnippetChooserViewSet
 from wagtail.snippets.views.snippets import SnippetViewSet
 

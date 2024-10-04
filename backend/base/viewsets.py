@@ -5,10 +5,6 @@ from django.contrib.contenttypes.models import ContentType
 
 
 class ContentObjectChooserView(ChooseView):
-    filter_form_class = None
-    page_title = _("Choose")
-    results_template_name = "wagtailsnippets/chooser/results.html"
-    per_page = 25
 
     def get_object_list(self):
         # import requests
@@ -31,14 +27,15 @@ class ContentObjectChooserViewSet(ChooserViewSet):
     preserve_url_parameters = ["multiple", "content_type"]
     choose_view_class = ContentObjectChooserView
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.model is None:
+            self.model = self.choose_view_class
+
     def get_queryset(self):
         if not self.model:
             return self.model.objects.none()
         return self.model.objects.all()
-
-    def filter_object_list(self, objects):
-        # No additional filtering by content_type here
-        return objects
 
 
 content_object_chooser_viewset = ContentObjectChooserViewSet("object_chooser")
