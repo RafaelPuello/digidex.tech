@@ -6,58 +6,15 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.urls import reverse
-from wagtail.models import (
-    DraftStateMixin,
-    RevisionMixin,
-    LockableMixin,
-    TranslatableMixin,
-    PreviewableMixin
-)
-from wagtail.fields import RichTextField
 
-from . import (NTAG213, NTAG_IC_CHOICES)
+from . import NTAG213, NTAG_IC_CHOICES, get_nfc_taggable_models
 from .validators import validate_serial_number, validate_integrated_circuit
 from .managers import NFCTagManager
 
 
-class NFCTagType(
-    DraftStateMixin,
-    RevisionMixin,
-    LockableMixin,
-    TranslatableMixin,
-    PreviewableMixin,
-    models.Model
-):
-
-    name = models.CharField(
-        max_length=255,
-        unique=True
-    )
-    description = RichTextField(
-        null=True
-    )
-
-    def __str__(self):
-        return self.name
-
-    class Meta(TranslatableMixin.Meta):
-        verbose_name = _("nfc tag type")
-        verbose_name_plural = _("nfc tag types")
-
-
-def get_content_type_options():
-    from . import get_nfc_taggable_models
-    taggable_models = get_nfc_taggable_models()
-
-    conditions = [
-        models.Q(app_label=app_label, model=model_name.lower()) for app_label, model_name in (model.split('.') for model in taggable_models)
-        ]
-    return models.Q() if not conditions else conditions[0] if len(conditions) == 1 else models.Q(*conditions, _connector=models.Q.OR)
-
-
 class BaseNFCTag(models.Model):
 
-    limited_options = get_content_type_options
+    limited_options = get_nfc_taggable_models
 
     serial_number = models.CharField(
         max_length=32,
@@ -87,13 +44,6 @@ class BaseNFCTag(models.Model):
     )
     active = models.BooleanField(
         default=True
-    )
-    nfc_tag_type = models.ForeignKey(
-        NFCTagType,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='ntags'
     )
     content_type = models.ForeignKey(
         ContentType,

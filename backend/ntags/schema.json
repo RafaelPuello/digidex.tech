@@ -27,10 +27,6 @@
         "active": {
           "type": "boolean"
         },
-        "nfc_tag_type": {
-          "type": "string",
-          "description": "Foreign key reference to NfcTagType"
-        },
         "content_type": {
           "type": "string",
           "description": "Foreign key reference to ContentType"
@@ -41,23 +37,6 @@
         }
       },
       "required": ["serial_number"]
-    },
-    "NfcTagType": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string",
-          "maxLength": 255
-        },
-        "description": {
-          "type": ["string", "null"]
-        },
-        "collection": {
-          "type": "string",
-          "maxLength": 255
-        }
-      },
-      "required": ["name"]
     },
     "NFCTagScan": {
       "type": "object",

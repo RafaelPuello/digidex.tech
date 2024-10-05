@@ -1,3 +1,4 @@
+from django.db import models
 from django.conf import settings
 
 NTAG213 = "213"
@@ -31,8 +32,19 @@ def get_nfc_tag_filter_method():
         raise ValueError('Invalid filter method for NFC tags. Valid options are: {}'.format(NTAG_FILTER_METHODS))
     return filter_method
 
-def get_nfc_taggable_models():
+def get_nfc_taggable_model_strings():
     """
-    Returns the models that are taggable by NFC tags.
+    Returns a list of model strings that are taggable by NFC tags.
     """
     return getattr(settings, 'NFC_TAGGABLE_MODELS', [])
+
+def get_nfc_taggable_models():
+    """
+    Returns a list of models that are taggable by NFC tags.
+    """
+    taggable_models = get_nfc_taggable_model_strings()
+
+    conditions = [
+        models.Q(app_label=app_label, model=model_name.lower()) for app_label, model_name in (model.split('.') for model in taggable_models)
+        ]
+    return models.Q() if not conditions else conditions[0] if len(conditions) == 1 else models.Q(*conditions, _connector=models.Q.OR)

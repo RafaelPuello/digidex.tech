@@ -16,6 +16,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='nfctag',
             name='content_type',
-            field=models.ForeignKey(blank=True, limit_choices_to=ntags.models.get_content_type_options, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='ntags', to='contenttypes.contenttype'),
+            field=models.ForeignKey(blank=True, limit_choices_to=ntags.models.get_nfc_taggable_models, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='ntags', to='contenttypes.contenttype'),
         ),
     ]

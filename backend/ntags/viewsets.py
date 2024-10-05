@@ -97,8 +97,8 @@ class NFCTagSnippetViewSet(SnippetViewSet):
     menu_name = "ntags"
     menu_order = 130
     copy_view_enabled = False
-    list_filter = {"nfc_tag_type": ["exact"], "label": ["icontains"]}
-    list_display = ["label", "nfc_tag_type", "serial_number"]
+    list_filter = {"label": ["icontains"]}
+    list_display = ["label", "serial_number"]
     list_per_page = 25
     admin_url_namespace = "nfc_tags"
     base_url_path = "nfc-tags"
@@ -108,16 +108,12 @@ class NFCTagSnippetViewSet(SnippetViewSet):
         FieldPanel("label"),
         FieldPanel("content_type"),
         FieldPanel("item"),
-    ]
-    private_panels = [
-        FieldPanel("nfc_tag_type"),
         FieldPanel("active"),
     ]
 
     edit_handler = TabbedInterface(
         [
             ObjectList(shared_panels, heading='Details'),
-            ObjectList(private_panels, heading='Admin only', permission="superuser"),
         ]
     )
 

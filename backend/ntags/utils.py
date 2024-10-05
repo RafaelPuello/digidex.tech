@@ -1,6 +1,5 @@
 NTAG_USERS_PERMISSIONS = [
     'change_nfctag', 'view_nfctag',
-    'view_nfctagtype',
     'view_nfctageeprom',
     'view_nfctagscan'
 ]
