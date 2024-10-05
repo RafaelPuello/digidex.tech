@@ -1,8 +1,7 @@
 from wagtail import hooks
 from wagtail.snippets.models import register_snippet
 
-from .views import plant_species_chooser_viewset
-from .viewsets import PlantViewSet
+from .viewsets import PlantViewSet, plant_species_chooser_viewset
 
 
 @hooks.register("register_icons")

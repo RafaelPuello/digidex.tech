@@ -3,11 +3,11 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 from wagtail.admin.panels import TabbedInterface, FieldPanel, ObjectList
 from wagtail.snippets.views.snippets import SnippetViewSet
+from django.utils.translation import gettext_lazy as _
 
 from .models import NFCTag, NFCTagScan
+from .forms import NFCTagAdminForm
 from .serializers import NFCTagSerializer, NFCTagScanSerializer
-
-from django.utils.translation import gettext_lazy as _
 
 
 class NFCTagViewSet(viewsets.ModelViewSet):
@@ -107,7 +107,7 @@ class NFCTagSnippetViewSet(SnippetViewSet):
     shared_panels = [
         FieldPanel("label"),
         FieldPanel("content_type"),
-        FieldPanel('object_id'),
+        FieldPanel("item"),
     ]
     private_panels = [
         FieldPanel("nfc_tag_type"),
@@ -120,6 +120,9 @@ class NFCTagSnippetViewSet(SnippetViewSet):
             ObjectList(private_panels, heading='Admin only', permission="superuser"),
         ]
     )
+
+    def get_form_class(self, for_update=False):
+        return NFCTagAdminForm
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
