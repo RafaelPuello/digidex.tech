@@ -1,8 +1,8 @@
 from django.urls import path
 
-from . import views
+from .views import link
 
 app_name = "ntags"
 urlpatterns = [
-    path("", views.link, name="link"),
+    path("", link, name="link"),
 ]

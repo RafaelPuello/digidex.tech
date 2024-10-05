@@ -6,15 +6,12 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.urls import reverse
-from wagtail.images import get_image_model
-from wagtail.documents import get_document_model
 from wagtail.models import (
     DraftStateMixin,
     RevisionMixin,
     LockableMixin,
     TranslatableMixin,
-    PreviewableMixin,
-    Collection
+    PreviewableMixin
 )
 from wagtail.fields import RichTextField
 

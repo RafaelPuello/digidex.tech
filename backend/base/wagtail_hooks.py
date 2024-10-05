@@ -1,5 +1,3 @@
-from django.templatetags.static import static
-from django.utils.html import format_html
 from wagtail import hooks
 from wagtail.admin.wagtail_hooks import LockedPagesMenuItem
 from wagtail.admin.site_summary import PagesSummaryItem
@@ -13,19 +11,6 @@ from wagtail.admin.wagtail_hooks import (
     PageTypesReportMenuItem,
     ExplorerMenuItem
 )
-
-from .viewsets import content_object_chooser_viewset
-
-
-@hooks.register("insert_editor_js")
-def editor_js():
-    return format_html('<script src="{}"></script>', static("base/js/page-editor.js"))
-
-
-@hooks.register("register_admin_viewset")
-def register_viewset():
-    return content_object_chooser_viewset
-
 
 @hooks.register('construct_explorer_page_queryset')
 def show_relevant_pages_only(parent_page, pages, request):

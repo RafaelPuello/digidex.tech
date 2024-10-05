@@ -4,9 +4,10 @@ from rest_framework.response import Response
 from wagtail.admin.panels import TabbedInterface, FieldPanel, ObjectList
 from wagtail.snippets.views.snippets import SnippetViewSet
 
-from base.widgets import ContentObjectChooserWidget
 from .models import NFCTag, NFCTagScan
 from .serializers import NFCTagSerializer, NFCTagScanSerializer
+
+from django.utils.translation import gettext_lazy as _
 
 
 class NFCTagViewSet(viewsets.ModelViewSet):
@@ -106,10 +107,7 @@ class NFCTagSnippetViewSet(SnippetViewSet):
     shared_panels = [
         FieldPanel("label"),
         FieldPanel("content_type"),
-        FieldPanel(
-            'object_id',
-            widget=ContentObjectChooserWidget
-            ),
+        FieldPanel('object_id'),
     ]
     private_panels = [
         FieldPanel("nfc_tag_type"),
