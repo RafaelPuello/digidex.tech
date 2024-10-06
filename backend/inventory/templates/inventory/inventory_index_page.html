@@ -13,16 +13,16 @@
           <div class="text-category">All</div>
         </a>
         <div class="collection-list-wrapper-categories w-dyn-list">
-          {% for box in boxes %}
-            <div role="list" class="collection-list-categories w-dyn-items">
+          <div role="list" class="collection-list-categories w-dyn-items">
+            {% for box in boxes %}
               <div role="listitem" class="collection-item-categories w-dyn-item">
                 <a href="{{ box.url }}" class="link-category w-inline-block">
                   <img alt="Inventory Box Icon" loading="eager" decoding="async" src="{% static 'base/images/star.svg' %}" class="icon-category">
                   <div class="text-category">{{ box.title }}</div>
                 </a>
               </div>
-            </div>
-          {% endfor %}
+            {% endfor %}
+          </div>
         </div>
       </div>
     </div>
@@ -30,45 +30,47 @@
   <section class="section">
     <div class="content">
       <div class="collection-list-wrapper-posts w-dyn-list">
-        {% for plant in plants %}
+        {% if plants %}
           <div role="list" class="collection-list-posts w-dyn-items">
-            <div role="listitem" class="w-dyn-item">
-              <div class="block-post">
-                <a href="{{ plant.url }}" class="link-post-thumbnail w-inline-block">
-                  {% with plant.main_image as main_image %}
-                    {% if main_image %}
-                      {% image main_image fill-320x240 class="image-main-post" %} <!-- Large should be 600x400 -->
-                      {% if main_image.caption %}
-                        <p>{{ main_image.caption }}</p>
+            {% for plant in plants %}
+              <div role="listitem" class="w-dyn-item">
+                <div class="block-post">
+                  <a href="{{ plant.url }}" class="link-post-thumbnail w-inline-block">
+                    {% with plant.main_image as main_image %}
+                      {% if main_image %}
+                        {% image main_image fill-320x240 class="image-main-post" %} <!-- Large should be 600x400 -->
+                        {% if main_image.caption %}
+                          <p>{{ main_image.caption }}</p>
+                        {% endif %}
+                      {% else %}
+                        <img alt="Plant Thumbnail Placeholder" loading="lazy" decoding="async" src="{% static 'inventory/placeholder.svg' %}" class="image-main-post">
                       {% endif %}
-                    {% else %}
-                      <img alt="Plant Thumbnail Placeholder" loading="lazy" decoding="async" src="{% static 'botany/plant-placeholder.svg' %}" class="image-main-post">
+                    {% endwith %}
+                  </a>
+                  <div class="post">
+                    {% if plant.date %}
+                      <div class="date">{{ plant.date }}</div>
                     {% endif %}
-                  {% endwith %}
-                </a>
-                <div class="post">
-                  {% if plant.date %}
-                    <div class="date">{{ plant.date }}</div>
-                  {% endif %}
-                  <a href="{{ plant.url }}" class="link-heading-post w-inline-block">
-                    <h4 class="heading-post">{{ plant.name }}</h4>
-                  </a>
-                  <p class="paragraph-post">{{ plant.description|richtext }}</p>
-                  <a href="{{ plant.url }}" class="link-block w-inline-block">
-                    <div class="text-link">View Details</div>
-                    <div class="block-icon-link">
-                      <img src="{% static 'base/images/bx-arrow-to-right_green.svg' %}" loading="lazy" decoding="async" alt="Green Arrow Pointing Right" class="icon-link">
-                    </div>
-                  </a>
+                    <a href="{{ plant.url }}" class="link-heading-post w-inline-block">
+                      <h4 class="heading-post">{{ plant.name }}</h4>
+                    </a>
+                    <p class="paragraph-post">{{ plant.description|richtext }}</p>
+                    <a href="{{ plant.url }}" class="link-block w-inline-block">
+                      <div class="text-link">View Details</div>
+                      <div class="block-icon-link">
+                        <img src="{% static 'base/images/bx-arrow-to-right_green.svg' %}" loading="lazy" decoding="async" alt="Green Arrow Pointing Right" class="icon-link">
+                      </div>
+                    </a>
+                  </div>
                 </div>
               </div>
-            </div>
+              {% endfor %}
           </div>
-        {% empty %}
+        {% else %}
           <div class="empty-state w-dyn-empty">
             <div class="text-empty">No plants found.</div>
           </div>
-        {% endfor %}
+        {% endif %}
       </div>
     </div>
   </section>
