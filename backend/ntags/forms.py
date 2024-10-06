@@ -4,6 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from .models import NFCTag
 
+
 class NFCTagAdminForm(WagtailAdminModelForm):
     item = forms.ModelChoiceField(
         queryset=None,
@@ -18,44 +19,62 @@ class NFCTagAdminForm(WagtailAdminModelForm):
 
     class Meta:
         model = NFCTag
-        fields = ['label', 'content_type', 'item']
+        fields = ['label', 'content_type', 'item', 'active']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
         self.fields['content_type'].label = 'Linked Object Type'
 
-        # Determine the content_type and object_id
+        content_type_id = self.get_content_type_id()
+        object_id = self.get_object_id()
+
+        self.populate_item_queryset(content_type_id, object_id)
+
+    def get_content_type_id(self):
+        """
+        Determine content_type_id from form data or instance.
+        """
         if 'content_type' in self.data:
-            content_type_id = self.data.get('content_type')
+            return self.data.get('content_type')
         elif self.instance.pk and self.instance.content_type:
-            content_type_id = self.instance.content_type.id
-        else:
-            content_type_id = None
+            return self.instance.content_type.id
+        return None
 
-        # Fetch object_id from form data or instance if available
+    def get_object_id(self):
+        """
+        Determine object_id from form data or instance.
+        """
         if 'object_id' in self.data:
-            object_id = self.data.get('object_id')
+            return self.data.get('object_id')
         elif self.instance.pk and self.instance.object_id:
-            object_id = self.instance.object_id
-        else:
-            object_id = None
+            return self.instance.object_id
+        return None
 
-        # If content_type is set, populate the item queryset
+    def populate_item_queryset(self, content_type_id, object_id):
+        """
+        Populate the 'item' field queryset and set initial value if applicable.
+        """
         if content_type_id:
-            content_type = ContentType.objects.get(id=content_type_id)
-            model_class = content_type.model_class()
-            self.fields['item'].queryset = model_class.objects.all()
+            try:
+                content_type = ContentType.objects.get(id=content_type_id)
+                model_class = content_type.model_class()
+                self.fields['item'].queryset = model_class.objects.all()
 
-            # If both content_type and object_id are set, set the initial value for item
-            if object_id:
-                try:
-                    self.fields['item'].initial = model_class.objects.get(id=object_id)
-                except model_class.DoesNotExist:
-                    pass  # Handle the case where the object_id does not exist in the model class
+                if object_id:
+                    self.set_item_initial_value(model_class, object_id)
+            except ContentType.DoesNotExist:
+                self.fields['item'].queryset = NFCTag.objects.none()
         else:
-            # If content_type is not set, leave the item field empty
             self.fields['item'].queryset = NFCTag.objects.none()
+
+    def set_item_initial_value(self, model_class, object_id):
+        """
+        Set the initial value of 'item' based on object_id.
+        """
+        try:
+            self.fields['item'].initial = model_class.objects.get(id=object_id)
+        except model_class.DoesNotExist:
+            pass  # Handle the case where the object_id does not exist in the model class
 
     def save(self, commit=True):
         instance = super().save(commit=False)

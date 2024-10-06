@@ -16,8 +16,7 @@ def setup_inventory_boxes(user_inventory, num_boxes=5):
         user_box_page = InventoryBoxPage(
             title=f"Box {i}",
             slug=f"box-{i}",
-            owner=user_inventory.owner,
-            live=False
+            owner=user_inventory.owner
         )
         try:
             user_inventory.add_child(instance=user_box_page)

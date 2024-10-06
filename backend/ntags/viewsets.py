@@ -1,7 +1,7 @@
 from rest_framework import status, viewsets, permissions
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
-from wagtail.admin.panels import TabbedInterface, FieldPanel, ObjectList
+from wagtail.admin.panels import TabbedInterface, FieldPanel, ObjectList, MultiFieldPanel
 from wagtail.snippets.views.snippets import SnippetViewSet
 from django.utils.translation import gettext_lazy as _
 
@@ -104,16 +104,19 @@ class NFCTagSnippetViewSet(SnippetViewSet):
     base_url_path = "nfc-tags"
     add_to_admin_menu = True
 
-    shared_panels = [
+    content_panels = [
         FieldPanel("label"),
         FieldPanel("content_type"),
-        FieldPanel("item"),
-        FieldPanel("active"),
+        FieldPanel("item")
     ]
 
+    settings_panels = [
+        FieldPanel("active")
+    ]
     edit_handler = TabbedInterface(
         [
-            ObjectList(shared_panels, heading='Details'),
+            ObjectList(content_panels, heading='Details'),
+            ObjectList(settings_panels, heading='Status'),
         ]
     )
 

@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Function to update the item field options based on selected content_type
     function updateItemFieldOptions(contentTypeId) {
         if (contentTypeId) {
-            fetch(`/link/objects/${contentTypeId}/`)
+            fetch(`/link/get-linkable-objects/${contentTypeId}/`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');

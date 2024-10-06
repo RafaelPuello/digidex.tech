@@ -328,11 +328,13 @@ WAGTAILSEARCH_BACKENDS = {
 }
 
 # ------------------------------------------------------------------------
-# Wagtail-ntag Configuration (PROD)
+# Wagtail-ntag Configuration
 # ------------------------------------------------------------------------
-NFC_TAG_FILTER_METHOD = 'uid_counter'
+NFC_TAGGABLE_MODELS = [
+    'inventory.InventoryIndexPage', 'inventory.InventoryBoxPage',
+    'botany.Plant'
+]
 
-NFC_TAGGABLE_MODELS = ['botany.Plant']
 try:
     from .local import *  # noqa
 except ImportError:
