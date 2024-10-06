@@ -73,13 +73,13 @@ STORAGES = {
 WAGTAIL_REDIRECTS_FILE_STORAGE = "cache"
 
 # ------------------------------------------------------------------------
-# Storage-URL Configuration (BASE)
+# Storage-URL Configuration (PROD)
 # ------------------------------------------------------------------------
 MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME_MEDIA}.{AWS_S3_ENDPOINT_URL}/'
 STATIC_URL = 'cdn.digidex.tech/'
 
 # ------------------------------------------------------------------------
-# Storage-Staticfiles Configuration (BASE)
+# Storage-Staticfiles Configuration (PROD)
 # ------------------------------------------------------------------------
 STATIC_ROOT = 'static/'
 STATICFILES_FINDERS = [

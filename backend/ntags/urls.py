@@ -1,9 +1,13 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 
-from .views import link_nfc_tag, get_linkable_objects
+from .viewsets import NFCTagViewSet
 
 app_name = "ntags"
+
+router = DefaultRouter()
+router.register(r'ntags', NFCTagViewSet, basename='ntag')
+
 urlpatterns = [
-    path("", link_nfc_tag, name="link-nfc-tag"),
-    path("get-linkable-objects/<int:objects_id>/", get_linkable_objects, name="get-linkable-objects"),
+    path('', include(router.urls)),
 ]

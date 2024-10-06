@@ -1,30 +1,36 @@
 from rest_framework import status, viewsets, permissions
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
-from wagtail.admin.panels import TabbedInterface, FieldPanel, ObjectList
-from wagtail.snippets.views.snippets import SnippetViewSet
 
-from .models import NFCTag, NFCTagScan
-from .forms import NFCTagAdminForm
-from .serializers import NFCTagSerializer, NFCTagScanSerializer
+from rest_framework.decorators import action
+from django.contrib.contenttypes.models import ContentType
+from django.shortcuts import redirect
+
+from .models import NFCTag
+from .serializers import NFCTagSerializer
 
 
 class NFCTagViewSet(viewsets.ModelViewSet):
-
+    """
+    A viewset for viewing, creating, and linking NFC tags.
+    """
     queryset = NFCTag.objects.all()
     serializer_class = NFCTagSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     authentication_classes = [JWTAuthentication]
     lookup_field = 'serial_number'
-    body_fields = ['serial_number']
-    meta_fields = ['id']
 
     def get_queryset(self):
-        return NFCTag.objects.filter(user=self.request.user)
+        if self.request.user.is_superuser:
+            return NFCTag.objects.all()
+        return NFCTag.objects.filter(
+            user=self.request.user,
+            active=True
+        )
 
     def create(self, request, *args, **kwargs):
         """
-        Create a new NFC tag with the provided serial number and tag type.
+        Create a new NFC tag with the provided serial number.
         """
         serial_number = request.data.get('serial_number')
 
@@ -40,95 +46,51 @@ class NFCTagViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         """
-        Set active to False.
+        Perform actual deletion if the user is a superuser, otherwise set
+        the NFC tag's active status to False.
         """
         instance = self.get_object()
-        instance.active = False
-        # self.perform_destroy(instance)
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
+        if request.user.is_superuser:
+            # Perform the usual delete if the user is a superuser
+            return super().destroy(request, *args, **kwargs)
+        else:
+            # For regular users, set 'active' to False instead of deleting
+            instance.active = False
+            instance.save()
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
-class NFCTagScanViewSet(viewsets.ModelViewSet):
-    """
-    A viewset for viewing and editing an NFC Tag's Scans.
-    """
-    queryset = NFCTagScan.objects.all()
-    serializer_class = NFCTagScanSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    authentication_classes = [JWTAuthentication]
-    lookup_field = 'id'
-    body_fields = ['ntag', 'scan_time']
-    meta_fields = ['id']
-
-    def get_queryset(self):
-        return NFCTagScan.objects.filter(ntag__user=self.request.user)
-
-    def create(self, request, *args, **kwargs):
+    @action(detail=False, methods=['get'], url_path='link')
+    def link(self, request):
         """
-        Create a new NFC tag scan with the provided NFC tag ID and scan time.
+        Custom action to link an NTAG using the ASCII Mirror embedded in the NTAG's URL.
         """
+        mirrored_values = request.GET.get('m', None)
 
-        ntag_id = request.data.get('ntag_id')
-        scan_time = request.data.get('scan_time')
-
-        if not ntag_id:
-            return Response({"error": "NFC Tag ID not provided."}, status=status.HTTP_400_BAD_REQUEST)
+        if not mirrored_values:
+            return Response({"error": "Invalid mirror values."}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            ntag = NFCTag.objects.get(pk=ntag_id)
-        except NFCTag.DoesNotExist:
-            return Response({"error": "Invalid NFC Tag ID."}, status=status.HTTP_400_BAD_REQUEST)
+            ntag = NFCTag.objects.get_from_mirror(mirrored_values)
+            return redirect(ntag.url)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-        ntag_scan = NFCTagScan.objects.create(
-            ntag=ntag,
-            scan_time=scan_time
-        )
+    @action(detail=False, methods=['get'], url_path=r'linkable-objects/(?P<objects_id>\d+)')
+    def get_linkable_objects(self, request, objects_id=None):
+        """
+        Custom action to get the objects that can be linked to an NTAG.
+        """
+        try:
+            content_type = ContentType.objects.get(id=objects_id)
+            model_class = content_type.model_class()
+            objects = model_class.objects.all()
 
-        serializer = self.get_serializer(ntag_scan, context={'request': request})
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+            data = {
+                'objects': [{'id': obj.id, 'name': str(obj)} for obj in objects]
+            }
 
+            return Response(data)
 
-class NFCTagSnippetViewSet(SnippetViewSet):
-
-    model = NFCTag
-    icon = "nfc-icon"
-    menu_label = "NFC Tags"
-    menu_name = "ntags"
-    menu_order = 130
-    copy_view_enabled = False
-    list_filter = {"label": ["icontains"]}
-    list_display = ["label", "serial_number"]
-    list_per_page = 25
-    admin_url_namespace = "nfc_tags"
-    base_url_path = "nfc-tags"
-    add_to_admin_menu = True
-
-    content_panels = [
-        FieldPanel("label"),
-        FieldPanel("content_type"),
-        FieldPanel("item")
-    ]
-
-    settings_panels = [
-        FieldPanel("active")
-    ]
-    edit_handler = TabbedInterface(
-        [
-            ObjectList(content_panels, heading='Details'),
-            ObjectList(settings_panels, heading='Status'),
-        ]
-    )
-
-    def get_form_class(self, for_update=False):
-        return NFCTagAdminForm
-
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        if qs is None:
-            qs = self.model.objects.all()
-
-        user = request.user
-        if user.is_superuser:
-            return qs
-        else:
-            return qs.filter(user=user)
+        except ContentType.DoesNotExist:
+            return Response({'error': 'Invalid content type'}, status=status.HTTP_400_BAD_REQUEST)
