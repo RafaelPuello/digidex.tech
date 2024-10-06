@@ -1,9 +1,8 @@
 from rest_framework import status, viewsets, permissions
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
-from wagtail.admin.panels import TabbedInterface, FieldPanel, ObjectList, MultiFieldPanel
+from wagtail.admin.panels import TabbedInterface, FieldPanel, ObjectList
 from wagtail.snippets.views.snippets import SnippetViewSet
-from django.utils.translation import gettext_lazy as _
 
 from .models import NFCTag, NFCTagScan
 from .forms import NFCTagAdminForm
@@ -17,7 +16,7 @@ class NFCTagViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     authentication_classes = [JWTAuthentication]
     lookup_field = 'serial_number'
-    body_fields = ['serial_number', 'design']
+    body_fields = ['serial_number']
     meta_fields = ['id']
 
     def get_queryset(self):
@@ -41,7 +40,7 @@ class NFCTagViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         """
-        Set active to False for now. Will fix later.
+        Set active to False.
         """
         instance = self.get_object()
         instance.active = False

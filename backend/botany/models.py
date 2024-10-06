@@ -29,13 +29,6 @@ class Plant(
     description = models.TextField(
         blank=True
     )
-    quantity = models.PositiveIntegerField(
-        default=1
-    )
-    date = models.DateField(
-        null=True,
-        blank=True
-    )
     uuid = models.UUIDField(
         default=uuid.uuid4,
         editable=False,
@@ -84,6 +77,10 @@ class Plant(
 
     def get_url(self):
         return self.box.url + self.slug + '/'
+
+    @property
+    def collection(self):
+        return self.get_parent_collection()
 
     def get_parent_collection(self):
         return self.box.collection

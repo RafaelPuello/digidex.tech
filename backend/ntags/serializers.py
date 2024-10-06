@@ -43,8 +43,7 @@ class NFCTagSerializer(serializers.ModelSerializer):
     class Meta:
         model = NFCTag
         fields = [
-            'id', 'serial_number', 'integrated_circuit',
-            'user', 'label',
-            'active', 'created_at', 'last_modified',
+            'serial_number', 'integrated_circuit',
+            'user', 'label', 'active',
             'scans', 'eeprom'
         ]

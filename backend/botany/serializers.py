@@ -9,4 +9,4 @@ class PlantSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Plant
-        fields = ['id', 'name', 'description', 'collection']
+        fields = ['id', 'name', 'description']

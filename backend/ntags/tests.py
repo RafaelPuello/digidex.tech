@@ -1,9 +1,6 @@
 from django.test import TestCase
-from django.contrib.auth import get_user_model
 
 from .models import NFCTag
-
-User = get_user_model()
 
 
 class NFCTagModelTest(TestCase):
@@ -18,5 +15,5 @@ class NFCTagModelTest(TestCase):
         Testing uniqueness constraint should involve trying to create a second object with the same serial number.
         """
         NFCTag.objects.create(serial_number="04E141124C2880", integrated_circuit="213")
-        with self.assertRaises(Exception):  # Adjust the exception type if necessary
+        with self.assertRaises(Exception):
             NFCTag.objects.create(serial_number="04E141124C2880", integrated_circuit="213")

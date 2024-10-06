@@ -91,7 +91,7 @@ class BaseNFCTag(models.Model):
         super().save(*args, **kwargs)
 
     def log_scan(self, counter, user):
-        raise NotImplementedError("Method 'log_scan' must be implemented in a subclass.")     
+        raise NotImplementedError("Method 'log_scan' must be implemented in a subclass.")
 
     @property
     def url(self):

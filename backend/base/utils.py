@@ -19,12 +19,12 @@ def assign_wagtail_group_permissions(group, obj, permissions):
     if isinstance(obj, Page):
         for perm in permissions:
             permission = Permission.objects.get(codename=perm)
-            
+
             if not GroupPagePermission.objects.filter(
-                    group=group,
-                    page=obj,
-                    permission=permission
-                ).exists():
+                group=group,
+                page=obj,
+                permission=permission
+            ).exists():
                 GroupPagePermission.objects.create(
                     group=group,
                     page=obj,
@@ -39,7 +39,7 @@ def assign_wagtail_group_permissions(group, obj, permissions):
                     group=group,
                     collection=obj,
                     permission=permission
-                ).exists():
+            ).exists():
                 GroupCollectionPermission.objects.create(
                     group=group,
                     collection=obj,

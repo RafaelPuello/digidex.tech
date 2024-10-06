@@ -8,6 +8,7 @@ from .viewsets import PlantViewSet, plant_species_chooser_viewset
 def register_icons(icons):
     return icons + ['botany/icons/plant.svg']
 
+
 register_snippet(PlantViewSet)
 
 

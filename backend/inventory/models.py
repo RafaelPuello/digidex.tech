@@ -1,17 +1,12 @@
 import uuid
 from django.db import models
+from django.conf import settings
 from django.shortcuts import get_object_or_404
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from wagtail.models import Page
 from wagtail.admin.panels import FieldPanel, TabbedInterface, TitleFieldPanel, ObjectList
 from wagtail.contrib.routable_page.models import RoutablePageMixin, path
-
-from django.db import models
-from django.conf import settings
-from django.utils.text import slugify
-from django.utils.translation import gettext_lazy as _
-from wagtail.models import Page
-from wagtail.admin.panels import FieldPanel, TabbedInterface, ObjectList
 
 from base.models import CollectionMixin
 from base.utils import assign_wagtail_group_permissions
@@ -25,6 +20,7 @@ COLLECTION_PERMISSIONS = (
 PAGE_PERMISSIONS = (
     'add_page', 'publish_page'
 )
+
 
 class InventoryIndexCollection(CollectionMixin, models.Model):
 
@@ -216,6 +212,10 @@ class InventoryIndexPage(Page):
             assign_wagtail_group_permissions(group, _instance, PAGE_PERMISSIONS)
             return _instance
 
+    @property
+    def collection(self):
+        return self.user_collection.collection
+
     def __str__(self):
         return f"{self.user_collection} and page"
 
@@ -271,6 +271,10 @@ class InventoryBoxPage(RoutablePageMixin, Page):
     def get_plants(self):
         from botany.models import Plant
         return Plant.objects.filter(box=self)
+
+    @property
+    def collection(self):
+        return self.get_parent_collection()
 
     def get_parent_collection(self):
         return self.owner.index_collection.collection

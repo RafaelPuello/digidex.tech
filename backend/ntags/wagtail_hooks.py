@@ -19,4 +19,4 @@ def register_icons(icons):
     ]
 
 
-register_snippet(NFCTagSnippetViewSet)
+register_snippet(NFCTagSnippetViewSet)  # noqa

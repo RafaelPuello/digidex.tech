@@ -25,6 +25,9 @@ def link_nfc_tag(request):
 
 
 def get_linkable_objects(request, objects_id):
+    """
+    Get the objects that can be linked to an NTAG.
+    """
     try:
         content_type = ContentType.objects.get(id=objects_id)
         model_class = content_type.model_class()

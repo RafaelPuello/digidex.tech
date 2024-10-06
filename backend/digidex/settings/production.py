@@ -3,7 +3,7 @@ from .base import *  # noqa
 # ------------------------------------------------------------------------
 # Site Configuration (PROD)
 # ------------------------------------------------------------------------
-SITE_PROTOCOL += "s"
+SITE_PROTOCOL += "s"  # noqa: F405
 
 WAGTAILADMIN_BASE_URL = f"{SITE_PROTOCOL}://{SITE_HOSTNAME}"  # noqa: F405
 
@@ -21,7 +21,7 @@ EMAIL_PORT = os.getenv("EMAIL_PORT")  # noqa: F405
 EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS")  # noqa: F405
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-EMAIL_SUBJECT_PREFIX = ACCOUNT_EMAIL_SUBJECT_PREFIX = f"[{WAGTAIL_SITE_NAME}] "
+EMAIL_SUBJECT_PREFIX = ACCOUNT_EMAIL_SUBJECT_PREFIX = f"[{WAGTAIL_SITE_NAME}] "  # noqa: F405
 
 # ------------------------------------------------------------------------
 # Storage Configuration (PROD)

@@ -1,6 +1,6 @@
 import re
 from queryish.rest import APIModel
-from pygbif import species as species
+# from pygbif import species
 from wagtail.admin.viewsets.chooser import ChooserViewSet
 from wagtail.admin.panels import TabbedInterface, FieldPanel, InlinePanel, ObjectList
 from wagtail.snippets.views.chooser import SnippetChooserViewSet
@@ -60,7 +60,6 @@ class PlantChooserViewSet(SnippetChooserViewSet):
         super().__init__(*args, **kwargs)
 
 
-
 class PlantViewSet(SnippetViewSet):
     model = Plant
     icon = "plant"
@@ -80,7 +79,6 @@ class PlantViewSet(SnippetViewSet):
         FieldPanel("box"),
         FieldPanel("name"),
         FieldPanel("description"),
-        FieldPanel("quantity"),
         InlinePanel("gallery_images", label="Images"),
     ]
 

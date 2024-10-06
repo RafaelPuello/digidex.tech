@@ -1,3 +1,4 @@
+import warnings
 from django.conf import settings
 
 NTAG213 = "213"
@@ -24,29 +25,46 @@ NTAG_EEPROM_SIZES = {
 
 def get_nfc_tag_filter_method():
     """
-    Returns the method to filter NFC tags that is active in this project.
+    Returns the method to filter NFC tags that are active in this project.
     """
     filter_method =  getattr(settings, 'NFC_TAG_FILTER_METHOD', 'uid')
     if filter_method not in NTAG_FILTER_METHODS:
-        raise ValueError('Invalid filter method for NFC tags. Valid options are: {}'.format(NTAG_FILTER_METHODS))
+        warnings.warn(
+            f"Invalid NFC_TAG_FILTER_METHOD '{filter_method}'. "
+            f"Falling back to default 'uid'. Valid options are: {NTAG_FILTER_METHODS}",
+            UserWarning
+        )
+        return 'uid'
     return filter_method
 
 def get_nfc_taggable_model_strings():
     """
     Returns a list of model strings that are taggable by NFC tags.
     """
-    return getattr(settings, 'NFC_TAGGABLE_MODELS', [])
+    taggable_models = getattr(settings, 'NFC_TAGGABLE_MODELS', None)
+    if taggable_models is None:
+        warnings.warn(
+            "NFC_TAGGABLE_MODELS is not set. Defaulting to an empty list.",
+            UserWarning
+        )
+        return []
+    return taggable_models
 
 def get_nfc_taggable_models():
     """
-    Returns a list of models that are taggable by NFC tags.
+    Returns a query combining all models that are taggable by NFC tags.
     """
     from django.db.models import Q as query
 
+    # Return an empty Q object if there are no taggable models
     taggable_models = get_nfc_taggable_model_strings()
+    if not taggable_models:
+        return query()
 
+    # Build conditions using the taggable models
     conditions = [
         query(app_label=app_label, model=model_name.lower()) for app_label, model_name in (model.split('.') for model in taggable_models)
-        ]
+    ]
 
-    return query() if not conditions else conditions[0] if len(conditions) == 1 else query(*conditions, _connector=query.OR)
+    # Combine all conditions with OR
+    return conditions[0] if len(conditions) == 1 else query(*conditions, _connector=query.OR)

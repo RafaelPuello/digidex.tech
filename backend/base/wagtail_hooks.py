@@ -12,6 +12,7 @@ from wagtail.admin.wagtail_hooks import (
     ExplorerMenuItem
 )
 
+
 @hooks.register('construct_explorer_page_queryset')
 def show_relevant_pages_only(parent_page, pages, request):
     """

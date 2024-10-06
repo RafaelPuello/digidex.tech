@@ -12,7 +12,7 @@ def setup_user_inventory(user):
 
 
 def setup_inventory_boxes(user_inventory, num_boxes=5):
-    for i in range(1, num_boxes+1):
+    for i in range(1, num_boxes + 1):
         user_box_page = InventoryBoxPage(
             title=f"Box {i}",
             slug=f"box-{i}",
@@ -22,4 +22,4 @@ def setup_inventory_boxes(user_inventory, num_boxes=5):
             user_inventory.add_child(instance=user_box_page)
         except Exception as e:
             print(e)
-            continue   
+            continue

@@ -2,7 +2,7 @@ from .base import *  # noqa
 
 DEBUG = True
 
-WAGTAIL_SITE_NAME += " (DEV)"
+WAGTAIL_SITE_NAME += " (DEV)"  # noqa: F405
 
 # ------------------------------------------------------------------------
 # Email Configuration (DEV)
