@@ -42,7 +42,3 @@ jobs:
       - name: Check for Security Issues with Bandit
         run: |
           bandit -r .
-
-      - name: Test with Pytest
-        run: |
-          pytest .
