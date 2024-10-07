@@ -54,7 +54,7 @@ class UserPlantSnippetViewSet(SnippetViewSet):
     )
 
     def get_queryset(self, request):
-        queryset = UserPlant.objects.filter(box__owner=request.user)
+        queryset = UserPlant.objects.filter(user=request.user)
         return queryset
 
 
