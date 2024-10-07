@@ -30,6 +30,18 @@ class InventoryIndexCollection(CollectionMixin, models.Model):
         related_name='index_collection'
     )
 
+    def __str__(self):
+        return f"{self.user.username}'s collection"
+
+    class Meta:
+        verbose_name = _('index collection')
+        verbose_name_plural = _('index collections')
+
+    def save(self, *args, **kwargs):
+        if not self.collection:
+            self.collection = self.get_for_user(self.user)
+        super().save(*args, **kwargs)
+
     @classmethod
     def get_parent_collection(cls):
         """
@@ -75,18 +87,6 @@ class InventoryIndexCollection(CollectionMixin, models.Model):
     def get_user_page(self):
         return InventoryIndexPage.get_for_user(self.user)
 
-    def save(self, *args, **kwargs):
-        if not self.collection:
-            self.collection = self.get_for_user(self.user)
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return f"{self.user.username}'s collection"
-
-    class Meta:
-        verbose_name = _('index collection')
-        verbose_name_plural = _('index collections')
-
 
 class InventoryIndexPage(Page):
 
@@ -112,6 +112,13 @@ class InventoryIndexPage(Page):
             ObjectList(private_panels, heading='Admin only', permission="superuser"),
         ]
     )
+
+    def __str__(self):
+        return f"{self.user_collection} and page"
+
+    class Meta:
+        verbose_name = _('user home page')
+        verbose_name_plural = _('user home pages')
 
     def get_context(self, request):
         context = super().get_context(request)
@@ -216,13 +223,6 @@ class InventoryIndexPage(Page):
     def collection(self):
         return self.user_collection.collection
 
-    def __str__(self):
-        return f"{self.user_collection} and page"
-
-    class Meta:
-        verbose_name = _('user home page')
-        verbose_name_plural = _('user home pages')
-
 
 class InventoryBoxPage(RoutablePageMixin, Page):
 
@@ -253,6 +253,18 @@ class InventoryBoxPage(RoutablePageMixin, Page):
         ObjectList(Page.settings_panels, heading='Settings', permission="superuser"),
     ])
 
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = _('box')
+        verbose_name_plural = _('boxes')
+
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request, *args, **kwargs)
+        context['plants'] = self.get_plants()
+        return context
+
     @path('<slug:plant_slug>/')
     def plant_details(self, request, plant_slug):
         from botany.models import Plant
@@ -262,11 +274,6 @@ class InventoryBoxPage(RoutablePageMixin, Page):
             context_overrides={'plant': plant},
             template="inventory/inventory_detail_page.html"
         )
-
-    def get_context(self, request, *args, **kwargs):
-        context = super().get_context(request, *args, **kwargs)
-        context['plants'] = self.get_plants()
-        return context
 
     def get_plants(self):
         from botany.models import Plant
@@ -278,10 +285,3 @@ class InventoryBoxPage(RoutablePageMixin, Page):
 
     def get_parent_collection(self):
         return self.owner.index_collection.collection
-
-    def __str__(self):
-        return self.title
-
-    class Meta:
-        verbose_name = _('box')
-        verbose_name_plural = _('boxes')

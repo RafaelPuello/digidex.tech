@@ -14,7 +14,10 @@ def assign_group_permissions(group, permissions):
 
 
 def assign_wagtail_group_permissions(group, obj, permissions):
-    from wagtail.models import Page, GroupPagePermission, Collection, GroupCollectionPermission
+    from wagtail.models import (
+        Page, GroupPagePermission,
+        Collection, GroupCollectionPermission
+    )
 
     if isinstance(obj, Page):
         for perm in permissions:

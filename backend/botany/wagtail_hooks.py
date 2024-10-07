@@ -3,7 +3,6 @@ from wagtail.snippets.models import register_snippet
 
 from .viewsets import PlantViewSet, plant_species_chooser_viewset
 
-
 @hooks.register("register_icons")
 def register_icons(icons):
     return icons + ['botany/icons/plant.svg']

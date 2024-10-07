@@ -19,7 +19,7 @@
     <div class="content narrow">
       <figure class="w-richtext-align-fullwidth w-richtext-figure-type-image">
         {% for item in plant.gallery_images.all %}
-          {% image item.image max-1200x880 %}
+          {% image item.image fill-1200x880 %}
           {% if item.caption %}
             <figcaption>{{ item.caption }}</figcaption>
           {% endif %}

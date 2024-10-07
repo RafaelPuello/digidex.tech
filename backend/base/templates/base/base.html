@@ -20,7 +20,7 @@
           <div class="nav">
             {% get_site_root as site_root %}
             <a href="{% pageurl site_root %}" class="brand w-nav-brand">
-              <img src="{% static 'base/images/logo.svg' %}" alt="Digidex Logo" class="logo">
+              <img src="{% static 'base/images/logo/logo.svg' %}" alt="Digidex Logo" class="logo">
             </a>
             <nav role="navigation" class="nav-menu w-nav-menu">
               {% for menuitem in site_root.get_children.live.in_menu %}
