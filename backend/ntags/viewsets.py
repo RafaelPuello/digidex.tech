@@ -37,7 +37,7 @@ class NFCTagViewSet(viewsets.ModelViewSet):
         if not serial_number:
             return Response({"error": "Serial Number not provided."}, status=status.HTTP_400_BAD_REQUEST)
 
-        ntag, created = NFCTag.objects.update_or_create(
+        ntag, created = NFCTag.objects.get_or_create(
             serial_number=serial_number
         )
 

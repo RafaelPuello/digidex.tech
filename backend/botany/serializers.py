@@ -1,20 +1,19 @@
-import uuid
 from rest_framework import serializers
 from wagtail.images.api.fields import ImageRenditionField
 
-from .models import Plant, PlantGalleryImage
+from .models import UserPlant, UserPlantGalleryImage
 
 
-class PlantGalleryImageSerializer(serializers.ModelSerializer):
+class UserPlantGalleryImageSerializer(serializers.ModelSerializer):
     """
-    Serializer for the PlantGalleryImage model.
+    Serializer for the UserPlantGalleryImage model.
     """
     thumbnail = ImageRenditionField('fill-100x100', source='image')
     featured = ImageRenditionField('fill-300x300', source='image')
     detail = ImageRenditionField('max-800x800', source='image')
 
     class Meta:
-        model = PlantGalleryImage
+        model = UserPlantGalleryImage
         fields = [
             'id', 'image',
             'caption', 'sort_order'
@@ -22,12 +21,12 @@ class PlantGalleryImageSerializer(serializers.ModelSerializer):
         ]
 
 
-class PlantSerializer(serializers.ModelSerializer):
+class UserPlantSerializer(serializers.ModelSerializer):
     """
-    Main serializer for the Plant model.
+    Main serializer for the UserPlant model.
     """
-    gallery_images = PlantGalleryImageSerializer(many=True, read_only=True)
+    gallery_images = UserPlantGalleryImageSerializer(many=True, read_only=True)
 
     class Meta:
-        model = Plant
-        fields = ['id', 'box', 'name', 'description', 'gallery_images']
+        model = UserPlant
+        fields = ['id', 'user', 'name', 'description', 'gallery_images']

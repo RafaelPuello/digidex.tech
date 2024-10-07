@@ -37,31 +37,10 @@
         }
       },
       "required": ["user_collection", "title", "slug"]
-    },
-    "InventoryBoxPage": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "The name of the plant",
-          "maxLength": 255
-        },
-        "description": {
-          "type": "string",
-          "description": "A description of the plant",
-          "maxLength": 10000
-        },
-        "collection": {
-          "type": "string",
-          "description": "The collection of the plant"
-        }
-      },
-      "required": ["name"]
     }
   },
   "properties": {
     "collection": { "$ref": "#/definitions/InventoryIndexCollection" },
-    "inventory": { "$ref": "#/definitions/InventoryIndexPage" },
-    "boxes": { "$ref": "#/definitions/InventoryBoxPage" }
+    "inventory": { "$ref": "#/definitions/InventoryIndexPage" }
   }
 }

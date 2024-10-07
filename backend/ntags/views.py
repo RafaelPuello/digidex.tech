@@ -12,13 +12,15 @@ def link_nfc_tag(request):
     Link an NTAG using the ASCII Mirror embedded in the NTAG's URL.
     """
     mirrored_values = request.GET.get('m', None)
+
     if not mirrored_values:
         messages.error(request, _('Invalid mirror values.'))
         return redirect('/')
 
     try:
-        ntag = NFCTag.objects.get_from_mirror(mirrored_values)
+        ntag = NFCTag.objects.get_from_mirror(mirrored_values, request.user)
         return redirect(ntag.url)
+
     except Exception as e:
         messages.error(request, str(e))
         return redirect('/')

@@ -17,10 +17,6 @@ class NFCTagAdminForm(WagtailAdminModelForm):
         widget=forms.HiddenInput()
     )
 
-    class Meta:
-        model = NFCTag
-        fields = ['label', 'content_type', 'item', 'active']
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['content_type'].label = 'Linked Object Type'
@@ -29,6 +25,19 @@ class NFCTagAdminForm(WagtailAdminModelForm):
         object_id = self.get_object_id()
 
         self.populate_item_queryset(content_type_id, object_id)
+
+    class Meta:
+        model = NFCTag
+        fields = ['label', 'content_type', 'item', 'active']
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        # Ensure object_id is saved as the ID (primary key)
+        if self.cleaned_data['item']:
+            instance.object_id = self.cleaned_data['item'].id
+        if commit:
+            instance.save()
+        return instance
 
     def get_content_type_id(self):
         """
@@ -75,12 +84,3 @@ class NFCTagAdminForm(WagtailAdminModelForm):
             self.fields['item'].initial = model_class.objects.get(id=object_id)
         except model_class.DoesNotExist:
             pass  # Handle the case where the object_id does not exist in the model class
-
-    def save(self, commit=True):
-        instance = super().save(commit=False)
-        # Ensure object_id is saved as the ID (primary key)
-        if self.cleaned_data['item']:
-            instance.object_id = self.cleaned_data['item'].id
-        if commit:
-            instance.save()
-        return instance

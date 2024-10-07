@@ -27,7 +27,6 @@ class HomePage(Page):
         'inventory.InventoryIndexPage',
         'blog.BlogIndexPage',
         'blog.TagIndexPage',
-        'botany.UserBoxPage',
         'company.CompanyIndexPage',
         'support.ContactFormPage',
     ]

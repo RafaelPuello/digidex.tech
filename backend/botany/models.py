@@ -3,6 +3,7 @@ import re
 from queryish.rest import APIModel
 # from pygbif import species
 from django.db import models
+from django.conf import settings
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from modelcluster.models import ClusterableModel
@@ -40,15 +41,15 @@ class PlantSpecies(APIModel):
         )
 
 
-class Plant(
+class UserPlant(
     Orderable,
     ClusterableModel,
     index.Indexed,
     TranslatableMixin,
     PreviewableMixin
 ):
-    box = models.ForeignKey(
-        'inventory.InventoryBoxPage',
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
         related_name='plants',
         on_delete=models.CASCADE
     )
@@ -88,12 +89,12 @@ class Plant(
         verbose_name = _('plant')
         verbose_name_plural = _('plants')
         indexes = [
-            models.Index(fields=['box', 'name']),
-            models.Index(fields=['box', 'slug']),
+            models.Index(fields=['user', 'name']),
+            models.Index(fields=['user', 'slug']),
         ]
         constraints = [
-            models.UniqueConstraint(fields=['box', 'name'], name='unique_plant_name_in_box'),
-            models.UniqueConstraint(fields=['box', 'slug'], name='unique_plant_slug_in_box')
+            models.UniqueConstraint(fields=['user', 'name'], name='unique_plant_name_for_user'),
+            models.UniqueConstraint(fields=['user', 'slug'], name='unique_plant_slug_for_user')
         ]
 
     def save(self, *args, **kwargs):
@@ -129,19 +130,23 @@ class Plant(
         return self.get_url()
 
     def get_url(self):
-        return self.box.url + self.slug + '/'
+        parent = self.get_parent_page()
+        return parent.get_url() + parent.reverse_subpage('detail', kwargs={'plant_slug': self.slug})
+
+    def get_parent_page(self):
+        return self.user.get_page()
 
     @property
     def collection(self):
         return self.get_parent_collection()
 
     def get_parent_collection(self):
-        return self.box.collection
+        return self.get_parent_page().user_collection.collection
 
 
-class PlantGalleryImage(GalleryImageMixin):
-    plant = ParentalKey(
-        Plant,
+class UserPlantGalleryImage(GalleryImageMixin):
+    user_plant = ParentalKey(
+        UserPlant,
         on_delete=models.CASCADE,
         related_name='gallery_images'
     )

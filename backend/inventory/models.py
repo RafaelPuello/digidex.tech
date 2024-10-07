@@ -1,11 +1,10 @@
-import uuid
 from django.db import models
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from wagtail.models import Page
-from wagtail.admin.panels import FieldPanel, TabbedInterface, TitleFieldPanel, ObjectList
+from wagtail.admin.panels import FieldPanel, TabbedInterface, ObjectList
 from wagtail.contrib.routable_page.models import RoutablePageMixin, path
 
 from base.models import CollectionMixin
@@ -88,7 +87,7 @@ class InventoryIndexCollection(CollectionMixin, models.Model):
         return InventoryIndexPage.get_for_user(self.user)
 
 
-class InventoryIndexPage(Page):
+class InventoryIndexPage(RoutablePageMixin, Page):
 
     user_collection = models.OneToOneField(
         'inventory.InventoryIndexCollection',
@@ -122,32 +121,18 @@ class InventoryIndexPage(Page):
 
     def get_context(self, request):
         context = super().get_context(request)
-        context['boxes'] = self.get_boxes(10)
         context['plants'] = self.get_plants(30)
         return context
 
-    def get_boxes(self, num=None):
-        """
-        Get and manipulate the box queryset for the user index page.
-
-        Args:
-            num (int): The number of boxes to return. If None, return all boxes.
-
-        Returns:
-            QuerySet: The plant queryset.
-        """
-        boxes_q = InventoryBoxPage.objects.descendant_of(self).live().specific()
-
-        if not boxes_q.exists():
-            return boxes_q.none()
-
-        if num is not None:
-            if isinstance(num, int) and num > 0:
-                return boxes_q[:num]
-            else:
-                raise ValueError("The 'num' parameter must be a positive, non-zero integer.")
-
-        return boxes_q
+    @path('<slug:plant_slug>/')
+    def detail(self, request, plant_slug):
+        from botany.models import UserPlant
+        plant = get_object_or_404(UserPlant, slug=plant_slug, box=self)
+        return self.render(
+            request,
+            context_overrides={'plant': plant},
+            template="inventory/inventory_detail_page.html"
+        )
 
     def get_plants(self, num=None):
         """
@@ -159,8 +144,8 @@ class InventoryIndexPage(Page):
         Returns:
             QuerySet: The plant queryset.
         """
-        from botany.models import Plant
-        plants_q = Plant.objects.filter(box__in=self.get_boxes())
+        from botany.models import UserPlant
+        plants_q = UserPlant.objects.filter(box__in=self.get_boxes())
 
         if not plants_q.exists():
             return plants_q.none()
@@ -222,66 +207,3 @@ class InventoryIndexPage(Page):
     @property
     def collection(self):
         return self.user_collection.collection
-
-
-class InventoryBoxPage(RoutablePageMixin, Page):
-
-    description = models.TextField(
-        blank=True
-    )
-    uuid = models.UUIDField(
-        default=uuid.uuid4,
-        editable=False,
-        unique=True,
-        db_index=True
-    )
-
-    parent_page_types = [
-        'inventory.InventoryIndexPage'
-    ]
-    child_page_types = []
-
-    content_panels = [
-        TitleFieldPanel('title', classname="title"),
-        FieldPanel('slug'),
-        FieldPanel('description'),
-    ]
-
-    edit_handler = TabbedInterface([
-        ObjectList(content_panels, heading='Details'),
-        ObjectList(Page.promote_panels, heading='Promote', permission="superuser"),
-        ObjectList(Page.settings_panels, heading='Settings', permission="superuser"),
-    ])
-
-    def __str__(self):
-        return self.title
-
-    class Meta:
-        verbose_name = _('box')
-        verbose_name_plural = _('boxes')
-
-    def get_context(self, request, *args, **kwargs):
-        context = super().get_context(request, *args, **kwargs)
-        context['plants'] = self.get_plants()
-        return context
-
-    @path('<slug:plant_slug>/')
-    def plant_details(self, request, plant_slug):
-        from botany.models import Plant
-        plant = get_object_or_404(Plant, slug=plant_slug, box=self)
-        return self.render(
-            request,
-            context_overrides={'plant': plant},
-            template="inventory/inventory_detail_page.html"
-        )
-
-    def get_plants(self):
-        from botany.models import Plant
-        return Plant.objects.filter(box=self)
-
-    @property
-    def collection(self):
-        return self.get_parent_collection()
-
-    def get_parent_collection(self):
-        return self.owner.index_collection.collection

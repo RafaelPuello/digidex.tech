@@ -19,7 +19,7 @@ class NFCTagManager(models.Manager):
         )
         return manager
 
-    def get_from_mirror(self, ascii_mirror):
+    def get_from_mirror(self, ascii_mirror, user=None):
         """
         Retrieves an NFCTag instance based on the mirrored ASCII value and filter type.
         """
@@ -27,10 +27,8 @@ class NFCTagManager(models.Manager):
 
         if ntag_filter == 'uid':
             return self.get_from_uid(ascii_mirror)
-        elif ntag_filter == 'counter':
-            return self.get_from_counter(ascii_mirror)
         elif ntag_filter == 'uid_counter':
-            return self.get_from_uid_counter(ascii_mirror)
+            return self.get_from_uid_counter(ascii_mirror, user)
         else:
             raise ValueError(_('Invalid filter method.'))
 
@@ -43,17 +41,7 @@ class NFCTagManager(models.Manager):
         except self.model.DoesNotExist:
             raise self.model.DoesNotExist(_('NFC Tag not found.'))
 
-    def get_from_counter(self, counter):
-        """
-        Retrieves an NFCTag instance based on the Counter.
-        """
-        from .models import NFCTagScan
-        queryset = NFCTagScan.objects.filter(
-            counter=counter
-        ).order_by('-scanned_at')
-        return queryset
-
-    def get_from_uid_counter(self, uid_counter):
+    def get_from_uid_counter(self, uid_counter, user=None):
         """
         Retrieves an NFCTag instance based on the UID and counter.
         """
@@ -62,6 +50,9 @@ class NFCTagManager(models.Manager):
         uid, counter = uid_counter.split('x')
 
         try:
-            return self.get(serial_number=uid)  # .scans.get(counter=counter)
+            ntag = self.get(serial_number=uid)
+            if user:
+                ntag.log_scan(counter, user)
+            return ntag
         except self.model.DoesNotExist:
             raise self.model.DoesNotExist(_('NFC Tag Scan not found.'))

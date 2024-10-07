@@ -1,5 +1,5 @@
 from django.contrib import admin
 
-from .models import Plant
+from .models import UserPlant
 
-admin.site.register(Plant)  # noqa
+admin.site.register(UserPlant)  # noqa

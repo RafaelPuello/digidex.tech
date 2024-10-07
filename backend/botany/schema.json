@@ -5,28 +5,48 @@
   "description": "Models for managing plants.",
   "type": "object",
   "definitions": {
-    "Plant": {
+    "UserPlant": {
       "type": "object",
       "properties": {
+        "user": {
+          "type": ["string", "null"],
+          "description": "Foreign key reference to User"
+        },
         "name": {
           "type": "string",
-          "description": "The name of the plant",
+          "description": "The name of the user plant",
           "maxLength": 255
         },
         "description": {
           "type": "string",
-          "description": "A description of the plant",
+          "description": "A description of the user plant",
           "maxLength": 10000
-        },
-        "collection": {
-          "type": "string",
-          "description": "The collection of the plant"
         }
       },
-      "required": ["name"]
+      "required": ["user", "name"]
+    },
+    "UserPlantGalleryImage": {
+      "type": "object",
+      "properties": {
+        "plant": {
+          "type": "string",
+          "description": "Foreign key reference to UserPlant",
+          "maxLength": 255
+        },
+        "image": {
+          "type": "string",
+          "description": "Foreign key reference to Image",
+          "maxLength": 10000
+        },
+        "caption": {
+          "type": "string",
+          "description": "A caption for the image"
+        }
+      },
+      "required": ["plant", "image"]
     }
   },
   "properties": {
-    "plants": { "$ref": "#/definitions/Plant" }
+    "plants": { "$ref": "#/definitions/UserPlant" }
   }
 }
