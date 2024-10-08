@@ -9,24 +9,13 @@ from wagtail.admin.panels import FieldPanel, TabbedInterface, TitleFieldPanel, O
 from wagtail.contrib.routable_page.models import RoutablePageMixin, path
 
 from base.models import CollectionMixin
-from base.utils import assign_wagtail_group_permissions
-
-
-COLLECTION_PERMISSIONS = (
-    'add_image', 'change_image', 'choose_image',
-    'add_document', 'change_document', 'choose_document'
-)
-
-PAGE_PERMISSIONS = (
-    'add_page', 'publish_page'
-)
 
 
 class InventoryIndexCollection(CollectionMixin, models.Model):
 
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='index_collection'
     )
 
@@ -80,8 +69,6 @@ class InventoryIndexCollection(CollectionMixin, models.Model):
                 user=user,
                 collection=user_collection
             )
-            group = user.get_user_group()
-            assign_wagtail_group_permissions(group, _instance, COLLECTION_PERMISSIONS)
             return _instance
 
     def get_user_page(self):
@@ -92,7 +79,8 @@ class InventoryIndexPage(Page):
 
     user_collection = models.OneToOneField(
         'inventory.InventoryIndexCollection',
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
+        null=True,
         related_name='page'
     )
 
@@ -217,8 +205,6 @@ class InventoryIndexPage(Page):
             parent_page.add_child(instance=_instance)
             # Save, publish, and return the page
             _instance.save_revision().publish()
-            group = user.get_user_group()
-            assign_wagtail_group_permissions(group, _instance, PAGE_PERMISSIONS)
             return _instance
 
     @property

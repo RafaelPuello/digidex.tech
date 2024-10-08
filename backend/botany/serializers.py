@@ -1,4 +1,3 @@
-import uuid
 from rest_framework import serializers
 from wagtail.images.api.fields import ImageRenditionField
 

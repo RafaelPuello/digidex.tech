@@ -331,8 +331,8 @@ WAGTAILSEARCH_BACKENDS = {
 # Wagtail-ntag Configuration
 # ------------------------------------------------------------------------
 NFC_TAGGABLE_MODELS = [
-    'inventory.InventoryIndexPage', 'inventory.InventoryBoxPage',
-    'botany.Plant'
+    'inventory.InventoryBoxPage',
+    'botany.UserPlant'
 ]
 
 try:

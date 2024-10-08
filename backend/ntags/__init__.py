@@ -1,35 +1,6 @@
 import warnings
 from django.conf import settings
-
-NTAG213 = "213"
-NTAG215 = "215"
-NTAG216 = "216"
-
-NTAG_IC_CHOICES = (
-    (NTAG213, "NTAG 213"),
-    (NTAG215, "NTAG 215"),
-    (NTAG216, "NTAG 216"),
-)
-
-NTAG_EEPROM_SIZES = {
-    NTAG213: 180,
-    NTAG215: 540,
-    NTAG216: 924,
-}
-
-NTAG_USERS_PERMISSIONS = [
-    'change_nfctag',
-]
-
-NTAG_FILTER_METHODS = [
-    'uid',
-    'counter',
-    'uid_counter'
-]
-
-def assign_ntag_user_permissions(group):
-    from base.utils import assign_group_permissions
-    return assign_group_permissions(group, NTAG_USERS_PERMISSIONS)
+from .constants import NTAG_FILTER_METHODS
 
 
 def get_nfc_tag_filter_method():
