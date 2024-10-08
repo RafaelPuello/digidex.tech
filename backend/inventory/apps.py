@@ -7,7 +7,6 @@ class InventoryConfig(AppConfig):
     name = 'inventory'
 
     def ready(self):
-        from . import signals  # noqa: F401
         from wagtail.admin.forms.models import register_form_field_override
         from .models import InventoryBoxPage
         from .widgets import BoxChooserWidget

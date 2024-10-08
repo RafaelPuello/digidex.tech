@@ -7,7 +7,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.urls import reverse
 
-from . import NTAG213, NTAG_IC_CHOICES, get_nfc_taggable_models
+from . import get_nfc_taggable_models
+from .constants import NTAG213, NTAG_IC_CHOICES
 from .validators import validate_serial_number, validate_integrated_circuit
 from .managers import NFCTagManager
 

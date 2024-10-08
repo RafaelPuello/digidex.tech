@@ -1,9 +1,9 @@
 <section class="section-top-bar">
-  <div class="top-bar-block">
-    <div class="top-bar">
-      {% for message in messages %}
-        <div class="info-top-bar">{{ message }}</div>
-      {% endfor %}
+  {% for message in messages %}
+    <div class="top-bar-block">
+      <div class="top-bar">
+          <div class="info-top-bar">{{ message }}</div>
+      </div>
     </div>
-  </div>
+  {% endfor %}
 </section>
