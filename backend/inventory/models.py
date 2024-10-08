@@ -99,7 +99,9 @@ class InventoryIndexPage(Page):
     parent_page_types = [
         'home.HomePage'
     ]
-    child_page_types = []
+    child_page_types = [
+        'inventory.InventoryBoxPage'
+    ]
 
     shared_panels = []
     private_panels = [
