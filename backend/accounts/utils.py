@@ -3,6 +3,7 @@ from django.contrib.auth.models import Group
 
 from base.utils import assign_group_permissions, assign_wagtail_group_permissions
 
+
 @transaction.atomic
 def setup_new_trainer(user):
     assign_user_permissions(user)

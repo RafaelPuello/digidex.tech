@@ -1,6 +1,6 @@
 import re
 from queryish.rest import APIModel
-from pygbif import species
+from pygbif import species  # noqa
 from wagtail.admin.viewsets.chooser import ChooserViewSet
 
 
@@ -36,4 +36,4 @@ class SpeciesChooserViewSet(ChooserViewSet):
     choose_one_text = "Choose a species"
 
 
-species_chooser_viewset = SpeciesChooserViewSet("species_chooser")
+species_chooser_viewset = SpeciesChooserViewSet("species_chooser")  # noqa
