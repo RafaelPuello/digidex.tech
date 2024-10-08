@@ -159,8 +159,8 @@ class InventoryIndexPage(Page):
         Returns:
             QuerySet: The plant queryset.
         """
-        from botany.models import Plant
-        plants_q = Plant.objects.filter(box__in=self.get_boxes())
+        from botany.models import UserPlant
+        plants_q = UserPlant.objects.filter(box__in=self.get_boxes())
 
         if not plants_q.exists():
             return plants_q.none()
@@ -267,8 +267,8 @@ class InventoryBoxPage(RoutablePageMixin, Page):
 
     @path('<slug:plant_slug>/')
     def plant_details(self, request, plant_slug):
-        from botany.models import Plant
-        plant = get_object_or_404(Plant, slug=plant_slug, box=self)
+        from botany.models import UserPlant
+        plant = get_object_or_404(UserPlant, slug=plant_slug, box=self)
         return self.render(
             request,
             context_overrides={'plant': plant},
@@ -276,8 +276,8 @@ class InventoryBoxPage(RoutablePageMixin, Page):
         )
 
     def get_plants(self):
-        from botany.models import Plant
-        return Plant.objects.filter(box=self)
+        from botany.models import UserPlant
+        return UserPlant.objects.filter(box=self)
 
     @property
     def collection(self):

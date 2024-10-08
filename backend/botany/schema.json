@@ -5,7 +5,7 @@
   "description": "Models for managing plants.",
   "type": "object",
   "definitions": {
-    "Plant": {
+    "UserPlant": {
       "type": "object",
       "properties": {
         "name": {
@@ -18,15 +18,62 @@
           "description": "A description of the plant",
           "maxLength": 10000
         },
+        "uuid": {
+          "type": "string",
+          "description": "Unique identifier for the plant",
+          "format": "uuid"
+        },
+        "slug": {
+          "type": "string",
+          "description": "Slugified version of the plant name",
+          "maxLength": 255
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the plant was created"
+        },
+        "last_modified": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the plant was last modified"
+        },
         "collection": {
           "type": "string",
-          "description": "The collection of the plant"
+          "description": "The collection the plant belongs to"
+        },
+        "url": {
+          "type": "string",
+          "description": "URL for accessing the plant",
+          "format": "uri"
         }
       },
-      "required": ["name"]
+      "required": ["name", "uuid", "slug", "created_at", "last_modified"]
+    },
+    "UserPlantGalleryImage": {
+      "type": "object",
+      "properties": {
+        "plant": {
+          "$ref": "#/definitions/UserPlant",
+          "description": "The plant associated with this gallery image"
+        },
+        "image": {
+          "type": "string",
+          "description": "URL or path to the gallery image",
+          "format": "uri"
+        }
+      },
+      "required": ["plant", "image"]
     }
   },
   "properties": {
-    "plants": { "$ref": "#/definitions/Plant" }
+    "plants": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/UserPlant" }
+    },
+    "plant_images": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/UserPlantGalleryImage" }
+    }
   }
 }

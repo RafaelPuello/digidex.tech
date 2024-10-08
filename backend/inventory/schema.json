@@ -23,9 +23,8 @@
       "type": "object",
       "properties": {
         "user_collection": {
-          "type": "object",
-          "description": "The associated InventoryIndexCollection object",
-          "$ref": "#/definitions/InventoryIndexCollection"
+          "$ref": "#/definitions/InventoryIndexCollection",
+          "description": "The associated InventoryIndexCollection object"
         },
         "title": {
           "type": "string",
@@ -34,6 +33,16 @@
         "slug": {
           "type": "string",
           "description": "The slug of the user page"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The date and time the page was created"
+        },
+        "last_modified": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The date and time the page was last modified"
         }
       },
       "required": ["user_collection", "title", "slug"]
@@ -41,27 +50,50 @@
     "InventoryBoxPage": {
       "type": "object",
       "properties": {
-        "name": {
+        "uuid": {
           "type": "string",
-          "description": "The name of the plant",
+          "format": "uuid",
+          "description": "Unique identifier for the inventory box"
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the inventory box"
+        },
+        "slug": {
+          "type": "string",
+          "description": "The slug for the inventory box page",
           "maxLength": 255
         },
         "description": {
           "type": "string",
-          "description": "A description of the plant",
+          "description": "A description of the inventory box",
           "maxLength": 10000
         },
         "collection": {
-          "type": "string",
-          "description": "The collection of the plant"
+          "$ref": "#/definitions/InventoryIndexCollection",
+          "description": "The collection associated with the inventory box"
+        },
+        "plants": {
+          "type": "array",
+          "items": {
+            "$ref": "https://digidex.tech/botany.schema.json#/definitions/UserPlant"
+          },
+          "description": "A list of plants associated with the inventory box"
         }
       },
-      "required": ["name"]
+      "required": ["uuid", "title", "slug"]
     }
   },
   "properties": {
-    "collection": { "$ref": "#/definitions/InventoryIndexCollection" },
-    "inventory": { "$ref": "#/definitions/InventoryIndexPage" },
-    "boxes": { "$ref": "#/definitions/InventoryBoxPage" }
+    "collection": {
+      "$ref": "#/definitions/InventoryIndexCollection"
+    },
+    "inventory": {
+      "$ref": "#/definitions/InventoryIndexPage"
+    },
+    "boxes": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/InventoryBoxPage" }
+    }
   }
 }
