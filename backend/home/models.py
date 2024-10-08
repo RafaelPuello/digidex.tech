@@ -25,9 +25,9 @@ class HomePage(Page):
     ]
     child_page_types = [
         'inventory.InventoryIndexPage',
+        'inventory.InventoryBoxPage',
         'blog.BlogIndexPage',
         'blog.TagIndexPage',
-        'botany.UserBoxPage',
         'company.CompanyIndexPage',
         'support.ContactFormPage',
     ]

@@ -1,7 +1,4 @@
 import uuid
-import re
-from queryish.rest import APIModel
-# from pygbif import species
 from django.db import models
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
@@ -13,34 +10,7 @@ from wagtail.search import index
 from base.models import GalleryImageMixin
 
 
-class PlantSpecies(APIModel):
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        base_url = "https://pokeapi.co/api/v2/pokemon/"
-        detail_url = "https://pokeapi.co/api/v2/pokemon/%s/"
-        fields = ["id", "name"]
-        pagination_style = "offset-limit"
-        verbose_name_plural = "plant species"
-
-    @classmethod
-    def from_query_data(cls, data):
-        return cls(
-            id=int(re.match(r'https://pokeapi.co/api/v2/pokemon/(\d+)/', data['url']).group(1)),
-            name=data['name'],
-        )
-
-    @classmethod
-    def from_individual_data(cls, data):
-        return cls(
-            id=data['id'],
-            name=data['name'],
-        )
-
-
-class Plant(
+class UserPlant(
     Orderable,
     ClusterableModel,
     index.Indexed,
@@ -139,9 +109,9 @@ class Plant(
         return self.box.collection
 
 
-class PlantGalleryImage(GalleryImageMixin):
+class UserPlantGalleryImage(GalleryImageMixin):
     plant = ParentalKey(
-        Plant,
+        UserPlant,
         on_delete=models.CASCADE,
         related_name='gallery_images'
     )

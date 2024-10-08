@@ -1,21 +1,12 @@
-from wagtail.admin.viewsets.chooser import ChooserViewSet
 from wagtail.admin.panels import TabbedInterface, FieldPanel, InlinePanel, ObjectList
 from wagtail.snippets.views.chooser import SnippetChooserViewSet
 from wagtail.snippets.views.snippets import SnippetViewSet
 
-from .models import PlantSpecies, Plant
+from ..models import UserPlant
 
 
-class PlantSpeciesChooserViewSet(ChooserViewSet):
-    model = PlantSpecies
-    choose_one_text = "Choose a plant"
-
-
-plant_species_chooser_viewset = PlantSpeciesChooserViewSet("plant_species")
-
-
-class PlantChooserViewSet(SnippetChooserViewSet):
-    model = Plant
+class UserPlantChooserViewSet(SnippetChooserViewSet):
+    model = UserPlant
     icon = "plant"
     choose_one_text = "Choose a plant"
     edit_item_text = "Edit this plant"
@@ -31,8 +22,8 @@ class PlantChooserViewSet(SnippetChooserViewSet):
         super().__init__(*args, **kwargs)
 
 
-class PlantViewSet(SnippetViewSet):
-    model = Plant
+class UserPlantViewSet(SnippetViewSet):
+    model = UserPlant
     icon = "plant"
     menu_label = "Plants"
     menu_name = "plants"
@@ -44,7 +35,7 @@ class PlantViewSet(SnippetViewSet):
     admin_url_namespace = "plants"
     base_url_path = "inventory/plants"
     add_to_admin_menu = True
-    chooser_viewset_class = PlantChooserViewSet
+    chooser_viewset_class = UserPlantChooserViewSet
 
     public_panels = [
         FieldPanel("box"),
@@ -64,5 +55,5 @@ class PlantViewSet(SnippetViewSet):
     )
 
     def get_queryset(self, request):
-        queryset = Plant.objects.filter(box__owner=request.user)
+        queryset = UserPlant.objects.filter(box__owner=request.user)
         return queryset

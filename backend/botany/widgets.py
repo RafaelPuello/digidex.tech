@@ -1,3 +1,4 @@
-from .viewsets import PlantChooserViewSet
+from .viewsets import UserPlantChooserViewSet, species_chooser_viewset
 
-PlantChooserWidget = PlantChooserViewSet.widget_class # noqa F405
+SpeciesChooserWidget = species_chooser_viewset.widget_class
+UserPlantChooserWidget = UserPlantChooserViewSet.widget_class # noqa F405
