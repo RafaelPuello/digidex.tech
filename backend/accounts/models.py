@@ -31,6 +31,19 @@ class User(AbstractUser):
         db_index=True,
     )
 
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} ({self.username})"
+
+    class Meta:
+        verbose_name = _('user')
+        verbose_name_plural = _('users')
+
+    @transaction.atomic
+    def delete(self, *args, **kwargs):
+        group = self.get_group()
+        group.delete()
+        super().delete(*args, **kwargs)
+
     def get_page(self):
         from inventory.models import InventoryIndexPage
         return InventoryIndexPage.get_for_user(self)
@@ -43,32 +56,8 @@ class User(AbstractUser):
         from inventory.models import InventoryBoxPage
         return InventoryBoxPage.objects.filter(owner=self)
 
-    def get_user_group(self):
-        return self.get_group(self.uuid)
-
-    def delete_user_group(self):
-        group = self.get_user_group()
-        group.delete()
-
-    def add_to_group(self, group_name):
-        group = self.get_group(group_name)
-        if not self.groups.filter(id=group.id).exists():
-            self.groups.add(group)
-
-    def get_group(self, group_name):
-        group, created = Group.objects.get_or_create(name=group_name)
+    def get_group(self):
+        group, created = Group.objects.get_or_create(name=self.uuid)
         if created:
-            pass
+            self.groups.add(group)
         return group
-
-    def delete(self, *args, **kwargs):
-        with transaction.atomic():
-            self.delete_user_group()
-            super().delete(*args, **kwargs)
-
-    def __str__(self):
-        return f"{self.first_name} {self.last_name} ({self.username})"
-
-    class Meta:
-        verbose_name = _('user')
-        verbose_name_plural = _('users')
