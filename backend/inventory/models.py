@@ -1,5 +1,5 @@
 import uuid
-from django.db import models
+from django.db import models, transaction
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.utils.text import slugify
@@ -7,6 +7,8 @@ from django.utils.translation import gettext_lazy as _
 from wagtail.models import Page
 from wagtail.admin.panels import FieldPanel, TabbedInterface, TitleFieldPanel, ObjectList
 from wagtail.contrib.routable_page.models import RoutablePageMixin, path
+from wagtail.images import get_image_model
+from wagtail.documents import get_document_model
 
 from base.models import CollectionMixin
 
@@ -30,6 +32,23 @@ class InventoryIndexCollection(CollectionMixin, models.Model):
         if not self.collection:
             self.collection = self.get_for_user(self.user)
         super().save(*args, **kwargs)
+
+    @transaction.atomic
+    def delete(self, *args, **kwargs):
+        # Delete all images associated with this collection
+        get_image_model().objects.filter(collection=self.collection).delete()
+
+        # Delete all documents associated with this collection
+        get_document_model().objects.filter(collection=self.collection).delete()
+
+        # Delete all pages associated with this collection
+        self.page.delete()
+
+        # Delete the collection itself
+        self.collection.delete()
+
+        # Proceed with the deletion of the index collection
+        super().delete(*args, **kwargs)
 
     @classmethod
     def get_parent_collection(cls):
