@@ -22,7 +22,7 @@ class NFCTagMemorySerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = NFCTagMemory
-        fields = ['uuid', 'ntag', 'eeprom', 'created_at', 'last_modified']
+        fields = ['uuid', 'ntag', 'eeprom']
 
 
 class NFCTagSerializer(serializers.ModelSerializer):

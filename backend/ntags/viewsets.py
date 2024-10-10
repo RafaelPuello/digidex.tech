@@ -1,96 +1,51 @@
-from rest_framework import status, viewsets, permissions
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.response import Response
-
-from rest_framework.decorators import action
-from django.contrib.contenttypes.models import ContentType
-from django.shortcuts import redirect
+from wagtail.admin.panels import TabbedInterface, FieldPanel, ObjectList
+from wagtail.snippets.views.snippets import SnippetViewSet
 
 from .models import NFCTag
-from .serializers import NFCTagSerializer
+from .forms import NFCTagAdminForm
 
 
-class NFCTagViewSet(viewsets.ModelViewSet):
-    """
-    A viewset for viewing, creating, and linking NFC tags.
-    """
-    queryset = NFCTag.objects.all()
-    serializer_class = NFCTagSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    authentication_classes = [JWTAuthentication]
-    lookup_field = 'serial_number'
+class NFCTagSnippetViewSet(SnippetViewSet):
 
-    def get_queryset(self):
-        if self.request.user.is_superuser:
-            return NFCTag.objects.all()
-        return NFCTag.objects.filter(
-            user=self.request.user,
-            active=True
-        )
+    model = NFCTag
+    icon = "nfc-icon"
+    menu_label = "NFC Tags"
+    menu_name = "ntags"
+    menu_order = 130
+    copy_view_enabled = False
+    list_filter = {"label": ["icontains"]}
+    list_display = ["label", "serial_number"]
+    list_per_page = 25
+    admin_url_namespace = "nfc_tags"
+    base_url_path = "nfc-tags"
+    add_to_admin_menu = True
 
-    def create(self, request, *args, **kwargs):
-        """
-        Create a new NFC tag with the provided serial number.
-        """
-        serial_number = request.data.get('serial_number')
+    content_panels = [
+        FieldPanel("label"),
+        FieldPanel("content_type"),
+        FieldPanel("item")
+    ]
 
-        if not serial_number:
-            return Response({"error": "Serial Number not provided."}, status=status.HTTP_400_BAD_REQUEST)
+    settings_panels = [
+        FieldPanel("active")
+    ]
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(content_panels, heading='Details'),
+            ObjectList(settings_panels, heading='Status'),
+        ]
+    )
 
-        ntag, created = NFCTag.objects.update_or_create(
-            serial_number=serial_number
-        )
+    def get_form_class(self, for_update=False):
+        return NFCTagAdminForm
 
-        serializer = self.get_serializer(ntag, context={'request': request})
-        return Response(serializer.data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if qs is None:
+            qs = self.model.objects.all()
 
-    def destroy(self, request, *args, **kwargs):
-        """
-        Perform actual deletion if the user is a superuser, otherwise set
-        the NFC tag's active status to False.
-        """
-        instance = self.get_object()
-
-        if request.user.is_superuser:
-            # Perform the usual delete if the user is a superuser
-            return super().destroy(request, *args, **kwargs)
+        user = request.user
+        if user.is_superuser:
+            return qs
         else:
-            # For regular users, set 'active' to False instead of deleting
-            instance.active = False
-            instance.save()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-
-    @action(detail=False, methods=['get'], url_path='link')
-    def link(self, request):
-        """
-        Custom action to link an NTAG using the ASCII Mirror embedded in the NTAG's URL.
-        """
-        mirrored_values = request.GET.get('m', None)
-
-        if not mirrored_values:
-            return Response({"error": "Invalid mirror values."}, status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            ntag = NFCTag.objects.get_from_mirror(mirrored_values)
-            return redirect(ntag.url)
-        except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-    @action(detail=False, methods=['get'], url_path=r'linkable-objects/(?P<objects_id>\d+)')
-    def get_linkable_objects(self, request, objects_id=None):
-        """
-        Custom action to get the objects that can be linked to an NTAG.
-        """
-        try:
-            content_type = ContentType.objects.get(id=objects_id)
-            model_class = content_type.model_class()
-            objects = model_class.objects.all()
-
-            data = {
-                'objects': [{'id': obj.id, 'name': str(obj)} for obj in objects]
-            }
-
-            return Response(data)
-
-        except ContentType.DoesNotExist:
-            return Response({'error': 'Invalid content type'}, status=status.HTTP_400_BAD_REQUEST)
+            return qs.filter(user=user)

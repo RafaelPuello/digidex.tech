@@ -39,12 +39,6 @@ class UserPlant(
         max_length=255,
         db_index=True
     )
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
-    last_modified = models.DateTimeField(
-        auto_now=True
-    )
 
     search_fields = [
         index.SearchField('name'),

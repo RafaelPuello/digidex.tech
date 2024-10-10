@@ -14,12 +14,6 @@ NTAG_EEPROM_SIZES = {
     NTAG216: 924,
 }
 
-NTAG_FILTER_METHODS = [
-    'uid',
-    'counter',
-    'uid_counter'
-]
-
 NTAG_PERMISSIONS = [
     'change_nfctag',
 ]

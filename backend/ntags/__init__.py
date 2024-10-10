@@ -1,21 +1,6 @@
 import warnings
 from django.conf import settings
-from .constants import NTAG_FILTER_METHODS
 
-
-def get_nfc_tag_filter_method():
-    """
-    Returns the method to filter NFC tags that are active in this project.
-    """
-    filter_method =  getattr(settings, 'NFC_TAG_FILTER_METHOD', 'uid')
-    if filter_method not in NTAG_FILTER_METHODS:
-        warnings.warn(
-            f"Invalid NFC_TAG_FILTER_METHOD '{filter_method}'. "
-            f"Falling back to default 'uid'. Valid options are: {NTAG_FILTER_METHODS}",
-            UserWarning
-        )
-        return 'uid'
-    return filter_method
 
 def get_nfc_taggable_model_strings():
     """

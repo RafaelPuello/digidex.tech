@@ -12,15 +12,20 @@ def link_nfc_tag(request):
     Link an NTAG using the ASCII Mirror embedded in the NTAG's URL.
     """
     mirrored_values = request.GET.get('m', None)
-    if not mirrored_values:
+
+    if not mirrored_values or 'x' not in mirrored_values:
         messages.error(request, _('Invalid mirror values.'))
         return redirect('/')
 
+    uid, counter = mirrored_values.split('x')
+
     try:
-        ntag = NFCTag.objects.get_from_mirror(mirrored_values)
+        ntag = NFCTag.objects.get(serial_number=uid)
+        ntag.log_scan(request.user, counter)
         return redirect(ntag.url)
-    except Exception as e:
-        messages.error(request, str(e))
+
+    except NFCTag.objects.model.DoesNotExist:
+        messages.error(request, _('NFC Tag not found.'))
         return redirect('/')
 
 
