@@ -20,7 +20,8 @@ class UserPlant(
     box = models.ForeignKey(
         'inventory.InventoryBoxPage',
         related_name='plants',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        blank=True
     )
     name = models.CharField(
         max_length=255,
@@ -34,16 +35,6 @@ class UserPlant(
         editable=False,
         unique=True,
         db_index=True
-    )
-    slug = models.SlugField(
-        max_length=255,
-        db_index=True
-    )
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
-    last_modified = models.DateTimeField(
-        auto_now=True
     )
 
     search_fields = [
@@ -59,17 +50,10 @@ class UserPlant(
         verbose_name_plural = _('plants')
         indexes = [
             models.Index(fields=['box', 'name']),
-            models.Index(fields=['box', 'slug']),
         ]
         constraints = [
             models.UniqueConstraint(fields=['box', 'name'], name='unique_plant_name_in_box'),
-            models.UniqueConstraint(fields=['box', 'slug'], name='unique_plant_slug_in_box')
         ]
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name)
-        super().save(*args, **kwargs)
 
     def get_preview_template(self, request, mode_name):
         return "botany/user_plant.html"
@@ -99,14 +83,14 @@ class UserPlant(
         return self.get_url()
 
     def get_url(self):
-        return self.box.url + self.slug + '/'
+        return self.box.url + slugify(self.name) + '/'
 
     @property
     def collection(self):
         return self.get_parent_collection()
 
     def get_parent_collection(self):
-        return self.box.collection
+        return self.user.collection
 
 
 class UserPlantGalleryImage(GalleryImageMixin):

@@ -148,12 +148,6 @@ class NFCTagMemory(models.Model):
     eeprom = models.BinaryField(
         max_length=924,
     )
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
-    last_modified = models.DateTimeField(
-        auto_now=True
-    )
 
     def __str__(self):
         return str(self.ntag)

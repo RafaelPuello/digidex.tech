@@ -3,7 +3,7 @@ from wagtail.snippets.models import register_snippet
 from django.templatetags.static import static
 from django.utils.html import format_html
 
-from .snippets import NFCTagSnippetViewSet
+from .viewsets import NFCTagSnippetViewSet
 
 
 @hooks.register("insert_editor_js")

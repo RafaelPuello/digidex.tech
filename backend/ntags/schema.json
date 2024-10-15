@@ -36,7 +36,7 @@
           "minimum": 1
         }
       },
-      "required": ["serial_number"]
+      "required": ["serial_number", "integrated_circuit", "active"]
     },
     "NFCTagScan": {
       "type": "object",
@@ -85,7 +85,7 @@
           "format": "date-time"
         }
       },
-      "required": ["uuid", "ntag", "eeprom", "created_at", "last_modified"]
+      "required": ["uuid", "ntag", "eeprom"]
     }
   },
   "properties": {

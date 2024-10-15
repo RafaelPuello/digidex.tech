@@ -22,33 +22,9 @@
           "type": "string",
           "description": "Unique identifier for the plant",
           "format": "uuid"
-        },
-        "slug": {
-          "type": "string",
-          "description": "Slugified version of the plant name",
-          "maxLength": 255
-        },
-        "created_at": {
-          "type": "string",
-          "format": "date-time",
-          "description": "Timestamp when the plant was created"
-        },
-        "last_modified": {
-          "type": "string",
-          "format": "date-time",
-          "description": "Timestamp when the plant was last modified"
-        },
-        "collection": {
-          "type": "string",
-          "description": "The collection the plant belongs to"
-        },
-        "url": {
-          "type": "string",
-          "description": "URL for accessing the plant",
-          "format": "uri"
         }
       },
-      "required": ["name", "uuid", "slug", "created_at", "last_modified"]
+      "required": ["name", "uuid"]
     },
     "UserPlantGalleryImage": {
       "type": "object",
