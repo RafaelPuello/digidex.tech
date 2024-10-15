@@ -6,11 +6,14 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.urls import reverse
+from django.contrib.auth import get_user_model
 
 from . import get_nfc_taggable_models
 from .constants import NTAG213, NTAG_IC_CHOICES
 from .validators import validate_serial_number, validate_integrated_circuit
 from .managers import NFCTagManager
+
+User = get_user_model()
 
 
 class BaseNFCTag(models.Model):
@@ -104,11 +107,20 @@ class BaseNFCTag(models.Model):
 
 class NFCTag(BaseNFCTag):
 
-    def log_scan(self, counter, user):
+    def log_scan(self, counter, user=None):
+        if user is not None:
+            try:
+                return NFCTagScan.objects.create(
+                    ntag=self,
+                    counter=counter,
+                    scanned_by=user
+                )
+            except ValueError:
+                raise TypeError("User must be a User instance or None")
+
         return NFCTagScan.objects.create(
             ntag=self,
-            counter=counter,
-            scanned_by=user
+            counter=counter
         )
 
     def get_url(self):
