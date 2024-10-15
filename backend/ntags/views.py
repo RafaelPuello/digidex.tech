@@ -21,7 +21,7 @@ def link_nfc_tag(request):
 
     try:
         ntag = NFCTag.objects.get(serial_number=uid)
-        ntag.log_scan(request.user, counter)
+        ntag.log_scan(counter, request.user)
         return redirect(ntag.url)
 
     except NFCTag.objects.model.DoesNotExist:
