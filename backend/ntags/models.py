@@ -110,7 +110,7 @@ class NFCTag(BaseNFCTag):
     def log_scan(self, counter, user=None):
         scan_data = {
             'ntag': self,
-            'counter': counter
+            'counter': self.clean_scan_counter(counter)
         }
 
         if user is not None and isinstance(user, User):
@@ -121,6 +121,18 @@ class NFCTag(BaseNFCTag):
         except Exception as e:
             raise e
 
+    def clean_scan_counter(self, counter):
+        if isinstance(counter, int):
+            return counter
+
+        # If counter is bytes, decode to string and convert to int
+        elif isinstance(counter, bytes):
+            try:
+                return int(counter.decode('utf-8'))
+            except ValueError:
+                raise ValueError("Counter bytes data is not a valid integer")
+        else:
+            raise TypeError("Counter must be an int or bytes")
 
     def get_url(self):
         if self.content_object:
