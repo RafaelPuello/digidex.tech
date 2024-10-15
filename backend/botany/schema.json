@@ -22,14 +22,9 @@
           "type": "string",
           "description": "Unique identifier for the plant",
           "format": "uuid"
-        },
-        "slug": {
-          "type": "string",
-          "description": "Slugified version of the plant name",
-          "maxLength": 255
         }
       },
-      "required": ["name", "uuid", "slug"]
+      "required": ["name", "uuid"]
     },
     "UserPlantGalleryImage": {
       "type": "object",

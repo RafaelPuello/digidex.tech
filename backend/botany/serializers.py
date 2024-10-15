@@ -29,4 +29,4 @@ class UserPlantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserPlant
-        fields = ['id', 'user', 'name', 'description', 'gallery_images']
+        fields = ['id', 'box', 'name', 'description', 'gallery_images']

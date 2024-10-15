@@ -18,10 +18,11 @@ class UserPlant(
     TranslatableMixin,
     PreviewableMixin
 ):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+    box = models.ForeignKey(
+        'inventory.InventoryBoxPage',
         related_name='plants',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        blank=True
     )
     name = models.CharField(
         max_length=255,
@@ -34,10 +35,6 @@ class UserPlant(
         default=uuid.uuid4,
         editable=False,
         unique=True,
-        db_index=True
-    )
-    slug = models.SlugField(
-        max_length=255,
         db_index=True
     )
 
@@ -53,18 +50,11 @@ class UserPlant(
         verbose_name = _('plant')
         verbose_name_plural = _('plants')
         indexes = [
-            models.Index(fields=['user', 'name']),
-            models.Index(fields=['user', 'slug']),
+            models.Index(fields=['box', 'name']),
         ]
         constraints = [
-            models.UniqueConstraint(fields=['user', 'name'], name='unique_plant_name_user'),
-            models.UniqueConstraint(fields=['user', 'slug'], name='unique_plant_slug_user')
+            models.UniqueConstraint(fields=['box', 'name'], name='unique_plant_name_in_box'),
         ]
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name)
-        super().save(*args, **kwargs)
 
     def get_preview_template(self, request, mode_name):
         return "botany/user_plant.html"
@@ -94,8 +84,7 @@ class UserPlant(
         return self.get_url()
 
     def get_url(self):
-        page = self.user.get_page()
-        return page.url + self.slug + '/'
+        return self.box.url + slugify(self.name) + '/'
 
     @property
     def collection(self):
