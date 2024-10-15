@@ -30,6 +30,17 @@
     <link rel="stylesheet" type="text/css" href="{% static 'base/css/digidex.css' %}">
     {% block extra_css %}{% endblock  %}
   </head>
+  {% if messages %}
+    <section class="section-top-bar">
+      <div class="top-bar-block">
+        <div class="top-bar">
+          {% for message in messages %}
+            <div class="info-top-bar">{{ message }}</div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+  {% endif %}
   {% block body %}
     <body>
       <a href="/" class="brand-center w-nav-brand">
