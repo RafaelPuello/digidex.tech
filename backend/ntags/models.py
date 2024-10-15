@@ -108,20 +108,19 @@ class BaseNFCTag(models.Model):
 class NFCTag(BaseNFCTag):
 
     def log_scan(self, counter, user=None):
-        if user is not None:
-            try:
-                return NFCTagScan.objects.create(
-                    ntag=self,
-                    counter=counter,
-                    scanned_by=user
-                )
-            except ValueError:
-                raise TypeError("User must be a User instance or None")
+        scan_data = {
+            'ntag': self,
+            'counter': counter
+        }
 
-        return NFCTagScan.objects.create(
-            ntag=self,
-            counter=counter
-        )
+        if user is not None and isinstance(user, User):
+            scan_data['scanned_by'] = user
+
+        try:
+            return NFCTagScan.objects.create(**scan_data)
+        except Exception as e:
+            raise e
+
 
     def get_url(self):
         if self.content_object:
@@ -195,3 +194,8 @@ class NFCTagScan(models.Model):
     class Meta:
         verbose_name = _("scan")
         verbose_name_plural = _("scans")
+        constraints = [
+            models.UniqueConstraint(
+                fields=['ntag', 'counter'], name='unique_ntag_counter'
+            )
+        ]
