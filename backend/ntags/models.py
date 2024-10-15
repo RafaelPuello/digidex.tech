@@ -125,14 +125,23 @@ class NFCTag(BaseNFCTag):
         if isinstance(counter, int):
             return counter
 
-        # If counter is bytes, decode to string and convert to int
+        # If counter is bytes, decode to a string and convert to int
         elif isinstance(counter, bytes):
             try:
                 return int(counter.decode('utf-8'))
             except ValueError:
                 raise ValueError("Counter bytes data is not a valid integer")
+
+        # If counter is a string, directly convert it to an integer
+        elif isinstance(counter, str):
+            try:
+                return int(counter, 16)  # Convert from hex if necessary
+            except ValueError:
+                raise ValueError("Counter string data is not a valid integer")
+
+        # Raise a TypeError if counter is none of the above types
         else:
-            raise TypeError("Counter must be an int or bytes")
+            raise TypeError("Counter must be an int, bytes, or str")
 
     def get_url(self):
         if self.content_object:
