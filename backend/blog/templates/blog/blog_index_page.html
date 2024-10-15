@@ -21,7 +21,7 @@
                   {% if main_image %}
                     {% image main_image original class="image-post-thumbnail large" %}
                   {% else %}
-                    <img alt="Featured blog post placeholder" loading="lazy" decoding="async" src="{% static 'blog/placeholder.svg' %}" class="image-post-thumbnail">
+                    <img alt="Featured blog post placeholder" loading="lazy" decoding="async" src="{% static 'base/images/placeholder.svg' %}" class="image-post-thumbnail">
                   {% endif %}
                 {% endwith %}
               </a>
@@ -53,7 +53,7 @@
                       {% if main_image %}
                         {% image main_image original class="image-post-thumbnail" %}
                       {% else %}
-                        <img alt="Blog Post Placeholder" loading="eager" decoding="async" src="{% static 'blog/placeholder.svg' %}" class="image-post-thumbnail">
+                        <img alt="Blog Post Placeholder" loading="eager" decoding="async" src="{% static 'base/images/placeholder.svg' %}" class="image-post-thumbnail">
                       {% endif %}
                     {% endwith %}
                   </a>
