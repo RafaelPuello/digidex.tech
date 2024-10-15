@@ -29,13 +29,19 @@ def assign_user_permissions(user):
 
 
 def assign_trainer_permissions(user):
+    NTAG_PERMISSIONS = [
+        'change_nfctag', 'view_nfctagdesign', 'view_nfctagscan'
+    ]
+
+    BOTANY_PERMISSIONS = [
+        'add_plant', 'change_plant', 'delete_plant', 'view_plant'
+    ]
+
     group, created = Group.objects.get_or_create(name='Trainers')
     if created:
         # Assign botany permissions for all trainers
-        from botany.constants import BOTANY_PERMISSIONS
         assign_group_permissions(group, BOTANY_PERMISSIONS)
 
         # Assign ntag permissions for all trainers
-        from ntags.constants import NTAG_PERMISSIONS
         assign_group_permissions(group, NTAG_PERMISSIONS)
     user.groups.add(group)
