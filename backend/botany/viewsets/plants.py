@@ -38,7 +38,7 @@ class UserPlantViewSet(SnippetViewSet):
     chooser_viewset_class = UserPlantChooserViewSet
 
     public_panels = [
-        FieldPanel("box"),
+        FieldPanel("user"),
         FieldPanel("name"),
         FieldPanel("description"),
         InlinePanel("gallery_images", label="Images"),
@@ -55,5 +55,5 @@ class UserPlantViewSet(SnippetViewSet):
     )
 
     def get_queryset(self, request):
-        queryset = UserPlant.objects.filter(box__owner=request.user)
+        queryset = UserPlant.objects.filter(user=request.user)
         return queryset

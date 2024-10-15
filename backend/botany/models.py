@@ -1,5 +1,6 @@
 import uuid
 from django.db import models
+from django.conf import settings
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from modelcluster.models import ClusterableModel
@@ -17,8 +18,8 @@ class UserPlant(
     TranslatableMixin,
     PreviewableMixin
 ):
-    box = models.ForeignKey(
-        'inventory.InventoryBoxPage',
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
         related_name='plants',
         on_delete=models.CASCADE
     )
@@ -52,12 +53,12 @@ class UserPlant(
         verbose_name = _('plant')
         verbose_name_plural = _('plants')
         indexes = [
-            models.Index(fields=['box', 'name']),
-            models.Index(fields=['box', 'slug']),
+            models.Index(fields=['user', 'name']),
+            models.Index(fields=['user', 'slug']),
         ]
         constraints = [
-            models.UniqueConstraint(fields=['box', 'name'], name='unique_plant_name_in_box'),
-            models.UniqueConstraint(fields=['box', 'slug'], name='unique_plant_slug_in_box')
+            models.UniqueConstraint(fields=['user', 'name'], name='unique_plant_name_user'),
+            models.UniqueConstraint(fields=['user', 'slug'], name='unique_plant_slug_user')
         ]
 
     def save(self, *args, **kwargs):
@@ -93,14 +94,15 @@ class UserPlant(
         return self.get_url()
 
     def get_url(self):
-        return self.box.url + self.slug + '/'
+        page = self.user.get_page()
+        return page.url + self.slug + '/'
 
     @property
     def collection(self):
         return self.get_parent_collection()
 
     def get_parent_collection(self):
-        return self.box.collection
+        return self.user.collection
 
 
 class UserPlantGalleryImage(GalleryImageMixin):
