@@ -7,7 +7,9 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.urls import reverse
 from django.contrib.auth import get_user_model
-
+from modelcluster.fields import ParentalKey
+from modelcluster.models import ClusterableModel
+from base.models import GalleryImageMixin
 from . import get_nfc_taggable_models
 from .constants import NTAG213, NTAG_IC_CHOICES
 from .validators import validate_serial_number, validate_integrated_circuit
@@ -32,6 +34,13 @@ class BaseNFCTag(models.Model):
         choices=NTAG_IC_CHOICES,
         default=NTAG213,
         validators=[validate_integrated_circuit]
+    )
+    design = models.ForeignKey(
+        'NFCTagDesign',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='ntags'
     )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -220,3 +229,45 @@ class NFCTagScan(models.Model):
                 fields=['ntag', 'counter'], name='unique_ntag_counter'
             )
         ]
+
+
+class NFCTagDesign(ClusterableModel):
+
+    name = models.CharField(
+        max_length=64,
+        unique=True
+    )
+    description = models.TextField(
+        blank=True,
+        null=True
+    )
+    designer = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='ntag_designs'
+    )
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _("ntag design")
+        verbose_name_plural = _("ntag designs")
+        ordering = ['name']
+
+
+class NFCTagDesignGalleryImage(GalleryImageMixin):
+    design = ParentalKey(
+        NFCTagDesign,
+        on_delete=models.CASCADE,
+        related_name='gallery_images'
+    )
+
+    def get_image_rendition(self, spec):
+        """
+        Generates an image rendition based on a given spec string
+        (e.g., "fill-300x300").
+        """
+        return self.image.get_rendition(spec)
