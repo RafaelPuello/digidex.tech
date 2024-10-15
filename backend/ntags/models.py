@@ -248,6 +248,7 @@ class NFCTagDesign(ClusterableModel):
         blank=True,
         related_name='ntag_designs'
     )
+
     def __str__(self):
         return self.name
 
@@ -255,7 +256,6 @@ class NFCTagDesign(ClusterableModel):
         verbose_name = _("ntag design")
         verbose_name_plural = _("ntag designs")
         ordering = ['name']
-
 
 
 class NFCTagDesignGalleryImage(GalleryImageMixin):
