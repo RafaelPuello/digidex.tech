@@ -252,8 +252,8 @@ class NFCTagDesign(ClusterableModel):
         return self.name
 
     class Meta:
-        verbose_name = _("tag type")
-        verbose_name_plural = _("tag types")
+        verbose_name = _("ntag design")
+        verbose_name_plural = _("ntag designs")
         ordering = ['name']
 
 
@@ -264,9 +264,6 @@ class NFCTagDesignGalleryImage(GalleryImageMixin):
         on_delete=models.CASCADE,
         related_name='gallery_images'
     )
-
-    class Meta(GalleryImageMixin.Meta):
-        abstract = False
 
     def get_image_rendition(self, spec):
         """
