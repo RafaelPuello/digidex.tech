@@ -20,10 +20,10 @@ def assign_user_permissions(user):
 
     group = user.get_group()
     assign_trainer_permissions(user)
-    
+
     page = user.get_page()
     assign_wagtail_group_permissions(group, page, PAGE_PERMISSIONS)
-    
+
     collection = user.get_collection().collection
     assign_wagtail_group_permissions(group, collection, COLLECTION_PERMISSIONS)
 
