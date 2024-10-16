@@ -2,7 +2,7 @@ from wagtail.admin.panels import TabbedInterface, FieldPanel, ObjectList, Inline
 from wagtail.snippets.views.snippets import SnippetViewSet, SnippetViewSetGroup
 
 from .models import NFCTag, NFCTagDesign, NFCTagScan
-# from .forms import NFCTagAdminForm
+from .forms import NFCTagAdminForm
 
 
 class NFCTagSnippetViewSet(SnippetViewSet):
@@ -25,6 +25,8 @@ class NFCTagSnippetViewSet(SnippetViewSet):
 
     content_panels = [
         FieldPanel("label"),
+        FieldPanel("content_type"),
+        FieldPanel("item")
     ]
 
     settings_panels = [
@@ -38,8 +40,8 @@ class NFCTagSnippetViewSet(SnippetViewSet):
         ]
     )
 
-    # def get_form_class(self, for_update=False):
-    #     return NFCTagAdminForm
+    def get_form_class(self, for_update=False):
+        return NFCTagAdminForm
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)

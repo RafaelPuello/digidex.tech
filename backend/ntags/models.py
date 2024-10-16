@@ -18,7 +18,9 @@ from .managers import NFCTagManager
 User = get_user_model()
 
 
-class BaseNFCTag(models.Model):
+class BaseNFCTag(ClusterableModel):
+
+    limited_options = get_nfc_taggable_models
 
     serial_number = models.CharField(
         max_length=32,
@@ -47,6 +49,24 @@ class BaseNFCTag(models.Model):
     eeprom = models.JSONField(
         default=dict,
     )
+    content_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        verbose_name=_("Content type"),
+        limit_choices_to=limited_options,
+        null=True,
+        blank=True,
+        related_name="nfc_tags"
+    )
+    object_id = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        db_index=True
+    )
+    content_object = GenericForeignKey(
+        "content_type",
+        "object_id"
+    )
 
     objects = NFCTagManager()
 
@@ -61,6 +81,12 @@ class BaseNFCTag(models.Model):
 
     class Meta:
         abstract = True
+        constraints = [
+            models.UniqueConstraint(
+                fields=['content_type', 'object_id'],
+                name='unique_content_object'
+            )
+        ]
 
     def log_scan(self, counter, user):
         raise NotImplementedError("Method 'log_scan' must be implemented in a subclass.")
@@ -138,19 +164,14 @@ class NFCTag(BaseNFCTag):
         else:
             raise TypeError("Counter must be an int, bytes, or str")
 
-    def get_tagged_items(self):
-        return self.tagged_items.all()
-
     def get_url(self):
-        _object = self.get_tagged_items().first()
-
-        if _object and _object.content_object:
-            return self.get_page_url(_object)
+        if self.content_object:
+            return self.get_page_url()
         return self.get_edit_url()
 
-    def get_page_url(self, _object):
-        if hasattr(_object, 'url'):
-            return _object.url
+    def get_page_url(self):
+        if hasattr(self.content_object, 'url'):
+            return self.content_object.url
 
     def get_edit_url(self):
         return self.get_admin_url('edit')
@@ -162,49 +183,6 @@ class NFCTag(BaseNFCTag):
         viewset = self.snippet_viewset
         url_name = viewset.get_url_name(action)
         return reverse(url_name, args=[self.pk])
-
-
-class BaseNFCTaggedItem(models.Model):
-
-    nfc_tag = models.ForeignKey(
-        NFCTag,
-        related_name="tagged_items",
-        on_delete=models.CASCADE
-    )
-    
-    class Meta:
-        abstract = True
-
-    def __str__(self):
-        return f"Item tagged with NFC Tag: {self.nfc_tag}"
-
-
-class NFCTaggedItem(BaseNFCTaggedItem):
-
-    limited_options = get_nfc_taggable_models
-
-    content_type = models.ForeignKey(
-        ContentType,
-        on_delete=models.CASCADE,
-        verbose_name=_("Content type"),
-        limit_choices_to=limited_options,
-        related_name="nfc_tags"
-    )
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey(
-        "content_type",
-        "object_id"
-    )
-
-    class Meta:
-        verbose_name = _("NFC Tagged Item")
-        verbose_name_plural = _("NFC Tagged Items")
-        constraints = [
-            models.UniqueConstraint(
-                fields=['content_type', 'object_id', 'nfc_tag'],
-                name='unique_content_object'
-            )
-        ]
 
 
 class NFCTagScan(models.Model):
