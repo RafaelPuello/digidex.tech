@@ -38,14 +38,7 @@
       {% block content %}{% endblock %}
     </main>
     <footer role="contentinfo">
-        <section class="section-footer">
-          <div class="content">
-            <div class="block-footer"></div>
-            <div class="block-footer-down">
-              <div class="text-footer-down">All rights reserved. Built with <a href="https://wagtail.org/" target="_blank" class="link-footer-down">Wagtail</a><br></div>
-            </div>
-          </div>
-        </section>
-      </footer>
+      {% include "base/includes/footer.html" %}
+    </footer>
   </body>
 {% endblock  %}

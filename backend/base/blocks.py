@@ -3,16 +3,21 @@ from wagtail.blocks import (
     ChoiceBlock,
     RichTextBlock,
     StreamBlock,
-    StructBlock,
+    StructBlock
 )
-from wagtail.embeds.blocks import EmbedBlock
 from wagtail.images.blocks import ImageChooserBlock
 
 
 class ImageBlock(StructBlock):
-    image = ImageChooserBlock(required=True)
-    caption = CharBlock(required=False)
-    attribution = CharBlock(required=False)
+    image = ImageChooserBlock(
+        required=True
+    )
+    caption = CharBlock(
+        required=False
+    )
+    attribution = CharBlock(
+        required=False
+    )
 
     class Meta:
         icon = "image"
@@ -20,13 +25,15 @@ class ImageBlock(StructBlock):
 
 
 class HeadingBlock(StructBlock):
-    heading_text = CharBlock(classname="title", required=True)
+    heading_text = CharBlock(
+        classname="title",
+        required=True
+    )
     size = ChoiceBlock(
         choices=[
             ("", "Select a heading size"),
             ("h2", "H2"),
             ("h3", "H3"),
-            ("h4", "H4"),
         ],
         blank=True,
         required=False,
@@ -37,11 +44,20 @@ class HeadingBlock(StructBlock):
         template = "base/blocks/heading_block.html"
 
 
+class BodyBlock(RichTextBlock):
+    features = [
+        'bold', 'italic', 'link',
+        'ol', 'ul', 'blockquote', 
+        'image', 'embed',
+        'h4', 'h5'
+    ]
+    icon = "pilcrow"
+
+
 class BaseStreamBlock(StreamBlock):
-    heading_block = HeadingBlock()
-    paragraph_block = RichTextBlock(icon="pilcrow")
-    image_block = ImageBlock()
-    embed_block = EmbedBlock(
-        help_text="Insert a URL to embed. For example, https://www.youtube.com/watch?v=SGJFWirQ3ks",
-        icon="media",
-    )
+    heading = HeadingBlock()
+    image = ImageBlock()
+    body = BodyBlock()
+
+    class Meta:
+        template = 'base/blocks/stream_block.html'

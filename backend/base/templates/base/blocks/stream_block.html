@@ -1,0 +1,15 @@
+<div class="rich-text-block w-richtext">
+  {% for block in self %}
+    {% if block.block_type == 'heading' %}
+      {% include_block block %}
+    {% endif %}
+
+    {% if block.block_type == 'image' %}
+      {% include_block block %}
+    {% endif %}
+
+    {% if block.block_type == 'body' %}
+      {% include_block block %}
+    {% endif %}
+  {% endfor %}
+</div>

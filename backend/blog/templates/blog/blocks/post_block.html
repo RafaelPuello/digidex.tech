@@ -1,0 +1,28 @@
+{% load wagtailimages_tags %}
+
+<div class="block-post {% if self.featured %}large{% endif %}">
+  <a href="{% pageurl self.link %}" class="link-post-thumbnail w-inline-block">
+    {% if self.featured %}
+      {% image self.main_image fill-720x480 large %}
+    {% else %}
+      {% image self.main_image fill-320x240 %} 
+    {% endif %}
+  </a>
+  <div class="post {% if self.featured %}large{% endif %}">
+    {% if self.date %}
+      <div class="date">{{ self.date }}</div>
+    {% endif %}
+    <a href="{% pageurl self.link %}" class="link-heading-post {% if self.featured %}large{% endif %} w-inline-block">
+      <h4 class="heading-post">{{ self.title }}</h4>
+    </a>
+    {% if self.description %}
+      <p class="paragraph-post {% if self.featured %}large{% endif %}">{{ self.description|richtext }}</p>
+    {% endif %}
+    <a href="{% pageurl self.link %}" class="link-block w-inline-block">
+      <div class="text-link">Read more</div>
+      <div class="block-icon-link">
+        <img src="{% static 'images/bx-arrow-to-right_blue.svg' %}" alt="Read more" class="icon-link">
+      </div>
+    </a>
+  </div>
+</div>

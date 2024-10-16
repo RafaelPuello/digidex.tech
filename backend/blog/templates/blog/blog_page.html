@@ -13,7 +13,7 @@
   </section>
   <section class="section">
     <div class="content narrow">
-        <figure style="max-width:882pxpx" class="w-richtext-align-fullwidth w-richtext-figure-type-image">
+        <figure class="w-richtext-align-fullwidth w-richtext-figure-type-image">
           {% for item in page.gallery_images.all %}
             {% image item.image original %}
             {% if item.caption %}

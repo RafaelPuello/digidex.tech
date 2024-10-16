@@ -3,7 +3,41 @@ from django.utils.translation import gettext_lazy as _
 from wagtail.models import Orderable, Collection
 from wagtail.documents.models import Document, AbstractDocument
 from wagtail.images.models import Image, AbstractImage, AbstractRendition
-from wagtail.admin.panels import FieldPanel
+from wagtail.admin.panels import (
+    FieldPanel,
+    MultiFieldPanel,
+)
+from wagtail.contrib.settings.models import (
+    BaseGenericSetting,
+    register_setting,
+)
+
+
+@register_setting
+class NavigationSettings(BaseGenericSetting):
+    twitter_url = models.URLField(
+        verbose_name=_("Twitter URL"),
+        blank=True
+    )
+    github_url = models.URLField(
+        verbose_name=_("GitHub URL"),
+        blank=True
+    )
+    instagtram_url = models.URLField(
+        verbose_name=_("Instagram URL"),
+        blank=True
+    )
+
+    panels = [
+        MultiFieldPanel(
+            [
+                FieldPanel("twitter_url"),
+                FieldPanel("github_url"),
+                FieldPanel("instagtram_url"),
+            ],
+            "Social settings",
+        )
+    ]
 
 
 class BaseDocument(AbstractDocument):
