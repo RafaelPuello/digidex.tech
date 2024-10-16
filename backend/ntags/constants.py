@@ -13,9 +13,3 @@ NTAG_EEPROM_SIZES = {
     NTAG215: 540,
     NTAG216: 924,
 }
-
-NTAG_PERMISSIONS = [
-    'change_nfctag',
-    'view_nfctagdesign',
-    'view_nfctagscan'
-]

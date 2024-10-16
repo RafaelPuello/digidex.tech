@@ -121,3 +121,4 @@ class NFCTagSnippetViewSetGroup(SnippetViewSetGroup):
     menu_icon = "nfc-logo"
     menu_label = "NFC Tags"
     menu_name = "nfc-tags"
+    menu_order = 130
