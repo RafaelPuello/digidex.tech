@@ -15,12 +15,11 @@ class NFCTagSnippetViewSet(SnippetViewSet):
     copy_view_enabled = False
     admin_url_namespace = "nfc_tags"
     base_url_path = "nfc-tags/tags"
-    list_display = ["label", "serial_number"]
+    list_display = ["label", "design"]
     list_per_page = 25
     list_filter = {
         "label": ["icontains"],
         "design": ["exact"],
-        "active": ["exact"],
     }
 
     content_panels = [

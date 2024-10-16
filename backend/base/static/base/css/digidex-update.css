@@ -25,6 +25,9 @@
 }
 
 body {
+  margin: 0;
+  min-height: 100%;
+
   background-color: var(--background);
   color: var(--paragraph);
   flex-direction: column;
@@ -131,6 +134,7 @@ blockquote {
   margin-top: 1.5em;
   margin-bottom: 1.5em;
   margin-left: 1em;
+  margin-right: 0;
   padding: .1em 0 .1em 1.3em;
   font-size: 1.125em;
   font-weight: 500;
@@ -141,6 +145,8 @@ figure {
   border-radius: .87em;
   margin-top: 2.7em;
   margin-bottom: 2.7em;
+  margin-right: 0;
+  margin-left: 0;
   overflow: hidden;
 }
 
@@ -154,6 +160,34 @@ figcaption {
   line-height: 145%;
 }
 
+fieldset {
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+button,
+[type='button'],
+[type='reset'] {
+  border: 0;
+  cursor: pointer;
+  -webkit-appearance: button;
+}
+
+.w-button {
+  display: inline-block;
+  padding: 9px 15px;
+  background-color: #3898EC;
+  color: white;
+  border: 0;
+  line-height: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 0;
+}
+input.w-button {
+  -webkit-appearance: button;
+}
+
 .rich-text-block p {
   margin-bottom: 1.4em;
 }
@@ -162,7 +196,11 @@ figcaption {
   margin-bottom: .4em;
 }
 
-.rich-text-block h2, .rich-text-block h3, .rich-text-block h4, .rich-text-block h5, .rich-text-block h6 {
+.rich-text-block h2,
+.rich-text-block h3,
+.rich-text-block h4,
+.rich-text-block h5,
+.rich-text-block h6 {
   margin-top: 1em;
   margin-bottom: .4em;
 }
@@ -1476,6 +1514,22 @@ figcaption {
   box-shadow: 0 15px 40px -10px var(--accent-a4);
 }
 
+.w-form {
+  margin: 0 0 15px;
+}
+.w-form-done {
+  display: none;
+  padding: 20px;
+  text-align: center;
+  background-color: #dddddd;
+}
+.w-form-fail {
+  display: none;
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #ffdede;
+}
+
 .form {
   flex-direction: column;
   justify-content: flex-start;
@@ -1483,10 +1537,86 @@ figcaption {
   display: flex;
 }
 
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.w-form-label {
+  display: inline-block;
+  cursor: pointer;
+  font-weight: normal;
+  margin-bottom: 0px;
+}
+
 .form label {
   display: block;
   margin-top: 10px;
   margin-bottom: 5px;
+}
+
+.w-input, .w-select {
+  display: block;
+  width: 100%;
+  height: 38px;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #333333;
+  vertical-align: middle;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+}
+
+.w-input:-moz-placeholder,
+.w-select:-moz-placeholder {
+  color: #999;
+}
+
+.w-input::-moz-placeholder,
+.w-select::-moz-placeholder {
+  color: #999;
+  opacity: 1;
+}
+
+.w-input::-webkit-input-placeholder,
+.w-select::-webkit-input-placeholder {
+  color: #999;
+}
+
+.w-input:focus,
+.w-select:focus {
+  border-color: #3898EC;
+  outline: 0;
+}
+
+.w-input[disabled], .w-input[readonly],
+.w-select[disabled], .w-select[readonly],
+fieldset[disabled] .w-input,
+fieldset[disabled] .w-select {
+  cursor: not-allowed;
+}
+
+.w-input[disabled]:not(.w-input-disabled), .w-input[readonly],
+.w-select[disabled]:not(.w-input-disabled), .w-select[readonly],
+fieldset[disabled]:not(.w-input-disabled) .w-input,
+fieldset[disabled]:not(.w-input-disabled) .w-select {
+  background-color: #eeeeee;
+}
+
+textarea.w-input,
+textarea.w-select {
+  height: auto;
+}
+
+.w-select {
+  background-color: #f3f3f3;
+}
+
+.w-select[multiple] {
+  height: auto;
 }
 
 .textarea, .form :is(textarea) {
