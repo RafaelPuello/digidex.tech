@@ -13,39 +13,43 @@
   <section class="section">
     <div class="content">
       <div class="collection-list-wrapper-posts large w-dyn-list">
-        <div role="list" class="collection-list-posts large w-dyn-items">
-          <div role="listitem" class="w-dyn-item">
-            <div class="block-post large">
-              <a href="#" class="link-post-thumbnail large w-inline-block">
-                {% with post.main_image as main_image %}
-                  {% if main_image %}
-                    {% image main_image original class="image-post-thumbnail large" %}
-                  {% else %}
-                    <img alt="Featured blog post placeholder" loading="lazy" decoding="async" src="{% static 'base/images/placeholder.svg' %}" class="image-post-thumbnail">
-                  {% endif %}
-                {% endwith %}
-              </a>
-              <div class="post large">
-                <div class="date"></div>
-                <a href="#" class="link-heading-post large w-inline-block">
-                  <h3 class="heading-post"></h3>
-                </a>
-                <p class="paragraph-post large"></p>
-                <a href="#" class="link-block w-inline-block">
-                  <div class="text-link">Read more</div>
-                  <div class="block-icon-link">
-                    <img src="{% static 'base/images/bx-arrow-to-right_green.svg' %}" loading="lazy" decoding="async" alt="Green Arrow Pointing Right" class="icon-link">
+        {% if featured_posts %}
+          <div role="list" class="collection-list-posts large w-dyn-items">
+            {% for featured in featured_posts %}
+              <div role="listitem" class="w-dyn-item">
+                <div class="block-post large">
+                  <a href="{% pageurl featured %}" class="link-post-thumbnail large w-inline-block">
+                    {% with featured.main_image as main_image %}
+                      {% if main_image %}
+                        {% image main_image original class="image-post-thumbnail large" %}
+                      {% else %}
+                        <img alt="Featured blog post placeholder" loading="lazy" decoding="async" src="{% static 'base/images/placeholder.svg' %}" class="image-post-thumbnail">
+                      {% endif %}
+                    {% endwith %}
+                  </a>
+                  <div class="post large">
+                    <div class="date">{{ featured.date }}</div>
+                    <a href="{% pageurl featured %}" class="link-heading-post large w-inline-block">
+                      <h3 class="heading-post">{{ featured.title }}</h3>
+                    </a>
+                    <p class="paragraph-post large">{{ featured.body|richtext }}</p>
+                    <a href="{% pageurl featured %}" class="link-block w-inline-block">
+                      <div class="text-link">Read more</div>
+                      <div class="block-icon-link">
+                        <img src="{% static 'base/images/bx-arrow-to-right_green.svg' %}" loading="lazy" decoding="async" alt="Green Arrow Pointing Right" class="icon-link">
+                      </div>
+                    </a>
                   </div>
-                </a>
+                </div>
               </div>
-            </div>
+            {% endfor %}
           </div>
-        </div>
+        {% endif %}
       </div>
       <div class="collection-list-wrapper-posts w-dyn-list">
-        {% for post in page.get_children %}
-          {% with post=post.specific %}
-            <div role="list" class="collection-list-posts w-dyn-items">
+        {% if posts %}
+          <div role="list" class="collection-list-posts w-dyn-items">
+            {% for post in posts %}
               <div role="listitem" class="w-dyn-item">
                 <div class="block-post">
                   <a href="{% pageurl post %}" class="link-post-thumbnail w-inline-block">
@@ -72,13 +76,13 @@
                   </div>
                 </div>
               </div>
-            </div>
-          {% endwith %}
-        {% empty %}
-          <div class="empty-state w-dyn-empty">
-            <div class="text-empty">No items found.</div>
+            {% endfor %}
           </div>
-        {% endfor %}
+        {% else %}
+          <div class="empty-state w-dyn-empty">
+            <div class="text-empty">No posts found.</div>
+          </div>
+        {% endif %}
       </div>
     </div>
   </section>
