@@ -1,0 +1,38 @@
+{% load static wagtailcore_tags navigation_tags %}
+
+<section class="section-footer">
+  <div class="content">
+    <div class="w-layout-grid grid-footer">
+      <div class="block-footer">
+        <img src="{% static 'base/images/logo/logo.svg' %}" loading="eager" alt="" class="logo-footer">
+        <div class="paragraph-footer">Fast, Reliable, Secure - Your Website Deserves the Best Hosting<br></div>
+      </div>
+      <div class="block-footer">
+        <div class="subtitle-footer">Quick Links<br></div>
+        {% get_site_root as site_root %}
+        {% for menuitem in site_root.get_children.live.in_menu %}
+          <a href="{% pageurl menuitem %}" class="link-footer">{{ menuitem.slug.title }}</a>
+        {% endfor %}
+      </div>
+      {% with twitter_url=settings.base.NavigationSettings.twitter_url github_url=settings.base.NavigationSettings.github_url instagram_url=settings.base.NavigationSettings.instagram_url %}
+        {% if twitter_url or github_url or instagram_url %}
+          <div class="block-footer">
+            <div class="subtitle-footer">Social<br></div>
+            {% if twitter_url %}
+              <a href="{{ twitter_url }}" target="_blank" class="link-footer">Twitter</a>
+            {% endif %}
+            {% if github_url %}
+              <a href="{{ github_url }}" target="_blank" class="link-footer">GitHub</a>
+            {% endif %}
+            {% if instagram_url %}    
+              <a href="{{ instagram_url }}" target="_blank" class="link-footer">Instagram</a>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% endwith %}
+    </div>
+    <div class="block-footer-down">
+      <div class="text-footer-down">All rights reserved. Built with <a href="https://wagtail.org/" target="_blank" class="link-footer-down">Wagtail</a><br></div>
+    </div>
+  </div>
+</section>
