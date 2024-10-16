@@ -1,4 +1,3 @@
-from uuid import uuid4
 from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator
@@ -9,6 +8,7 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
+
 from base.models import GalleryImageMixin
 from . import get_nfc_taggable_models
 from .constants import NTAG213, NTAG_IC_CHOICES
@@ -19,8 +19,6 @@ User = get_user_model()
 
 
 class BaseNFCTag(models.Model):
-
-    limited_options = get_nfc_taggable_models
 
     serial_number = models.CharField(
         max_length=32,
@@ -35,13 +33,6 @@ class BaseNFCTag(models.Model):
         default=NTAG213,
         validators=[validate_integrated_circuit]
     )
-    design = models.ForeignKey(
-        'NFCTagDesign',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='+'
-    )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -50,30 +41,11 @@ class BaseNFCTag(models.Model):
         editable=False,
         related_name='nfc_tags'
     )
-    label = models.CharField(
-        max_length=64,
-        blank=True,
-        null=True
-    )
     active = models.BooleanField(
         default=True
     )
-    content_type = models.ForeignKey(
-        ContentType,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        limit_choices_to=limited_options,
-        related_name='nfc_tags'
-    )
-    object_id = models.PositiveIntegerField(
-        null=True,
-        blank=True
-    )
-
-    content_object = GenericForeignKey(
-        'content_type',
-        'object_id'
+    eeprom = models.JSONField(
+        default=dict,
     )
 
     objects = NFCTagManager()
@@ -89,20 +61,6 @@ class BaseNFCTag(models.Model):
 
     class Meta:
         abstract = True
-        verbose_name = _("nfc-tag")
-        verbose_name_plural = _("nfc-tags")
-        indexes = [
-            models.Index(fields=["content_type", "object_id"]),
-        ]
-
-    def save(self, *args, **kwargs):
-        if not self.label:
-            if self.user:
-                n = self.user.nfc_tags.count() + 1
-                self.label = f"NFC Tag {n}"
-            else:
-                self.label = f"NFC Tag {uuid4()}"
-        super().save(*args, **kwargs)
 
     def log_scan(self, counter, user):
         raise NotImplementedError("Method 'log_scan' must be implemented in a subclass.")
@@ -116,6 +74,35 @@ class BaseNFCTag(models.Model):
 
 
 class NFCTag(BaseNFCTag):
+
+    design = models.ForeignKey(
+        'NFCTagDesign',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='+'
+    )
+    label = models.CharField(
+        max_length=64,
+        null=True,
+        db_index=True
+    )
+
+    def __str__(self):
+        if self.label:
+            return self.label
+        return self.serial_number
+
+    def save(self, *args, **kwargs):
+        if not self.label and self.user:
+            n = self.user.nfc_tags.count() + 1
+            self.label = f"NFC Tag {n}"
+        super().save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = _("nfc-tag")
+        verbose_name_plural = _("nfc-tags")
+        ordering = ['serial_number']
 
     def log_scan(self, counter, user=None):
         scan_data = {
@@ -142,25 +129,28 @@ class NFCTag(BaseNFCTag):
             except ValueError:
                 raise ValueError("Counter bytes data is not a valid integer")
 
-        # If counter is a string, directly convert it to an integer
         elif isinstance(counter, str):
             try:
                 return int(counter, 16)  # Convert from hex if necessary
             except ValueError:
                 raise ValueError("Counter string data is not a valid integer")
 
-        # Raise a TypeError if counter is none of the above types
         else:
             raise TypeError("Counter must be an int, bytes, or str")
 
+    def get_tagged_items(self):
+        return self.tagged_items.all()
+
     def get_url(self):
-        if self.content_object:
-            return self.get_page_url()
+        _object = self.get_tagged_items().first()
+
+        if _object and _object.content_object:
+            return self.get_page_url(_object)
         return self.get_edit_url()
 
-    def get_page_url(self):
-        if hasattr(self.content_object, 'url'):
-            return self.content_object.url
+    def get_page_url(self, _object):
+        if hasattr(_object, 'url'):
+            return _object.url
 
     def get_edit_url(self):
         return self.get_admin_url('edit')
@@ -174,29 +164,47 @@ class NFCTag(BaseNFCTag):
         return reverse(url_name, args=[self.pk])
 
 
-class NFCTagMemory(models.Model):
+class BaseNFCTaggedItem(models.Model):
 
-    uuid = models.UUIDField(
-        primary_key=True,
-        default=uuid4,
-        editable=False,
-        unique=True,
-    )
-    nfc_tag = models.OneToOneField(
+    nfc_tag = models.ForeignKey(
         NFCTag,
-        on_delete=models.CASCADE,
-        related_name='eeprom'
+        related_name="tagged_items",
+        on_delete=models.CASCADE
     )
-    eeprom = models.BinaryField(
-        max_length=924,
-    )
+    
+    class Meta:
+        abstract = True
 
     def __str__(self):
-        return str(self.nfc_tag)
+        return f"Item tagged with NFC Tag: {self.nfc_tag}"
+
+
+class NFCTaggedItem(BaseNFCTaggedItem):
+
+    limited_options = get_nfc_taggable_models
+
+    content_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        verbose_name=_("Content type"),
+        limit_choices_to=limited_options,
+        related_name="nfc_tags"
+    )
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey(
+        "content_type",
+        "object_id"
+    )
 
     class Meta:
-        verbose_name = _("eeprom")
-        verbose_name_plural = _("eeproms")
+        verbose_name = _("NFC Tagged Item")
+        verbose_name_plural = _("NFC Tagged Items")
+        constraints = [
+            models.UniqueConstraint(
+                fields=['content_type', 'object_id', 'nfc_tag'],
+                name='unique_content_object'
+            )
+        ]
 
 
 class NFCTagScan(models.Model):
