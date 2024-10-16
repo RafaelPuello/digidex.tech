@@ -1,5 +1,5 @@
 {% extends "blog/base.html" %}
-{% load wagtailcore_tags %}
+{% load static wagtailcore_tags wagtailimages_tags %}
 
 {% block content %}
   <section class="section-top padding-0">
@@ -25,11 +25,9 @@
         </figure>
       <div class="post-body">
         <div class="rich-text-block w-dyn-bind-empty w-richtext">{{ page.body|richtext }}</div>
+        <a href="{{ page.get_parent.url }}">Return to blog</a>
       </div>
     </div>
-    <p>
-      <a href="{{ page.get_parent.url }}">Return to blog</a>
-    </p>
     {% with tags=page.tags.all %}
       {% if tags %}
         <div class="tags">

@@ -28,8 +28,12 @@ class BlogIndexPage(Page):
 
     def get_context(self, request):
         context = super().get_context(request)
-        blogpages = self.get_children().live().order_by('-first_published_at')
-        context['blogpages'] = blogpages
+
+        posts = self.get_children().live().order_by('-first_published_at').specific()
+        context['posts'] = posts
+
+        featured = posts.filter(blogpage__featured=True)
+        context['featured_posts'] = featured
         return context
 
 
@@ -69,6 +73,9 @@ class BlogPage(Page):
     body = RichTextField(
         blank=True
     )
+    featured = models.BooleanField(
+        default=False
+    )
 
     tags = ClusterTaggableManager(
         through=BlogPageTag,
@@ -96,8 +103,9 @@ class BlogPage(Page):
     content_panels = Page.content_panels + [
         MultiFieldPanel(
             [
+                FieldPanel('featured'),
                 FieldPanel('date'),
-                FieldPanel('tags')
+                FieldPanel('tags'),
             ], heading="Blog information"),
         FieldPanel('intro'),
         FieldPanel('body'),

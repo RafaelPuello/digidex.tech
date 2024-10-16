@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from wagtail.models import Page, Collection
+from wagtail.models import Page
 from wagtail.fields import StreamField
 from wagtail.admin.panels import FieldPanel
 
@@ -24,12 +24,6 @@ class CompanyIndexPage(Page):
         use_json_field=True,
         help_text="Use this section to list your projects and skills.",
     )
-    collection = models.ForeignKey(
-        Collection,
-        null=True,
-        on_delete=models.PROTECT,
-        related_name='+'
-    )
 
     parent_page_types = [
         'home.HomePage'
@@ -39,7 +33,6 @@ class CompanyIndexPage(Page):
     content_panels = Page.content_panels + [
         FieldPanel('intro'),
         FieldPanel('body'),
-        FieldPanel('collection')
     ]
 
     def __str__(self):
