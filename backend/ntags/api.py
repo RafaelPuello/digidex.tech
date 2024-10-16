@@ -34,11 +34,11 @@ class NFCTagAPIViewSet(viewsets.ModelViewSet):
         if not serial_number:
             return Response({"error": "Serial Number not provided."}, status=status.HTTP_400_BAD_REQUEST)
 
-        ntag, created = NFCTag.objects.update_or_create(
+        nfc_tag, created = NFCTag.objects.update_or_create(
             serial_number=serial_number
         )
 
-        serializer = self.get_serializer(ntag, context={'request': request})
+        serializer = self.get_serializer(nfc_tag, context={'request': request})
         return Response(serializer.data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
@@ -59,4 +59,4 @@ class NFCTagAPIViewSet(viewsets.ModelViewSet):
 
 
 router = DefaultRouter()
-router.register(r'ntags', NFCTagAPIViewSet, basename='ntag')  # noqa
+router.register(r'nfc-tags', NFCTagAPIViewSet, basename='nfc-tag')  # noqa

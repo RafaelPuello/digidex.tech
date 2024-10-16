@@ -9,15 +9,19 @@ class NFCTagSnippetViewSet(SnippetViewSet):
 
     model = NFCTag
     icon = "tag"
-    menu_label = "NFC Tags"
-    menu_name = "ntags"
+    menu_label = "Tags"
+    menu_name = "tags"
     menu_order = 131
     copy_view_enabled = False
-    list_filter = {"label": ["icontains"]}
+    admin_url_namespace = "nfc_tags"
+    base_url_path = "nfc-tags/tags"
     list_display = ["label", "serial_number"]
     list_per_page = 25
-    admin_url_namespace = "nfc_tags"
-    base_url_path = "nfc-tags"
+    list_filter = {
+        "label": ["icontains"],
+        "design": ["exact"],
+        "active": ["exact"],
+    }
 
     content_panels = [
         FieldPanel("label"),
@@ -51,15 +55,15 @@ class NFCTagDesignSnippetViewSet(SnippetViewSet):
 
     model = NFCTagDesign
     icon = "nfc-design"
-    menu_label = "NTAG Designs"
-    menu_name = "ntag-designs"
+    menu_label = "Designs"
+    menu_name = "designs"
     menu_order = 133
     copy_view_enabled = False
     list_filter = {"name": ["icontains"]}
     list_display = ["name", "description"]
     list_per_page = 25
     admin_url_namespace = "nfc_tag_designs"
-    base_url_path = "nfc-tag-designs"
+    base_url_path = "nfc-tags/designs"
 
     content_panels = [
         FieldPanel("name"),
@@ -82,18 +86,18 @@ class NFCTagScanSnippetViewSet(SnippetViewSet):
 
     model = NFCTagScan
     icon = "nfc-scan"
-    menu_label = "NTAG Scans"
-    menu_name = "ntag-scans"
+    menu_label = "Scans"
+    menu_name = "scans"
     menu_order = 135
     copy_view_enabled = False
-    list_filter = {"ntag": ["exact"]}
-    list_display = ["ntag", "counter", "scanned_at"]
+    list_filter = {"nfc_tag": ["exact"]}
+    list_display = ["nfc_tag", "counter", "scanned_at"]
     list_per_page = 100
     admin_url_namespace = "nfc_tag_scans"
-    base_url_path = "nfc-tag-scans"
+    base_url_path = "nfc-tags/scans"
 
     content_panels = [
-        FieldPanel("ntag"),
+        FieldPanel("nfc_tag"),
         FieldPanel("counter"),
     ]
 
@@ -108,12 +112,12 @@ class NFCTagScanSnippetViewSet(SnippetViewSet):
         if qs is None:
             qs = self.model.objects.all()
 
-        return qs.filter(ntag__user=request.user)
+        return qs.filter(nfc_tag__user=request.user)
 
 
 class NFCTagSnippetViewSetGroup(SnippetViewSetGroup):
     items = (NFCTagSnippetViewSet, NFCTagDesignSnippetViewSet, NFCTagScanSnippetViewSet)
     add_to_admin_menu = True
     menu_icon = "nfc-logo"
-    menu_label = "NFC"
-    menu_name = "nfc"
+    menu_label = "NFC Tags"
+    menu_name = "nfc-tags"

@@ -40,7 +40,7 @@ class BaseNFCTag(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='ntags'
+        related_name='+'
     )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -48,7 +48,7 @@ class BaseNFCTag(models.Model):
         null=True,
         blank=True,
         editable=False,
-        related_name='ntags'
+        related_name='nfc_tags'
     )
     label = models.CharField(
         max_length=64,
@@ -64,12 +64,13 @@ class BaseNFCTag(models.Model):
         null=True,
         blank=True,
         limit_choices_to=limited_options,
-        related_name='ntags'
+        related_name='nfc_tags'
     )
     object_id = models.PositiveIntegerField(
         null=True,
         blank=True
     )
+
     content_object = GenericForeignKey(
         'content_type',
         'object_id'
@@ -88,8 +89,8 @@ class BaseNFCTag(models.Model):
 
     class Meta:
         abstract = True
-        verbose_name = _("ntag")
-        verbose_name_plural = _("ntags")
+        verbose_name = _("nfc-tag")
+        verbose_name_plural = _("nfc-tags")
         indexes = [
             models.Index(fields=["content_type", "object_id"]),
         ]
@@ -97,7 +98,7 @@ class BaseNFCTag(models.Model):
     def save(self, *args, **kwargs):
         if not self.label:
             if self.user:
-                n = self.user.ntags.count() + 1
+                n = self.user.nfc_tags.count() + 1
                 self.label = f"NFC Tag {n}"
             else:
                 self.label = f"NFC Tag {uuid4()}"
@@ -118,7 +119,7 @@ class NFCTag(BaseNFCTag):
 
     def log_scan(self, counter, user=None):
         scan_data = {
-            'ntag': self,
+            'nfc_tag': self,
             'counter': self.clean_scan_counter(counter)
         }
 
@@ -181,7 +182,7 @@ class NFCTagMemory(models.Model):
         editable=False,
         unique=True,
     )
-    ntag = models.OneToOneField(
+    nfc_tag = models.OneToOneField(
         NFCTag,
         on_delete=models.CASCADE,
         related_name='eeprom'
@@ -191,7 +192,7 @@ class NFCTagMemory(models.Model):
     )
 
     def __str__(self):
-        return str(self.ntag)
+        return str(self.nfc_tag)
 
     class Meta:
         verbose_name = _("eeprom")
@@ -200,7 +201,7 @@ class NFCTagMemory(models.Model):
 
 class NFCTagScan(models.Model):
 
-    ntag = models.ForeignKey(
+    nfc_tag = models.ForeignKey(
         NFCTag,
         on_delete=models.CASCADE,
         related_name='scans'
@@ -219,14 +220,14 @@ class NFCTagScan(models.Model):
     )
 
     def __str__(self):
-        return f"Scan #{self.counter} for {self.ntag}"
+        return f"Scan #{self.counter} for {self.nfc_tag}"
 
     class Meta:
         verbose_name = _("scan")
         verbose_name_plural = _("scans")
         constraints = [
             models.UniqueConstraint(
-                fields=['ntag', 'counter'], name='unique_ntag_counter'
+                fields=['nfc_tag', 'counter'], name='unique_nfc_tag_counter'
             )
         ]
 
@@ -246,15 +247,15 @@ class NFCTagDesign(ClusterableModel):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='ntag_designs'
+        related_name='nfc_tag_designs'
     )
 
     def __str__(self):
         return self.name
 
     class Meta:
-        verbose_name = _("ntag design")
-        verbose_name_plural = _("ntag designs")
+        verbose_name = _("nfc_tag design")
+        verbose_name_plural = _("nfc_tag designs")
         ordering = ['name']
 
 
