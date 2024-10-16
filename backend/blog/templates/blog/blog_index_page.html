@@ -6,7 +6,7 @@
     <div class="content">
       <div class="block-top">
         <h1 class="heading-top">{{ page.title }}</h1>
-        <p class="paragraph-top">{{ page.intro|richtext }}</p>
+        <p class="paragraph-top">{{ page.intro }}</p>
       </div>
     </div>
   </section>
@@ -32,7 +32,7 @@
                     <a href="{% pageurl featured %}" class="link-heading-post large w-inline-block">
                       <h3 class="heading-post">{{ featured.title }}</h3>
                     </a>
-                    <p class="paragraph-post large">{{ featured.body|richtext }}</p>
+                    <p class="paragraph-post large">{{ featured.intro }}</p>
                     <a href="{% pageurl featured %}" class="link-block w-inline-block">
                       <div class="text-link">Read more</div>
                       <div class="block-icon-link">
@@ -55,7 +55,7 @@
                   <a href="{% pageurl post %}" class="link-post-thumbnail w-inline-block">
                     {% with post.main_image as main_image %}
                       {% if main_image %}
-                        {% image main_image original class="image-post-thumbnail" %}
+                        {% image main_image fill-320x240 class="image-post-thumbnail" %}
                       {% else %}
                         <img alt="Blog Post Placeholder" loading="eager" decoding="async" src="{% static 'base/images/placeholder.svg' %}" class="image-post-thumbnail">
                       {% endif %}
@@ -66,7 +66,7 @@
                     <a href="{% pageurl post %}" class="link-heading-post w-inline-block">
                       <h4 class="heading-post">{{ post.title }}</h4>
                     </a>
-                    <p class="paragraph-post">{{ post.body|richtext }}</p>
+                    <p class="paragraph-post">{{ post.intro }}</p>
                     <a href="{% pageurl post %}" class="link-block w-inline-block">
                       <div class="text-link">Read more</div>
                       <div class="block-icon-link">
