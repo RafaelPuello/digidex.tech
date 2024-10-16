@@ -335,6 +335,8 @@ NFC_TAGGABLE_MODELS = [
     'botany.UserPlant'
 ]
 
+NFC_TAG_LINK_URL = WAGTAILADMIN_BASE_URL + '/link'
+
 try:
     from .local import *  # noqa
 except ImportError:

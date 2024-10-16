@@ -1,4 +1,3 @@
-from uuid import uuid4
 from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator
@@ -9,6 +8,7 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
+
 from base.models import GalleryImageMixin
 from . import get_nfc_taggable_models
 from .constants import NTAG213, NTAG_IC_CHOICES
@@ -18,7 +18,7 @@ from .managers import NFCTagManager
 User = get_user_model()
 
 
-class BaseNFCTag(models.Model):
+class BaseNFCTag(ClusterableModel):
 
     limited_options = get_nfc_taggable_models
 
@@ -35,44 +35,37 @@ class BaseNFCTag(models.Model):
         default=NTAG213,
         validators=[validate_integrated_circuit]
     )
-    design = models.ForeignKey(
-        'NFCTagDesign',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='ntags'
-    )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
         editable=False,
-        related_name='ntags'
-    )
-    label = models.CharField(
-        max_length=64,
-        blank=True,
-        null=True
+        related_name='nfc_tags'
     )
     active = models.BooleanField(
         default=True
     )
+    eeprom = models.JSONField(
+        default=dict,
+    )
     content_type = models.ForeignKey(
         ContentType,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
+        verbose_name=_("Content type"),
+        limit_choices_to=limited_options,
         null=True,
         blank=True,
-        limit_choices_to=limited_options,
-        related_name='ntags'
+        related_name="nfc_tags"
     )
     object_id = models.PositiveIntegerField(
         null=True,
-        blank=True
+        blank=True,
+        db_index=True
     )
     content_object = GenericForeignKey(
-        'content_type',
-        'object_id'
+        "content_type",
+        "object_id"
     )
 
     objects = NFCTagManager()
@@ -88,20 +81,12 @@ class BaseNFCTag(models.Model):
 
     class Meta:
         abstract = True
-        verbose_name = _("ntag")
-        verbose_name_plural = _("ntags")
-        indexes = [
-            models.Index(fields=["content_type", "object_id"]),
+        constraints = [
+            models.UniqueConstraint(
+                fields=['content_type', 'object_id'],
+                name='unique_content_object'
+            )
         ]
-
-    def save(self, *args, **kwargs):
-        if not self.label:
-            if self.user:
-                n = self.user.ntags.count() + 1
-                self.label = f"NFC Tag {n}"
-            else:
-                self.label = f"NFC Tag {uuid4()}"
-        super().save(*args, **kwargs)
 
     def log_scan(self, counter, user):
         raise NotImplementedError("Method 'log_scan' must be implemented in a subclass.")
@@ -116,9 +101,38 @@ class BaseNFCTag(models.Model):
 
 class NFCTag(BaseNFCTag):
 
+    design = models.ForeignKey(
+        'NFCTagDesign',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='+'
+    )
+    label = models.CharField(
+        max_length=64,
+        null=True,
+        db_index=True
+    )
+
+    def __str__(self):
+        if self.label:
+            return self.label
+        return self.serial_number
+
+    def save(self, *args, **kwargs):
+        if not self.label and self.user:
+            n = self.user.nfc_tags.count() + 1
+            self.label = f"NFC Tag {n}"
+        super().save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = _("nfc-tag")
+        verbose_name_plural = _("nfc-tags")
+        ordering = ['serial_number']
+
     def log_scan(self, counter, user=None):
         scan_data = {
-            'ntag': self,
+            'nfc_tag': self,
             'counter': self.clean_scan_counter(counter)
         }
 
@@ -141,14 +155,12 @@ class NFCTag(BaseNFCTag):
             except ValueError:
                 raise ValueError("Counter bytes data is not a valid integer")
 
-        # If counter is a string, directly convert it to an integer
         elif isinstance(counter, str):
             try:
                 return int(counter, 16)  # Convert from hex if necessary
             except ValueError:
                 raise ValueError("Counter string data is not a valid integer")
 
-        # Raise a TypeError if counter is none of the above types
         else:
             raise TypeError("Counter must be an int, bytes, or str")
 
@@ -173,34 +185,9 @@ class NFCTag(BaseNFCTag):
         return reverse(url_name, args=[self.pk])
 
 
-class NFCTagMemory(models.Model):
-
-    uuid = models.UUIDField(
-        primary_key=True,
-        default=uuid4,
-        editable=False,
-        unique=True,
-    )
-    ntag = models.OneToOneField(
-        NFCTag,
-        on_delete=models.CASCADE,
-        related_name='eeprom'
-    )
-    eeprom = models.BinaryField(
-        max_length=924,
-    )
-
-    def __str__(self):
-        return str(self.ntag)
-
-    class Meta:
-        verbose_name = _("eeprom")
-        verbose_name_plural = _("eeproms")
-
-
 class NFCTagScan(models.Model):
 
-    ntag = models.ForeignKey(
+    nfc_tag = models.ForeignKey(
         NFCTag,
         on_delete=models.CASCADE,
         related_name='scans'
@@ -219,14 +206,14 @@ class NFCTagScan(models.Model):
     )
 
     def __str__(self):
-        return f"Scan #{self.counter} for {self.ntag}"
+        return f"Scan #{self.counter} for {self.nfc_tag}"
 
     class Meta:
         verbose_name = _("scan")
         verbose_name_plural = _("scans")
         constraints = [
             models.UniqueConstraint(
-                fields=['ntag', 'counter'], name='unique_ntag_counter'
+                fields=['nfc_tag', 'counter'], name='unique_nfc_tag_counter'
             )
         ]
 
@@ -246,15 +233,15 @@ class NFCTagDesign(ClusterableModel):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='ntag_designs'
+        related_name='nfc_tag_designs'
     )
 
     def __str__(self):
         return self.name
 
     class Meta:
-        verbose_name = _("ntag design")
-        verbose_name_plural = _("ntag designs")
+        verbose_name = _("nfc_tag design")
+        verbose_name_plural = _("nfc_tag designs")
         ordering = ['name']
 
 

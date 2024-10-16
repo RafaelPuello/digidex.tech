@@ -20,13 +20,13 @@ def link_nfc_tag(request):
     uid, counter = mirrored_values.split('x')
 
     try:
-        ntag = NFCTag.objects.get(serial_number=uid)
+        nfc_tag = NFCTag.objects.get(serial_number=uid)
 
         if request.user.is_authenticated:
-            ntag.log_scan(counter, request.user)
+            nfc_tag.log_scan(counter, request.user)
         else:
-            ntag.log_scan(counter)
-        return redirect(ntag.url)
+            nfc_tag.log_scan(counter)
+        return redirect(nfc_tag.url)
 
     except NFCTag.objects.model.DoesNotExist:
         messages.error(request, _('NFC Tag not found.'))

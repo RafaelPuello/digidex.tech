@@ -16,24 +16,37 @@
           "type": "string",
           "enum": ["213", "215", "216"]
         },
+        "active": {
+          "type": "boolean"
+        },
         "user": {
           "type": ["string", "null"],
           "description": "Foreign key reference to User"
         },
+        "design": {
+          "type": ["string", "null"],
+          "description": "Foreign key reference to NFCTagDesign"
+        },
         "label": {
-          "type": "string",
+          "type": ["string", "null"],
           "maxLength": 64
         },
-        "active": {
-          "type": "boolean"
+        "eeprom": {
+          "type": "string",
+          "contentEncoding": "base64",
+          "maxLength": 924
         },
         "content_type": {
           "type": "string",
-          "description": "Foreign key reference to ContentType"
+          "description": "Content type reference for generic foreign key"
         },
         "object_id": {
           "type": "integer",
-          "minimum": 1
+          "description": "Primary key of the related object"
+        },
+        "content_object": {
+          "type": "string",
+          "description": "Generic foreign key link"
         }
       },
       "required": ["serial_number", "integrated_circuit", "active"]
@@ -41,7 +54,7 @@
     "NFCTagScan": {
       "type": "object",
       "properties": {
-        "ntag": {
+        "nfc_tag": {
           "type": "string",
           "description": "Foreign key reference to NFCTag"
         },
@@ -58,40 +71,45 @@
           "format": "date-time"
         }
       },
-      "required": ["ntag", "counter", "scanned_at"]
+      "required": ["nfc_tag", "counter", "scanned_at"]
     },
-    "NFCTagMemory": {
+    "NFCTagDesign": {
       "type": "object",
       "properties": {
-        "uuid": {
+        "name": {
           "type": "string",
-          "format": "uuid"
+          "maxLength": 64
         },
-        "ntag": {
-          "type": "string",
-          "description": "Foreign key reference to NFCTag"
+        "description": {
+          "type": ["string", "null"]
         },
-        "eeprom": {
-          "type": "string",
-          "contentEncoding": "base64",
-          "maxLength": 2048
-        },
-        "created_at": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "last_modified": {
-          "type": "string",
-          "format": "date-time"
+        "designer": {
+          "type": ["string", "null"],
+          "description": "Foreign key reference to User"
         }
       },
-      "required": ["uuid", "ntag", "eeprom"]
+      "required": ["name"]
+    },
+    "NFCTagDesignGalleryImage": {
+      "type": "object",
+      "properties": {
+        "design": {
+          "type": "string",
+          "description": "Foreign key reference to NFCTagDesign"
+        },
+        "image": {
+          "type": "string",
+          "contentEncoding": "base64",
+          "description": "Image binary data"
+        }
+      },
+      "required": ["design", "image"]
     }
   },
   "properties": {
-    "ntags": { "$ref": "#/definitions/NFCTag" },
-    "types": { "$ref": "#/definitions/NfcTagType" },
-    "scans": { "$ref": "#/definitions/NFCTagScan" },
-    "eeproms": { "$ref": "#/definitions/NFCTagMemory" }
+    "nfc-tags": { "$ref": "#/definitions/NFCTag" },
+    "nfc-tag-designs": { "$ref": "#/definitions/NFCTagDesign" },
+    "nfc-tag-scans": { "$ref": "#/definitions/NFCTagScan" },
+    "nfc-tag-design-gallery-images": { "$ref": "#/definitions/NFCTagDesignGalleryImage" }
   }
 }
