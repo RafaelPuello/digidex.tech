@@ -3,6 +3,23 @@ from django.contrib.auth.models import Group
 
 from base.utils import assign_group_permissions, assign_wagtail_group_permissions
 
+NTAG_PERMISSIONS = (
+    'change_nfctag', 'view_nfctagdesign', 'view_nfctagscan'
+)
+
+BOTANY_PERMISSIONS = (
+    'add_plant', 'change_plant', 'delete_plant', 'view_plant'
+)
+
+COLLECTION_PERMISSIONS = (
+    'add_image', 'change_image', 'choose_image',
+    'add_document', 'change_document', 'choose_document'
+)
+
+PAGE_PERMISSIONS = (
+    'add_page', 'publish_page'
+)
+
 
 @transaction.atomic
 def setup_new_trainer(user):
@@ -16,26 +33,18 @@ def setup_new_trainer(user):
 
 
 def assign_user_permissions(user):
-    from inventory.constants import PAGE_PERMISSIONS, COLLECTION_PERMISSIONS
 
-    group = user.get_group()
     assign_trainer_permissions(user)
+    group = user.get_group()
+
+    collection = user.get_collection()
+    assign_wagtail_group_permissions(group, collection, COLLECTION_PERMISSIONS)
 
     page = user.get_page()
     assign_wagtail_group_permissions(group, page, PAGE_PERMISSIONS)
 
-    collection = user.get_collection().collection
-    assign_wagtail_group_permissions(group, collection, COLLECTION_PERMISSIONS)
-
 
 def assign_trainer_permissions(user):
-    NTAG_PERMISSIONS = [
-        'change_nfctag', 'view_nfctagdesign', 'view_nfctagscan'
-    ]
-
-    BOTANY_PERMISSIONS = [
-        'add_plant', 'change_plant', 'delete_plant', 'view_plant'
-    ]
 
     group, created = Group.objects.get_or_create(name='Trainers')
     if created:
