@@ -28,8 +28,8 @@ class HomePage(Page):
         'inventory.InventoryBoxPage',
         'blog.BlogIndexPage',
         'blog.TagIndexPage',
-        'company.CompanyIndexPage',
-        'support.ContactFormPage',
+        'portfolio.PortfolioIndexPage',
+        'contact.ContactFormPage',
     ]
 
     content_panels = Page.content_panels + [

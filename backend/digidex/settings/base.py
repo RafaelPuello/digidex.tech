@@ -37,8 +37,8 @@ INSTALLED_APPS = [
     "inventory",
     "home",
     "blog",
-    "company",
-    "support",
+    "portfolio",
+    "contact",
     "search",
 
     "wagtail.contrib.forms",

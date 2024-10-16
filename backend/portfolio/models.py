@@ -7,9 +7,9 @@ from wagtail.admin.panels import FieldPanel
 from .blocks import PortfolioStreamBlock
 
 
-class CompanyIndexPage(Page):
+class PortfolioIndexPage(Page):
     """
-    Represents the company index page.
+    Represents the portfolio index page.
 
     Attributes:
         intro (TextField): The introduction of the page.
@@ -39,5 +39,5 @@ class CompanyIndexPage(Page):
         return self.title
 
     class Meta:
-        verbose_name = _('company index page')
-        verbose_name_plural = _('company index pages')
+        verbose_name = _('portfolio index page')
+        verbose_name_plural = _('portfolio index pages')
