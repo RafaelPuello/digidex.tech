@@ -19,7 +19,7 @@ class NFCTagAdminForm(WagtailAdminModelForm):
 
     class Meta:
         model = NFCTag
-        fields = ['label', 'content_type', 'item', 'active']
+        fields = ['label', 'content_type', 'item', 'active', 'design']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
