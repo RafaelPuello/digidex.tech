@@ -20,8 +20,7 @@ class UserPlant(
     box = models.ForeignKey(
         'inventory.InventoryBoxPage',
         related_name='plants',
-        on_delete=models.CASCADE,
-        blank=True
+        on_delete=models.CASCADE
     )
     name = models.CharField(
         max_length=255,
