@@ -13,7 +13,7 @@ from wagtail.contrib.forms.panels import FormSubmissionsPanel
 
 class ContactFormField(AbstractFormField):
     page = ParentalKey(
-        'support.ContactFormPage',
+        'contact.ContactFormPage',
         on_delete=models.CASCADE,
         related_name='form_fields'
     )
