@@ -27,7 +27,7 @@ class NFCTagSnippetViewSet(SnippetViewSet):
 
     settings_panels = [
         FieldPanel("active"),
-        FieldPanel("design"),
+        FieldPanel("design")
     ]
     edit_handler = TabbedInterface(
         [
