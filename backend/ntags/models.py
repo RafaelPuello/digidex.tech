@@ -101,10 +101,7 @@ class BaseNFCTag(ClusterableModel):
 
 class NFCTag(BaseNFCTag):
 
-    viewset_actions = [
-        'edit', 'copy', 'delete',
-        'usage', 'history', 'inspect'
-    ]
+    viewset_actions = ('edit', 'usage', 'history')
 
     design = models.ForeignKey(
         'NFCTagDesign',

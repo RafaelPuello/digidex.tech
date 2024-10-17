@@ -34,7 +34,7 @@ def link_nfc_tag(request):
 
             return render(
                 request,
-                'wagtailnfctags/index.html',
+                'nfctags/index.html',
                 {'urls': nfc_tag.get_urls()}
             )
 

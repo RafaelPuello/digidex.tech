@@ -1,0 +1,25 @@
+{% extends "base/base.html" %}
+
+{% block title %}NFC Tags{% endblock %}
+
+{% block content %}
+  <section class="section">
+    <div class="content narrow">
+      <div class="page-body">
+        <div class="block-button">
+          {% for action, url in urls.items %}
+            {% if action == 'page' %}
+              <a href="{{ url }}" class="button w-button">{{ action }}</a>
+            {% elif action == 'edit' %}
+              <a href="{{ url }}" class="button-outline w-button">{{ action }}</a>
+            {% elif action == 'usage' %}
+              <a href="{{ url }}" class="button yellow w-button">{{ action }}</a>
+            {% elif action == 'history' %}
+              <a href="{{ url }}" class="button dark w-button">{{ action }}</a>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
