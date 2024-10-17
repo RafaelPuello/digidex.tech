@@ -191,10 +191,10 @@ class NFCTag(BaseNFCTag):
         return self.get_page_url()
 
     def get_urls(self, group=None):
-        if self.content_type:
+        if self.content_object:
             urls = {'Page': self.get_page_url()}
         else:
-            urls = {}
+            urls = {'Home': self.get_fallback_url()}
 
         if group is None or group == 'user':
             urls.update({action.title(): self.get_admin_url(action) for action in self.viewset_actions})
@@ -205,7 +205,7 @@ class NFCTag(BaseNFCTag):
             raise ValueError("Invalid group value")
 
     def get_page_url(self):
-        if self.content_object and hasattr(self.content_object, 'url'):
+        if hasattr(self.content_object, 'url'):
             return self.content_object.url
         return self.get_fallback_url()
 
