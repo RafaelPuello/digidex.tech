@@ -1,36 +1,16 @@
 from wagtail.blocks import (
-    BooleanBlock,
     CharBlock,
+    TextBlock,
     ChoiceBlock,
     DateBlock,
     RichTextBlock,
-    StreamBlock,
     StructBlock
 )
 from wagtail.images.blocks import ImageChooserBlock
 
 
-class CardImageBlock(StructBlock):
-    image = ImageChooserBlock(
-        required=True
-    )
-    caption = CharBlock(
-        required=False
-    )
-    attribution = CharBlock(
-        required=False
-    )
-
-    class Meta:
-        icon = "image"
-        template = "base/blocks/card_image_block.html"
-
-
-class CardHeadingBlock(StructBlock):
-    heading_text = CharBlock(
-        classname="title",
-        required=True
-    )
+class BaseHeadingBlock(StructBlock):
+    heading_value = CharBlock(form_classname="title")
     size = ChoiceBlock(
         choices=[
             ("", "Select a heading size"),
@@ -43,34 +23,33 @@ class CardHeadingBlock(StructBlock):
 
     class Meta:
         icon = "title"
-        template = "base/blocks/card_heading_block.html"
+        template = "base/blocks/base_heading_block.html"
 
 
-class CardDateBlock(StructBlock):
-    header = BooleanBlock(required=False)
-    date = DateBlock(required=True)
+class BaseImageBlock(StructBlock):
+    image = ImageChooserBlock()
+    caption = CharBlock(required=False)
+    attribution = CharBlock(required=False)
 
     class Meta:
-        icon = "date"
-        template = "base/blocks/card_date_block.html"
+        icon = "image"
+        template = "base/blocks/base_image_block.html"
 
 
-class CardBodyBlock(RichTextBlock):
+class BaseBodyBlock(RichTextBlock):
     features = [
-        'bold', 'italic', 'link',
-        'ol', 'ul', 'blockquote',
-        'image', 'embed',
-        'h4', 'h5'
+        'h4', 'h5', 'bold', 'italic', 'link',
+        'ol', 'ul', 'blockquote', 'image', 'embed',
     ]
     icon = "pilcrow"
 
 
-class CardBlock(StreamBlock):
-    heading = CardHeadingBlock(required=False)
-    date = CardDateBlock()
-    image = CardImageBlock(required=False)
-    body = CardBodyBlock()
+class BaseCardBlock(StructBlock):
+    heading = CharBlock(form_classname="title")
+    date = DateBlock()
+    image = ImageChooserBlock()
+    body = TextBlock()
 
     class Meta:
         icon = "doc-full"
-        template = 'base/blocks/card_block.html'
+        template = 'base/blocks/base_card_block.html'

@@ -4,11 +4,20 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+from modelcluster.fields import ParentalKey
 from wagtail.models import Page
-from wagtail.admin.panels import FieldPanel, TabbedInterface, TitleFieldPanel, ObjectList
-from wagtail.contrib.routable_page.models import RoutablePageMixin, path
 from wagtail.images import get_image_model
 from wagtail.documents import get_document_model
+from wagtail.fields import RichTextField
+from wagtail.admin.panels import (
+    FieldPanel, TitleFieldPanel, InlinePanel,
+    TabbedInterface, ObjectList
+)
+
+from wagtail.contrib.forms.models import AbstractForm, AbstractFormField
+from wagtail.contrib.forms.panels import FormSubmissionsPanel
+
+from wagtail.contrib.routable_page.models import RoutablePageMixin, path
 
 from base.models import CollectionMixin
 
@@ -107,7 +116,7 @@ class InventoryIndexPage(Page):
         'home.HomePage'
     ]
     child_page_types = [
-        'inventory.InventoryBoxPage'
+        'inventory.InventoryFormPage'
     ]
 
     shared_panels = []
@@ -145,7 +154,7 @@ class InventoryIndexPage(Page):
         Returns:
             QuerySet: The plant queryset.
         """
-        boxes_q = InventoryBoxPage.objects.descendant_of(self).live().specific()
+        boxes_q = InventoryFormPage.objects.descendant_of(self).live().specific()
 
         if not boxes_q.exists():
             return boxes_q.none()
@@ -231,11 +240,18 @@ class InventoryIndexPage(Page):
         return self.user_collection.collection
 
 
-class InventoryBoxPage(RoutablePageMixin, Page):
-
-    description = models.TextField(
-        blank=True
+class InventoryFormField(AbstractFormField):
+    page = ParentalKey(
+        'InventoryFormPage',
+        on_delete=models.CASCADE,
+        related_name='inventory_form_fields'
     )
+
+
+class InventoryFormPage(RoutablePageMixin, AbstractForm):
+
+    description = models.TextField(blank=True)
+    form_submission_text = RichTextField(blank=True)
     uuid = models.UUIDField(
         default=uuid.uuid4,
         editable=False,
@@ -250,8 +266,12 @@ class InventoryBoxPage(RoutablePageMixin, Page):
 
     content_panels = [
         TitleFieldPanel('title', classname="title"),
+        FormSubmissionsPanel(),
         FieldPanel('slug'),
         FieldPanel('description'),
+        InlinePanel('inventory_form_fields', label="Form fields"),
+        FieldPanel('form_submission_text'),
+
     ]
 
     edit_handler = TabbedInterface([
@@ -271,6 +291,9 @@ class InventoryBoxPage(RoutablePageMixin, Page):
         context = super().get_context(request, *args, **kwargs)
         context['plants'] = self.get_plants()
         return context
+
+    def get_form_fields(self):
+        return self.inventory_form_fields.all()
 
     @path('<slug:plant_slug>/')
     def plant_details(self, request, plant_slug):
@@ -292,3 +315,9 @@ class InventoryBoxPage(RoutablePageMixin, Page):
 
     def get_parent_collection(self):
         return self.owner.index_collection.collection
+
+    content_panels = AbstractForm.content_panels + [
+        FieldPanel('intro'),
+        InlinePanel('form_fields', label="Form fields"),
+        FieldPanel('thank_you_text'),
+    ]

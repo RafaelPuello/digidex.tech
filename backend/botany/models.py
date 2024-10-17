@@ -20,7 +20,7 @@ class UserPlant(
     PreviewableMixin
 ):
     box = models.ForeignKey(
-        'inventory.InventoryBoxPage',
+        'inventory.InventoryFormPage',
         related_name='plants',
         on_delete=models.CASCADE
     )
@@ -38,7 +38,7 @@ class UserPlant(
         db_index=True
     )
     notes = StreamField(
-        BotanyNoteBlock,
+        [('note', BotanyNoteBlock())],
         blank=True
     )
 

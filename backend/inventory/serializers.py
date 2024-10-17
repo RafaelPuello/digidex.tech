@@ -1,10 +1,10 @@
 from rest_framework import serializers
 
-from .models import InventoryBoxPage
+from .models import InventoryFormPage
 
 
 class InventoryBoxSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = InventoryBoxPage
+        model = InventoryFormPage
         fields = ['id', 'name', 'description', 'collection']

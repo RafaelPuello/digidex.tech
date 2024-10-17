@@ -1,7 +1,7 @@
 from wagtail.blocks import BooleanBlock
 
-from base.blocks import CardBlock
+from base.blocks import BaseCardBlock
 
 
-class BlogPostCardBlock(CardBlock):
+class BlogPostCardBlock(BaseCardBlock):
     featured = BooleanBlock()

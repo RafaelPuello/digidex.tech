@@ -1,5 +1,5 @@
-from base.blocks import CardBlock
+from base.blocks import BaseCardBlock
 
 
-class BotanyNoteBlock(CardBlock):
+class BotanyNoteBlock(BaseCardBlock):
     pass
