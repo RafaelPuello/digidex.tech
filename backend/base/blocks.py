@@ -1,6 +1,8 @@
 from wagtail.blocks import (
+    BooleanBlock,
     CharBlock,
     ChoiceBlock,
+    DateBlock,
     RichTextBlock,
     StreamBlock,
     StructBlock
@@ -8,7 +10,7 @@ from wagtail.blocks import (
 from wagtail.images.blocks import ImageChooserBlock
 
 
-class ImageBlock(StructBlock):
+class CardImageBlock(StructBlock):
     image = ImageChooserBlock(
         required=True
     )
@@ -21,10 +23,10 @@ class ImageBlock(StructBlock):
 
     class Meta:
         icon = "image"
-        template = "base/blocks/image_block.html"
+        template = "base/blocks/card_image_block.html"
 
 
-class HeadingBlock(StructBlock):
+class CardHeadingBlock(StructBlock):
     heading_text = CharBlock(
         classname="title",
         required=True
@@ -41,10 +43,19 @@ class HeadingBlock(StructBlock):
 
     class Meta:
         icon = "title"
-        template = "base/blocks/heading_block.html"
+        template = "base/blocks/card_heading_block.html"
 
 
-class BodyBlock(RichTextBlock):
+class CardDateBlock(StructBlock):
+    header = BooleanBlock(required=False)
+    date = DateBlock(required=True)
+
+    class Meta:
+        icon = "date"
+        template = "base/blocks/card_date_block.html"
+
+
+class CardBodyBlock(RichTextBlock):
     features = [
         'bold', 'italic', 'link',
         'ol', 'ul', 'blockquote',
@@ -54,10 +65,12 @@ class BodyBlock(RichTextBlock):
     icon = "pilcrow"
 
 
-class BaseStreamBlock(StreamBlock):
-    heading = HeadingBlock()
-    image = ImageBlock()
-    body = BodyBlock()
+class CardBlock(StreamBlock):
+    heading = CardHeadingBlock(required=False)
+    date = CardDateBlock()
+    image = CardImageBlock(required=False)
+    body = CardBodyBlock()
 
     class Meta:
-        template = 'base/blocks/stream_block.html'
+        icon = "doc-full"
+        template = 'base/blocks/card_block.html'
