@@ -296,8 +296,7 @@ figcaption {
   color: var(--white);
 }
 
-.section-top-bar {
-  background-color: var(--accent-a1);
+.section-messages {
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -318,7 +317,8 @@ figcaption {
   display: flex;
 }
 
-.top-bar-block {
+.info-messages-block {
+  background-color: var(--accent-a1);
   grid-column-gap: 1em;
   justify-content: space-between;
   align-items: center;
@@ -327,7 +327,37 @@ figcaption {
   display: flex;
 }
 
-.top-bar {
+.success-messages-block {
+  background-color: var(--accent-a1);
+  grid-column-gap: 1em;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 75em;
+  display: flex;
+}
+
+.warning-messages-block {
+  background-color: var(--accent-a1);
+  grid-column-gap: 1em;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 75em;
+  display: flex;
+}
+
+.error-messages-block {
+  background-color: var(--accent-a1);
+  grid-column-gap: 1em;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 75em;
+  display: flex;
+}
+
+.message {
   grid-column-gap: 1.87em;
   flex-flow: row;
   flex: 1;
@@ -336,7 +366,7 @@ figcaption {
   display: flex;
 }
 
-.info-top-bar {
+.info-message {
   opacity: .7;
   color: var(--white);
   letter-spacing: -.02em;
@@ -344,7 +374,7 @@ figcaption {
   line-height: 120%;
 }
 
-.link-top-bar {
+.link-message {
   grid-column-gap: .35em;
   opacity: .7;
   justify-content: center;
@@ -354,16 +384,16 @@ figcaption {
   display: flex;
 }
 
-.link-top-bar:hover {
+.link-message:hover {
   opacity: 1;
 }
 
-.icon-top-bar {
+.icon-message {
   width: 1.125em;
   height: 1.125em;
 }
 
-.text-top-bar {
+.text-message {
   color: var(--white);
   letter-spacing: -.02em;
   font-size: .87em;
@@ -1567,11 +1597,6 @@ figcaption {
   padding: 1em 10%;
 }
 
-.error-message.yellow {
-  border: 1px dashed var(--accent-a4);
-  background-color: #0000;
-}
-
 .text-error {
   color: #bc0003;
   letter-spacing: .05em;
@@ -1582,19 +1607,10 @@ figcaption {
   line-height: 130%;
 }
 
-.text-error.yellow {
-  color: var(--accent-a4);
-}
-
 .success-message {
   background-color: var(--accent-b3);
   border-radius: .87em;
   padding: 1.5em 10%;
-}
-
-.success-message.yellow {
-  border: 1px dashed var(--accent-a4);
-  background-color: #0000;
 }
 
 .text-success {
@@ -1607,8 +1623,36 @@ figcaption {
   line-height: 130%;
 }
 
-.text-success.yellow {
-  color: var(--accent-a4);
+.info-message {
+  background-color: var(--accent-b3);
+  border-radius: .87em;
+  padding: 1.5em 10%;
+}
+
+.text-info {
+  color: var(--accent-a3);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  font-family: IBM Plex Mono, sans-serif;
+  font-size: .7em;
+  font-weight: 500;
+  line-height: 130%;
+}
+
+.warning-message {
+  background-color: var(--accent-b3);
+  border-radius: .87em;
+  padding: 1.5em 10%;
+}
+
+.text-warning {
+  color: var(--accent-a3);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  font-family: IBM Plex Mono, sans-serif;
+  font-size: .7em;
+  font-weight: 500;
+  line-height: 130%;
 }
 
 .section-full {
@@ -2657,12 +2701,12 @@ figcaption {
     box-shadow: 0 15px 25px -10px #1417180d;
   }
 
-  .section-top-bar {
+  .section-messages {
     padding-top: .8em;
     padding-bottom: .8em;
   }
 
-  .top-bar-block {
+  .messages-block {
     grid-row-gap: .6em;
     flex-direction: column;
     align-items: flex-start;
@@ -2906,12 +2950,12 @@ figcaption {
     padding-right: .5em;
   }
 
-  .section-top-bar {
+  .section-messages {
     padding-left: 1.5em;
     padding-right: 1.5em;
   }
 
-  .top-bar {
+  .message {
     grid-row-gap: .6em;
     flex-direction: column;
     align-items: flex-start;

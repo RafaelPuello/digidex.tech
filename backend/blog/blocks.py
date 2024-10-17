@@ -1,8 +1,7 @@
-from base.blocks import BaseStreamBlock
-
 from wagtail.blocks import BooleanBlock, CharBlock, DateBlock, RichTextBlock, StructBlock
 from wagtail.images.blocks import ImageChooserBlock
 from base.blocks import BaseStreamBlock
+
 
 class PostBlock(StructBlock):
     title = CharBlock(
