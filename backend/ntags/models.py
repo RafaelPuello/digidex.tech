@@ -33,7 +33,7 @@ NTAG_EEPROM_SIZES = (
 )
 
 
-class BaseNFCTag(ClusterableModel):
+class BaseNFCTag(models.Model):
 
     limited_options = get_nfc_taggable_models
 
@@ -99,55 +99,9 @@ class BaseNFCTag(ClusterableModel):
                 name='unique_content_object'
             )
         ]
-
-    def log_scan(self):
-        raise NotImplementedError("Method 'log_scan' must be implemented in a subclass.")
-
-    @property
-    def url(self):
-        return self.get_url()
-
-    def get_url(self):
-        raise NotImplementedError("Method 'get_url' must be implemented in a subclass.")
-
-
-class NFCTag(BaseNFCTag):
-
-    viewset_actions = ['edit', 'usage', 'history']
-
-    design = models.ForeignKey(
-        'NFCTagDesign',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='+'
-    )
-    label = models.CharField(
-        max_length=64,
-        null=True,
-        db_index=True
-    )
-
-    def __str__(self):
-        return self.label if self.label else self.serial_number
-
-    def save(self, *args, **kwargs):
-        if not self.label and self.user:
-            n = self.user.nfc_tags.count() + 1
-            self.label = f"NFC Tag {n}"
-        super().save(*args, **kwargs)
-
-    class Meta:
+        ordering = ['serial_number']
         verbose_name = _("nfc-tag")
         verbose_name_plural = _("nfc-tags")
-        ordering = ['serial_number']
-
-    @classmethod
-    def get_from_uid(cls, uid):
-        try:
-            return cls.objects.get(serial_number=uid)
-        except cls.DoesNotExist:
-            return None
 
     def log_scan(self, counter, user=None):
         scan_data = {
@@ -182,30 +136,12 @@ class NFCTag(BaseNFCTag):
         else:
             raise TypeError("Counter must be an int, bytes, or str")
 
-    def get_url(self, action=None):
-        if action and action in self.viewset_actions:
-            try:
-                return self.get_admin_url(action)
-            except Exception as e:
-                raise e
-        return self.get_page_url()
+    @property
+    def url(self):
+        return self.get_url()
 
-    def get_urls(self, group=None):
-        if self.content_object:
-            urls = {'Page': self.get_page_url()}
-        else:
-            urls = {'Home': self.get_fallback_url()}
-
-        if group is None or group == 'user':
-            urls.update({action.title(): self.get_admin_url(action) for action in self.viewset_actions})
-            return urls
-        elif group == 'visitor':
-            return urls
-        else:
-            raise ValueError("Invalid group value")
-
-    def get_page_url(self):
-        if hasattr(self.content_object, 'url'):
+    def get_url(self):
+        if self.content_object and hasattr(self.content_object, 'url'):
             return self.content_object.url
         return self.get_fallback_url()
 
@@ -213,6 +149,63 @@ class NFCTag(BaseNFCTag):
     def get_fallback_url():
         from django.conf import settings
         return settings.NFC_TAG_FALLBACK_URL
+
+    @classmethod
+    def get_from_uid(cls, uid):
+        try:
+            return cls.objects.get(serial_number=uid)
+        except cls.DoesNotExist:
+            return None
+
+
+class NFCTag(BaseNFCTag):
+
+    viewset_actions = ['edit', 'usage', 'history']
+
+    design = models.ForeignKey(
+        'NFCTagDesign',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='+'
+    )
+    label = models.CharField(
+        max_length=64,
+        null=True,
+        db_index=True
+    )
+
+    def __str__(self):
+        return self.label if self.label else self.serial_number
+
+    def save(self, *args, **kwargs):
+        if not self.label and self.user:
+            n = self.user.nfc_tags.count() + 1
+            self.label = f"NFC Tag {n}"
+        super().save(*args, **kwargs)
+
+    def get_url(self, action=None):
+        if action and action in self.viewset_actions:
+            try:
+                return self.get_admin_url(action)
+            except Exception as e:
+                raise e
+        super().get_url()
+
+    def get_urls(self, group=None):
+        if self.content_object:
+            urls = {'Page': self.get_url()}
+        else:
+            urls = {'Page': self.get_fallback_url()}
+
+        if group == 'visitor':
+            pass  # No additional URLs for visitors
+        elif group is None or group == 'user':
+            urls.update({action.title(): self.get_admin_url(action) for action in self.viewset_actions})
+        else:
+            raise ValueError("Invalid group value")
+
+        return urls
 
     def get_admin_url(self, action):
         viewset = self.get_viewset()
