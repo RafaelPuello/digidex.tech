@@ -4,10 +4,12 @@ from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from modelcluster.models import ClusterableModel
 from modelcluster.fields import ParentalKey
+from wagtail.fields import StreamField
 from wagtail.models import TranslatableMixin, PreviewableMixin, Orderable
 from wagtail.search import index
 
 from base.models import GalleryImageMixin
+from .blocks import BotanyNoteBlock
 
 
 class UserPlant(
@@ -18,7 +20,7 @@ class UserPlant(
     PreviewableMixin
 ):
     box = models.ForeignKey(
-        'inventory.InventoryBoxPage',
+        'inventory.InventoryFormPage',
         related_name='plants',
         on_delete=models.CASCADE
     )
@@ -34,6 +36,10 @@ class UserPlant(
         editable=False,
         unique=True,
         db_index=True
+    )
+    notes = StreamField(
+        [('note', BotanyNoteBlock())],
+        blank=True
     )
 
     search_fields = [

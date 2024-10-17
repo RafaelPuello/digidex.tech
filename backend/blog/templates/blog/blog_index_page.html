@@ -12,27 +12,27 @@
   </section>
   <section class="section">
     <div class="content">
-      <div class="collection-list-wrapper-posts large w-dyn-list">
+      <div class="collection-list-wrapper-posts featured w-dyn-list">
         {% if featured_posts %}
-          <div role="list" class="collection-list-posts large w-dyn-items">
+          <div role="list" class="collection-list-posts featured w-dyn-items">
             {% for featured in featured_posts %}
               <div role="listitem" class="w-dyn-item">
-                <div class="block-post large">
-                  <a href="{% pageurl featured %}" class="link-post-thumbnail large w-inline-block">
+                <div class="block-post featured">
+                  <a href="{% pageurl featured %}" class="link-post-thumbnail featured w-inline-block">
                     {% with featured.main_image as main_image %}
                       {% if main_image %}
-                        {% image main_image original class="image-post-thumbnail large" %}
+                        {% image main_image original class="image-post-thumbnail featured" %}
                       {% else %}
                         <img alt="Featured blog post placeholder" loading="lazy" decoding="async" src="{% static 'base/images/placeholder.svg' %}" class="image-post-thumbnail">
                       {% endif %}
                     {% endwith %}
                   </a>
-                  <div class="post large">
+                  <div class="post featured">
                     <div class="date">{{ featured.date }}</div>
-                    <a href="{% pageurl featured %}" class="link-heading-post large w-inline-block">
+                    <a href="{% pageurl featured %}" class="link-heading-post featured w-inline-block">
                       <h3 class="heading-post">{{ featured.title }}</h3>
                     </a>
-                    <p class="paragraph-post large">{{ featured.intro }}</p>
+                    <p class="paragraph-post featured">{{ featured.intro }}</p>
                     <a href="{% pageurl featured %}" class="link-block w-inline-block">
                       <div class="text-link">Read more</div>
                       <div class="block-icon-link">

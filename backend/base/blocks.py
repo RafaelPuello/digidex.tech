@@ -1,34 +1,16 @@
 from wagtail.blocks import (
     CharBlock,
+    TextBlock,
     ChoiceBlock,
+    DateBlock,
     RichTextBlock,
-    StreamBlock,
     StructBlock
 )
 from wagtail.images.blocks import ImageChooserBlock
 
 
-class ImageBlock(StructBlock):
-    image = ImageChooserBlock(
-        required=True
-    )
-    caption = CharBlock(
-        required=False
-    )
-    attribution = CharBlock(
-        required=False
-    )
-
-    class Meta:
-        icon = "image"
-        template = "base/blocks/image_block.html"
-
-
-class HeadingBlock(StructBlock):
-    heading_text = CharBlock(
-        classname="title",
-        required=True
-    )
+class BaseHeadingBlock(StructBlock):
+    heading_value = CharBlock(form_classname="title")
     size = ChoiceBlock(
         choices=[
             ("", "Select a heading size"),
@@ -41,23 +23,33 @@ class HeadingBlock(StructBlock):
 
     class Meta:
         icon = "title"
-        template = "base/blocks/heading_block.html"
+        template = "base/blocks/base_heading_block.html"
 
 
-class BodyBlock(RichTextBlock):
+class BaseImageBlock(StructBlock):
+    image = ImageChooserBlock()
+    caption = CharBlock(required=False)
+    attribution = CharBlock(required=False)
+
+    class Meta:
+        icon = "image"
+        template = "base/blocks/base_image_block.html"
+
+
+class BaseBodyBlock(RichTextBlock):
     features = [
-        'bold', 'italic', 'link',
-        'ol', 'ul', 'blockquote',
-        'image', 'embed',
-        'h4', 'h5'
+        'h4', 'h5', 'bold', 'italic', 'link',
+        'ol', 'ul', 'blockquote', 'image', 'embed',
     ]
     icon = "pilcrow"
 
 
-class BaseStreamBlock(StreamBlock):
-    heading = HeadingBlock()
-    image = ImageBlock()
-    body = BodyBlock()
+class BaseCardBlock(StructBlock):
+    heading = CharBlock(form_classname="title")
+    date = DateBlock()
+    image = ImageChooserBlock()
+    body = TextBlock()
 
     class Meta:
-        template = 'base/blocks/stream_block.html'
+        icon = "doc-full"
+        template = 'base/blocks/base_card_block.html'

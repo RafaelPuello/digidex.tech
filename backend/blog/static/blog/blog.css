@@ -12,7 +12,7 @@
   display: grid;
 }
 
-.collection-list-posts.large {
+.collection-list-posts.featured {
   grid-template-columns: 1fr;
 }
 
@@ -26,7 +26,7 @@
   box-shadow: 0 15px 25px -10px rgba(20, 23, 24, .05);
 }
 
-.block-post.large {
+.block-post.featured {
   grid-column-gap: 0em;
   grid-row-gap: 0em;
   grid-template-rows: auto;
@@ -35,7 +35,7 @@
   display: grid;
 }
 
-.collection-list-wrapper-posts.large {
+.collection-list-wrapper-posts.featured {
   margin-bottom: 3.4em;
 }
 
@@ -46,7 +46,7 @@
   border-radius: .87em;
 }
 
-.image-post-thumbnail.large {
+.image-post-thumbnail.featured {
   height: auto;
   max-height: 40em;
 }
@@ -55,7 +55,7 @@
   width: 100%;
 }
 
-.link-post-thumbnail.large {
+.link-post-thumbnail.featured {
   flex-direction: row;
   justify-content: flex-start;
   align-items: stretch;
@@ -71,7 +71,7 @@
   display: flex;
 }
 
-.post.large {
+.post.featured {
   justify-content: center;
   padding: 4.3em 4.5em;
 }
@@ -81,7 +81,7 @@
   text-decoration: none;
 }
 
-.link-heading-post.large {
+.link-heading-post.featured {
   margin-bottom: 1.4em;
 }
 
@@ -100,7 +100,7 @@
   margin-bottom: 1.4em;
 }
 
-.paragraph-post.large {
+.paragraph-post.featured {
   max-width: 25em;
   margin-bottom: 1.6em;
 }
@@ -156,7 +156,7 @@
     grid-template-columns: 1fr 1fr;
   }
 
-  .collection-list-wrapper-posts.large {
+  .collection-list-wrapper-posts.featured {
     margin-bottom: 3em;
   }
 
@@ -164,7 +164,7 @@
     height: 28vw;
   }
 
-  .post.large {
+  .post.featured {
     padding: 3.4em 3.2em;
   }
 
@@ -180,15 +180,15 @@
     grid-template-columns: 1fr;
   }
 
-  .block-post.large {
+  .block-post.featured {
     grid-template-columns: 1fr;
   }
 
-  .collection-list-wrapper-posts.large {
+  .collection-list-wrapper-posts.featured {
     margin-bottom: 2em;
   }
 
-  .image-post-thumbnail, .image-post-thumbnail.large {
+  .image-post-thumbnail, .image-post-thumbnail.featured {
     height: 50vw;
   }
 
@@ -203,11 +203,11 @@
     grid-row-gap: 1.5em;
   }
 
-  .collection-list-wrapper-posts.large {
+  .collection-list-wrapper-posts.featured {
     margin-bottom: 1.5em;
   }
 
-  .post, .post.large {
+  .post, .post.featured {
     padding: 1.8em 2.2em;
   }
 

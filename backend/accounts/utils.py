@@ -28,8 +28,8 @@ def setup_new_trainer(user):
     # Assign trainer permissions
     assign_trainer_permissions(user)
     # Setup inventory boxes for the new user
-    from inventory.utils import setup_inventory_boxes
-    setup_inventory_boxes(user)
+    from inventory.utils import setup_user_inventory
+    setup_user_inventory(user)
 
 
 def assign_user_permissions(user):

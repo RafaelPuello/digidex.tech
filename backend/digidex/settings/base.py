@@ -334,7 +334,7 @@ WAGTAILSEARCH_BACKENDS = {
 NFC_TAG_MODEL = 'ntags.NFCTag'
 
 NFC_TAGGABLE_MODELS = [
-    'inventory.InventoryBoxPage',
+    'inventory.InventoryFormPage',
     'botany.UserPlant'
 ]
 

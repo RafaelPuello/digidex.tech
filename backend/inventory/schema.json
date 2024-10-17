@@ -47,7 +47,7 @@
       },
       "required": ["user_collection", "title", "slug"]
     },
-    "InventoryBoxPage": {
+    "InventoryFormPage": {
       "type": "object",
       "properties": {
         "uuid": {
@@ -93,7 +93,7 @@
     },
     "boxes": {
       "type": "array",
-      "items": { "$ref": "#/definitions/InventoryBoxPage" }
+      "items": { "$ref": "#/definitions/InventoryFormPage" }
     }
   }
 }

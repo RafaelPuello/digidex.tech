@@ -41,6 +41,7 @@ class UserPlantViewSet(SnippetViewSet):
         FieldPanel("box"),
         FieldPanel("name"),
         FieldPanel("description"),
+        FieldPanel("notes"),
         InlinePanel("gallery_images", label="Images"),
     ]
 

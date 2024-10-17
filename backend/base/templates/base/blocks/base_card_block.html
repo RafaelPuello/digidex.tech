@@ -1,0 +1,14 @@
+{% load wagtailimages_tags %}
+
+<div class="block-post">
+  {% if self.image %}
+    <div class="link-post-thumbnail w-inline-block">
+      {% image self.image fill-600x338 loading="lazy" class="image-post-thumbnail w-dyn-bind-empty" %}
+    </div>
+  {% endif %}
+  <div class="post">
+    <div class="date w-dyn-bind-empty">{{ self.date }}</div>
+    <h3 class="heading-post w-dyn-bind-empty">{{ self.heading }}</h3>
+    <p class="paragraph-post w-dyn-bind-empty">{{ self.body }}</p>
+  </div>
+</div>
