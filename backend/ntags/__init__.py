@@ -1,11 +1,42 @@
 import warnings
-from django.conf import settings
+
+
+def get_nfc_tag_model_string():
+    """
+    Returns the model string for the NFCTag model.
+    """
+    from django.conf import settings
+
+    tag_model = getattr(settings, 'NFC_TAG_MODEL', None)
+    if tag_model is None:
+        warnings.warn(
+            "NFC_TAG_MODEL is not set. Defaulting to 'nfc.NFCTag'.",
+            UserWarning
+        )
+        return 'ntags.NFCTag'
+    return tag_model
+
+
+def get_nfc_tag_model():
+    """
+    Returns the model class for the NFCTag model.
+    """
+    from django.apps import apps
+
+    model_string = get_nfc_tag_model_string()
+    try:
+        app_label, model_name = model_string.split('.')
+        return apps.get_model(app_label, model_name)
+    except (ValueError, LookupError):
+        raise ValueError(f"Invalid NFC_TAG_MODEL '{model_string}'")
 
 
 def get_nfc_taggable_model_strings():
     """
     Returns a list of model strings that are taggable by NFC tags.
     """
+    from django.conf import settings
+
     taggable_models = getattr(settings, 'NFC_TAGGABLE_MODELS', None)
     if taggable_models is None:
         warnings.warn(

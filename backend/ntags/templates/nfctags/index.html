@@ -9,7 +9,7 @@
         <h2 class="heading">{{ heading }}</h2>
         <div class="block-button">
           {% for action, url in urls.items %}
-            {% if action == 'Page' or action == 'Home' %}
+            {% if action == 'Page' %}
               <a href="{{ url }}" class="button w-button">{{ action }}</a>
             {% elif action == 'Edit' %}
               <a href="{{ url }}" class="button-outline w-button">{{ action }}</a>

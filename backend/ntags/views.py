@@ -5,26 +5,30 @@ from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.utils.translation import gettext_lazy as _
 
+from . import get_nfc_tag_model
 from .validators import validate_ascii_mirror
-from .models import NFCTag
+
+NFCTag = get_nfc_tag_model()
 
 
 def link_nfc_tag(request):
     """
     Link an NTAG using the ASCII Mirror embedded in the NTAG's URL.
     """
+    # Check mirrored_values is in the request
     mirrored_values = request.GET.get('m', None)
-
     if not mirrored_values:
         messages.error(request, _('No ASCII Mirror value found.'))
         return redirect(NFCTag.get_fallback_url())
 
+    # Check mirrored_values is in the expected format
     try:
         uid, counter = validate_ascii_mirror(mirrored_values)
     except ValidationError as e:
         messages.error(request, _(f'Invalid ASCII Mirror value: {e}'))
         return redirect(NFCTag.get_fallback_url())
 
+    # Check that the NFC Tag exists
     nfc_tag = NFCTag.get_from_uid(uid)
     if not nfc_tag:
         messages.error(request, _('Invalid serial number. NFC Tag ASCII mirror improperly configured.'))
@@ -33,8 +37,8 @@ def link_nfc_tag(request):
     context = {'heading': str(nfc_tag)}
     scan = {'counter': counter}
 
+    # Determine what URLs to display based on request user
     if request.user.is_authenticated:
-        # User is authenticated so user can be included in the scan log
         scan.update({'user': request.user})
 
         if request.user == nfc_tag.user:
@@ -44,13 +48,12 @@ def link_nfc_tag(request):
     else:
         context.update({'urls': nfc_tag.get_urls('visitor')})
 
+    # Attempt to log the scan and return the response
     try:
         nfc_tag.log_scan(**scan)
         messages.info(request, _(f'Logged scan #{counter} for NFC Tag'))
     except Exception as e:
         messages.error(request, _(f'Error logging scan #{counter} for NFC Tag: {e}'))
-
-    messages.success(request, _('NFC Tag linked successfully'))
     return render(request, 'nfctags/index.html', context)
 
 
