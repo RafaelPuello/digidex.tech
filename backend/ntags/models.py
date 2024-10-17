@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, IntegrityError
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
@@ -10,12 +10,28 @@ from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
 
 from base.models import GalleryImageMixin
+
 from . import get_nfc_taggable_models
-from .constants import NTAG213, NTAG_IC_CHOICES
-from .validators import validate_serial_number, validate_integrated_circuit
+from .validators import validate_ascii_mirror_uid
 from .managers import NFCTagManager
 
 User = get_user_model()
+
+NTAG213 = "213"
+NTAG215 = "215"
+NTAG216 = "216"
+
+NTAG_IC_CHOICES = (
+    (NTAG213, "NTAG 213"),
+    (NTAG215, "NTAG 215"),
+    (NTAG216, "NTAG 216"),
+)
+
+NTAG_EEPROM_SIZES = (
+    (NTAG213, 180),
+    (NTAG215, 540),
+    (NTAG216, 924),
+)
 
 
 class BaseNFCTag(ClusterableModel):
@@ -27,13 +43,12 @@ class BaseNFCTag(ClusterableModel):
         editable=False,
         unique=True,
         db_index=True,
-        validators=[validate_serial_number]
+        validators=[validate_ascii_mirror_uid]
     )
     integrated_circuit = models.CharField(
         max_length=5,
         choices=NTAG_IC_CHOICES,
-        default=NTAG213,
-        validators=[validate_integrated_circuit]
+        default=NTAG213
     )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -101,7 +116,7 @@ class BaseNFCTag(ClusterableModel):
 
 class NFCTag(BaseNFCTag):
 
-    viewset_actions = ('edit', 'usage', 'history')
+    viewset_actions = ['edit', 'usage', 'history']
 
     design = models.ForeignKey(
         'NFCTagDesign',
@@ -130,6 +145,13 @@ class NFCTag(BaseNFCTag):
         verbose_name_plural = _("nfc-tags")
         ordering = ['serial_number']
 
+    @classmethod
+    def get_from_uid(cls, uid):
+        try:
+            return cls.objects.get(serial_number=uid)
+        except cls.DoesNotExist:
+            return None
+
     def log_scan(self, counter, user=None):
         scan_data = {
             'nfc_tag': self,
@@ -141,8 +163,8 @@ class NFCTag(BaseNFCTag):
 
         try:
             return NFCTagScan.objects.create(**scan_data)
-        except Exception as e:
-            raise e
+        except IntegrityError:
+            raise IntegrityError(_("Invalid counter: {counter}. Scan counter must be unique for each NFC Tag"))
 
     def clean_scan_counter(self, counter):
         if isinstance(counter, int):
@@ -167,19 +189,33 @@ class NFCTag(BaseNFCTag):
         if action and action in self.viewset_actions:
             try:
                 return self.get_admin_url(action)
-            except Exception:
-                return self.get_page_url()
+            except Exception as e:
+                raise e
+        return self.get_page_url()
+
+    def get_page_url(self):
+        if self.content_object and hasattr(self.content_object, 'url'):
+            return self.content_object.url
+        return self.get_fallback_url()
+
+    @staticmethod
+    def get_fallback_url():
+        return '/'
+
+    def get_owner_urls(self):
+        return self.get_urls()
+
+    def get_visitor_urls(self):
+        return self.get_page_url()
+
+    def get_anonymous_visitor_urls(self):
+        return self.get_visitor_urls()
 
     def get_urls(self):
         actions = {action: self.get_admin_url(action) for action in self.viewset_actions}
         if self.content_object:
             actions['page'] = self.get_page_url()
         return actions
-
-    def get_page_url(self):
-        if hasattr(self.content_object, 'url'):
-            return self.content_object.url
-        return '/'
 
     def get_admin_url(self, action):
         viewset = self.get_viewset()

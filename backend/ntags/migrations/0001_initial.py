@@ -23,8 +23,8 @@ class Migration(migrations.Migration):
             name='NFCTag',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('serial_number', models.CharField(db_index=True, editable=False, max_length=32, unique=True, validators=[ntags.validators.validate_serial_number])),
-                ('integrated_circuit', models.CharField(choices=[('213', 'NTAG 213'), ('215', 'NTAG 215'), ('216', 'NTAG 216')], default='213', max_length=5, validators=[ntags.validators.validate_integrated_circuit])),
+                ('serial_number', models.CharField(db_index=True, editable=False, max_length=32, unique=True, validators=[ntags.validators.validate_ascii_mirror_uid])),
+                ('integrated_circuit', models.CharField(choices=[('213', 'NTAG 213'), ('215', 'NTAG 215'), ('216', 'NTAG 216')], default='213', max_length=5)),
                 ('label', models.CharField(blank=True, max_length=64, null=True)),
                 ('active', models.BooleanField(default=True)),
                 ('object_id', models.PositiveIntegerField(blank=True, null=True)),

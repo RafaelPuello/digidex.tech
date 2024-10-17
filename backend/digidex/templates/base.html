@@ -31,15 +31,7 @@
     {% block extra_css %}{% endblock  %}
   </head>
   {% if messages %}
-    <section class="section-top-bar">
-      <div class="top-bar-block">
-        <div class="top-bar">
-          {% for message in messages %}
-            <div class="info-top-bar">{{ message }}</div>
-          {% endfor %}
-        </div>
-      </div>
-    </section>
+    {% include "base/includes/messages.html" with messages=messages %}
   {% endif %}
   {% block body %}
     <body>

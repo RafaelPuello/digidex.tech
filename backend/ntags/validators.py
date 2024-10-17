@@ -1,27 +1,48 @@
 import re
 from django.core.exceptions import ValidationError
 
-from .constants import NTAG_IC_CHOICES
+
+def validate_ascii_mirror(value):
+    """
+    Validate the ASCII Mirror-Based UID and counter format.
+    Based on NXP Semiconductors documentation.
+    """
+    if 'x' not in value:
+        raise ValidationError(
+            '%(value)s is not a valid mirror value (missing separator).',
+            params={'value': value},
+        )
+
+    # Split and call the separate validators for UID and Counter
+    uid, counter = value.split('x', 1)
+    validate_ascii_mirror_uid(uid)
+    validate_ascii_mirror_counter(counter)
+    return uid, counter
 
 
-def validate_serial_number(value):
+def validate_ascii_mirror_counter(value):
     """
-    Validates the NTAG serial number format.
+    Validate the ASCII Mirror-Based counter format.
+    The counter should be a 3-byte hex value in ASCII representation.
+    Each byte should be represented by 2 characters so the total length should be 6 characters.
     """
-    pattern = re.compile(r'^[A-Za-z0-9]{14}$')
+    pattern = re.compile(r'^[0-9A-Fa-f]{6}$')
     if not pattern.match(value):
         raise ValidationError(
-            '%(value)s is not a valid NTAG serial number',
+            '%(value)s is not a valid counter value.',
             params={'value': value},
         )
 
 
-def validate_integrated_circuit(value):
+def validate_ascii_mirror_uid(value):
     """
-    Validates the NTAG integrated circuit type.
+    Validates the ASCII Mirror-Based NTAG uid format.
+    The uid should be a 7-byte hex value in ASCII representation.
+    Each byte should be represented by 2 characters so the total length should be 14 characters.
     """
-    if value not in dict(NTAG_IC_CHOICES).keys():
+    pattern = re.compile(r'^[0-9A-Fa-f]{14}$')
+    if not pattern.match(value):
         raise ValidationError(
-            '%(value)s is not a valid NTAG integrated circuit type',
+            '%(value)s is not a valid UID (Serial Number).',
             params={'value': value},
         )

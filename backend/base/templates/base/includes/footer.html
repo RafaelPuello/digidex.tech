@@ -8,12 +8,16 @@
         <div class="paragraph-footer">Fast, Reliable, Secure - Your Website Deserves the Best Hosting<br></div>
       </div>
       <div class="block-footer">
-        <div class="subtitle-footer">Quick Links<br></div>
         {% get_site_root as site_root %}
-        {% for menuitem in site_root.get_children.live.in_menu %}
-          <a href="{% pageurl menuitem %}" class="link-footer">{{ menuitem.slug.title }}</a>
-        {% endfor %}
-      </div>
+        {% with site_root.get_children.live.in_menu as menuitems %}
+          {% if menuitems.exists %}
+            <div class="subtitle-footer">Quick Links<br></div>
+            {% for menuitem in menuitems %}
+              <a href="{% pageurl menuitem %}" class="link-footer">{{ menuitem.title }}</a>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+      </div>    
       {% with twitter_url=settings.base.NavigationSettings.twitter_url github_url=settings.base.NavigationSettings.github_url instagram_url=settings.base.NavigationSettings.instagram_url %}
         {% if twitter_url or github_url or instagram_url %}
           <div class="block-footer">

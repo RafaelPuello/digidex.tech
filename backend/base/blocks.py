@@ -47,7 +47,7 @@ class HeadingBlock(StructBlock):
 class BodyBlock(RichTextBlock):
     features = [
         'bold', 'italic', 'link',
-        'ol', 'ul', 'blockquote', 
+        'ol', 'ul', 'blockquote',
         'image', 'embed',
         'h4', 'h5'
     ]
