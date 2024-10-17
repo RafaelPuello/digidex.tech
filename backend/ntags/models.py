@@ -95,11 +95,13 @@ class BaseNFCTag(ClusterableModel):
     def url(self):
         return self.get_url()
 
-    def get_url(self):
+    def get_url(self, action=None):
         raise NotImplementedError("Method 'get_url' must be implemented in a subclass.")
 
 
 class NFCTag(BaseNFCTag):
+
+    viewset_actions = ('edit', 'usage', 'history')
 
     design = models.ForeignKey(
         'NFCTagDesign',
@@ -115,9 +117,7 @@ class NFCTag(BaseNFCTag):
     )
 
     def __str__(self):
-        if self.label:
-            return self.label
-        return self.serial_number
+        return self.label if self.label else self.serial_number
 
     def save(self, *args, **kwargs):
         if not self.label and self.user:
@@ -148,7 +148,6 @@ class NFCTag(BaseNFCTag):
         if isinstance(counter, int):
             return counter
 
-        # If counter is bytes, decode to a string and convert to int
         elif isinstance(counter, bytes):
             try:
                 return int(counter.decode('utf-8'))
@@ -164,25 +163,35 @@ class NFCTag(BaseNFCTag):
         else:
             raise TypeError("Counter must be an int, bytes, or str")
 
-    def get_url(self):
+    def get_url(self, action=None):
+        if action and action in self.viewset_actions:
+            try:
+                return self.get_admin_url(action)
+            except Exception:
+                return self.get_page_url()
+
+    def get_urls(self):
+        actions = {action: self.get_admin_url(action) for action in self.viewset_actions}
         if self.content_object:
-            return self.get_page_url()
-        return self.get_edit_url()
+            actions['page'] = self.get_page_url()
+        return actions
 
     def get_page_url(self):
         if hasattr(self.content_object, 'url'):
             return self.content_object.url
-
-    def get_edit_url(self):
-        return self.get_admin_url('edit')
-
-    def get_usage_url(self):
-        return self.get_admin_url('usage')
+        return '/'
 
     def get_admin_url(self, action):
-        viewset = self.snippet_viewset
+        viewset = self.get_viewset()
         url_name = viewset.get_url_name(action)
         return reverse(url_name, args=[self.pk])
+
+    def get_breadcrumb_items(self):
+        viewset = self.get_viewset()
+        return viewset.breadcrumbs_items
+
+    def get_viewset(self):
+        return self.snippet_viewset
 
 
 class NFCTagScan(models.Model):

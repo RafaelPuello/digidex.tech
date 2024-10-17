@@ -23,17 +23,33 @@ class NavigationSettings(BaseGenericSetting):
         verbose_name=_("GitHub URL"),
         blank=True
     )
-    instagtram_url = models.URLField(
+    instagram_url = models.URLField(
         verbose_name=_("Instagram URL"),
+        blank=True
+    )
+    email = models.EmailField(
+        verbose_name=_("Email"),
+        blank=True
+    )
+    phone_number = models.CharField(
+        verbose_name=_("Phone number"),
+        max_length=15,
         blank=True
     )
 
     panels = [
         MultiFieldPanel(
             [
+                FieldPanel("email"),
+                FieldPanel("phone_number"),
+            ],
+            "Support settings",
+        ),
+        MultiFieldPanel(
+            [
                 FieldPanel("twitter_url"),
                 FieldPanel("github_url"),
-                FieldPanel("instagtram_url"),
+                FieldPanel("instagram_url"),
             ],
             "Social settings",
         )
