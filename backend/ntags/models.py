@@ -191,7 +191,10 @@ class NFCTag(BaseNFCTag):
         return self.get_page_url()
 
     def get_urls(self, group=None):
-        urls = {'Page': self.get_page_url()}
+        if self.content_type:
+            urls = {'Page': self.get_page_url()}
+        else:
+            urls = {}
 
         if group is None or group == 'user':
             urls.update({action.title(): self.get_admin_url(action) for action in self.viewset_actions})
