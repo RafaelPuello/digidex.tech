@@ -45,11 +45,12 @@ def link_nfc_tag(request):
         context.update({'urls': nfc_tag.get_anonymous_visitor_urls()})
 
     try:
-        nfc_tag_scan = nfc_tag.log_scan(**scan)
-        messages.success(request, _(f'NFC Tag linked successfully: {str(nfc_tag_scan)}'))
+        nfc_tag.log_scan(**scan)
+        messages.info(request, _(f'Logged scan #{counter} for NFC Tag'))
     except Exception as e:
-        messages.error(request, _(f'Error logging scan: {e}'))
+        messages.error(request, _(f'Error logging scan #{counter} for NFC Tag: {e}'))
 
+    messages.success(request, _('NFC Tag linked successfully'))
     return render(request, 'nfctags/index.html', context)
 
 

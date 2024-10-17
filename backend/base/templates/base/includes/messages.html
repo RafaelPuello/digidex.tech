@@ -1,8 +1,8 @@
 <section class="section-messages">
   {% for message in messages %}
-    <div class="{{ message.tag }}-messages-block">
+    <div class="messages-block {{ message.tags }}">
       <div class="message">
-          <div class="info-message">{{ message }}</div>
+          <div class="text-message {{ message.tags }}">{{ message }}</div>
       </div>
     </div>
   {% endfor %}
