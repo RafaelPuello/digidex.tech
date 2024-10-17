@@ -13,6 +13,62 @@
   --accent-b1: rgba(114, 174, 131, 0.07);
   --accent-b2: rgba(188, 0, 135, .07);
   --accent-b3: rgba(57, 89, 255, .07);
+
+  /* Neutral Colors */
+  --w-color-black: #000000;
+  --w-color-grey-600: #4F4F4F;
+  --w-color-grey-400: #828282;
+  --w-color-grey-200: #BDBDBD;
+  --w-color-grey-150: #D3D3D3;
+  --w-color-grey-100: #E0E0E0;
+  --w-color-grey-50: #F2F2F2;
+  --w-color-white: #FFFFFF;
+
+  /* Primary Color - Deep Teal */
+  --w-color-primary: #006D5B; /* hsl(168, 100%, 21%) */
+  --w-color-primary-200: #005247;
+
+  /* Secondary Color - Soft Green */
+  --w-color-secondary-hue: 160;
+  --w-color-secondary-saturation: 53%;
+  --w-color-secondary-lightness: 37%;
+
+  /* Generate shades of Secondary Color */
+  --w-color-secondary-600: hsl(160, 53%, 32%); /* Hover states */
+  --w-color-secondary-400: hsl(160, 53%, 42%); /* Active states */
+  --w-color-secondary-100: hsl(160, 53%, 82%); /* UI highlights over dark backgrounds */
+  --w-color-secondary-75: hsl(160, 53%, 87%);  /* UI highlights over dark text */
+  --w-color-secondary-50: hsl(160, 53%, 92%);  /* Backgrounds */
+
+  /* Additional Secondary Color - Soft Blue */
+  --w-color-secondary-blue: #357ABD; /* hsl(213, 56%, 47%) */
+  --w-color-secondary-blue-600: #2F6CA9; /* Hover states */
+  --w-color-secondary-blue-400: #4288C8; /* Active states */
+  --w-color-secondary-blue-100: #A9CBE3; /* UI highlights */
+  --w-color-secondary-blue-50: #E1EFF6;  /* Backgrounds */
+
+  /* Additional Secondary Color - Warm Red */
+  --w-color-secondary-red: #D1495B; /* hsl(353, 61%, 56%) */
+  --w-color-secondary-red-600: #B04050; /* Hover states */
+  --w-color-secondary-red-400: #DC5E6D; /* Active states */
+  --w-color-secondary-red-100: #F1B7BD; /* UI highlights */
+  --w-color-secondary-red-50: #F9E4E6;  /* Backgrounds */
+
+  /* Success Messages */
+  --w-color-success-100: #00693E;
+  --w-color-success-50: #C3E6CB;
+
+  /* Information Messages */
+  --w-color-info-100: #3959FF;
+  --w-color-info-50: #D1ECF1;
+
+  /* Warning Messages */
+  --w-color-warning-100: #FFC107;
+  --w-color-warning-50: #FFF3CD;
+
+  /* Error Messages */
+  --w-color-error-100: #DC5349;
+  --w-color-error-50: #FDECEA;
 }
 
 .w-layout-grid {
@@ -317,44 +373,31 @@ figcaption {
   display: flex;
 }
 
-.info-messages-block {
-  background-color: var(--accent-a1);
-  grid-column-gap: 1em;
-  justify-content: space-between;
+.messages-block {
+  padding: 1em;
+  margin-bottom: 0.5em;
+  border-radius: 4px;
+  justify-content: center;
   align-items: center;
   width: 100%;
   max-width: 75em;
   display: flex;
 }
 
-.success-messages-block {
-  background-color: var(--accent-a1);
-  grid-column-gap: 1em;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  max-width: 75em;
-  display: flex;
+.messages-block.info {
+  background-color: var(--w-color-info-100);
 }
 
-.warning-messages-block {
-  background-color: var(--accent-a1);
-  grid-column-gap: 1em;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  max-width: 75em;
-  display: flex;
+.messages-block.success {
+  background-color: var(--w-color-success-100);
 }
 
-.error-messages-block {
-  background-color: var(--accent-a1);
-  grid-column-gap: 1em;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  max-width: 75em;
-  display: flex;
+.messages-block.warning {
+  background-color: var(--w-color-warning-100);
+}
+
+.messages-block.error {
+  background-color: var(--w-color-error-100);
 }
 
 .message {
@@ -366,11 +409,10 @@ figcaption {
   display: flex;
 }
 
-.info-message {
-  opacity: .7;
-  color: var(--white);
+.text-message {
+  color: var(--w-color-white);
+  font-size: 1.18em;
   letter-spacing: -.02em;
-  font-size: .87em;
   line-height: 120%;
 }
 

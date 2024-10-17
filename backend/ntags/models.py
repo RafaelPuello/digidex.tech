@@ -164,7 +164,7 @@ class NFCTag(BaseNFCTag):
         try:
             return NFCTagScan.objects.create(**scan_data)
         except IntegrityError:
-            raise IntegrityError(_("Invalid counter: {counter}. Scan counter must be unique for each NFC Tag"))
+            raise IntegrityError(_("Scan counter must be unique for each NFC Tag"))
 
     def clean_scan_counter(self, counter):
         if isinstance(counter, int):
@@ -212,9 +212,9 @@ class NFCTag(BaseNFCTag):
         return self.get_visitor_urls()
 
     def get_urls(self):
-        actions = {action: self.get_admin_url(action) for action in self.viewset_actions}
+        actions = {action.title(): self.get_admin_url(action) for action in self.viewset_actions}
         if self.content_object:
-            actions['page'] = self.get_page_url()
+            actions['Page'] = self.get_page_url()
         return actions
 
     def get_admin_url(self, action):
@@ -251,7 +251,9 @@ class NFCTagScan(models.Model):
     )
 
     def __str__(self):
-        return f"Scan #{self.counter} for {self.nfc_tag}"
+        if self.scanned_by:
+            return f"{self.nfc_tag} scan #{self.counter} by {self.scanned_by} at {self.scanned_at}"
+        return f"{self.nfc_tag} scan #{self.counter} at {self.scanned_at}"
 
     class Meta:
         verbose_name = _("scan")
