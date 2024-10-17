@@ -329,12 +329,14 @@ WAGTAILSEARCH_BACKENDS = {
 }
 
 # ------------------------------------------------------------------------
-# Wagtail-ntag Configuration
+# Wagtail-nfctags Configuration
 # ------------------------------------------------------------------------
 NFC_TAGGABLE_MODELS = [
     'inventory.InventoryBoxPage',
     'botany.UserPlant'
 ]
+
+NFC_TAG_FALLBACK_URL = WAGTAILADMIN_BASE_URL
 
 NFC_TAG_LINK_URL = WAGTAILADMIN_BASE_URL + '/link'
 

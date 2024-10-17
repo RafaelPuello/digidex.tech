@@ -31,7 +31,7 @@
           "type": ["string", "null"],
           "maxLength": 64
         },
-        "eeprom": {
+        "metadata": {
           "type": "string",
           "contentEncoding": "base64",
           "maxLength": 924

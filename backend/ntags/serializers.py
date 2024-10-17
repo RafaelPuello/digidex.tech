@@ -33,5 +33,5 @@ class NFCTagSerializer(serializers.ModelSerializer):
         fields = [
             'serial_number', 'integrated_circuit',
             'user', 'label', 'active',
-            'scans', 'eeprom'
+            'scans', 'metadata'
         ]

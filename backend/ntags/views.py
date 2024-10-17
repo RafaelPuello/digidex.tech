@@ -38,11 +38,11 @@ def link_nfc_tag(request):
         scan.update({'user': request.user})
 
         if request.user == nfc_tag.user:
-            context.update({'urls': nfc_tag.get_owner_urls()})
+            context.update({'urls': nfc_tag.get_urls('user')})
         else:
-            context.update({'urls': nfc_tag.get_visitor_urls()})
+            context.update({'urls': nfc_tag.get_urls('visitor')})
     else:
-        context.update({'urls': nfc_tag.get_anonymous_visitor_urls()})
+        context.update({'urls': nfc_tag.get_urls('visitor')})
 
     try:
         nfc_tag.log_scan(**scan)

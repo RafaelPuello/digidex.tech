@@ -13,7 +13,6 @@ from base.models import GalleryImageMixin
 
 from . import get_nfc_taggable_models
 from .validators import validate_ascii_mirror_uid
-from .managers import NFCTagManager
 
 User = get_user_model()
 
@@ -61,7 +60,7 @@ class BaseNFCTag(ClusterableModel):
     active = models.BooleanField(
         default=True
     )
-    eeprom = models.JSONField(
+    metadata = models.JSONField(
         default=dict,
     )
     content_type = models.ForeignKey(
@@ -83,8 +82,6 @@ class BaseNFCTag(ClusterableModel):
         "object_id"
     )
 
-    objects = NFCTagManager()
-
     def __str__(self):
         return self.serial_number
 
@@ -103,14 +100,14 @@ class BaseNFCTag(ClusterableModel):
             )
         ]
 
-    def log_scan(self, counter, user):
+    def log_scan(self):
         raise NotImplementedError("Method 'log_scan' must be implemented in a subclass.")
 
     @property
     def url(self):
         return self.get_url()
 
-    def get_url(self, action=None):
+    def get_url(self):
         raise NotImplementedError("Method 'get_url' must be implemented in a subclass.")
 
 
@@ -193,6 +190,20 @@ class NFCTag(BaseNFCTag):
                 raise e
         return self.get_page_url()
 
+    def get_urls(self, group=None):
+        if self.content_type:
+            urls = {'Page': self.get_page_url()}
+        else:
+            urls = {}
+
+        if group is None or group == 'user':
+            urls.update({action.title(): self.get_admin_url(action) for action in self.viewset_actions})
+            return urls
+        elif group == 'visitor':
+            return urls
+        else:
+            raise ValueError("Invalid group value")
+
     def get_page_url(self):
         if self.content_object and hasattr(self.content_object, 'url'):
             return self.content_object.url
@@ -200,22 +211,8 @@ class NFCTag(BaseNFCTag):
 
     @staticmethod
     def get_fallback_url():
-        return '/'
-
-    def get_owner_urls(self):
-        return self.get_urls()
-
-    def get_visitor_urls(self):
-        return self.get_page_url()
-
-    def get_anonymous_visitor_urls(self):
-        return self.get_visitor_urls()
-
-    def get_urls(self):
-        actions = {action.title(): self.get_admin_url(action) for action in self.viewset_actions}
-        if self.content_object:
-            actions['Page'] = self.get_page_url()
-        return actions
+        from django.conf import settings
+        return settings.NFC_TAG_FALLBACK_URL
 
     def get_admin_url(self, action):
         viewset = self.get_viewset()
