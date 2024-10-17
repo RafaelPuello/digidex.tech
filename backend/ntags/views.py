@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
 from django.http import JsonResponse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.utils.translation import gettext_lazy as _
 
 from .models import NFCTag
@@ -22,11 +22,21 @@ def link_nfc_tag(request):
     try:
         nfc_tag = NFCTag.objects.get(serial_number=uid)
 
-        if request.user.is_authenticated:
-            nfc_tag.log_scan(counter, request.user)
-        else:
+        if not request.user.is_authenticated:
             nfc_tag.log_scan(counter)
-        return redirect(nfc_tag.url)
+            return redirect(nfc_tag.url)
+
+        else:
+            nfc_tag.log_scan(counter, request.user)
+
+            if request.user != nfc_tag.user:
+                return redirect(nfc_tag.url)
+
+            return render(
+                request,
+                'wagtailnfctags/index.html',
+                {'urls': nfc_tag.get_urls()}
+            )
 
     except NFCTag.objects.model.DoesNotExist:
         messages.error(request, _('NFC Tag not found.'))

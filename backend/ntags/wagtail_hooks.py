@@ -8,16 +8,16 @@ from .viewsets import NFCTagSnippetViewSetGroup
 
 @hooks.register("insert_editor_js")
 def editor_js():
-    return format_html('<script src="{}"></script>', static("ntags/js/nfc-tag-editor.js"))
+    return format_html('<script src="{}"></script>', static("wagtailnfctags/js/nfc-tag-editor.js"))
 
 
 @hooks.register("register_icons")
 def register_icons(icons):
     return icons + [
-        'ntags/icons/logo.svg',
-        'ntags/icons/designs.svg',
-        'ntags/icons/scans.svg',
-        'ntags/icons/memory.svg',
+        'wagtailnfctags/icons/logo.svg',
+        'wagtailnfctags/icons/designs.svg',
+        'wagtailnfctags/icons/scans.svg',
+        'wagtailnfctags/icons/memory.svg',
     ]
 
 
