@@ -103,15 +103,34 @@ class BaseNFCTag(models.Model):
         verbose_name = _("nfc-tag")
         verbose_name_plural = _("nfc-tags")
 
+    def build_context(self):
+        return {
+            'heading': str(self),
+            'urls': self.get_urls(),
+            'form': self.get_form()
+        }
+
     def log_scan(self, counter, user=None):
+        """
+        Log a scan for the NFC tag, optionally including a user.
+        """
         scan_data = {
             'nfc_tag': self,
             'counter': self.clean_scan_counter(counter)
         }
 
-        if user is not None and isinstance(user, User):
+        if user:
+            if not isinstance(user, User):
+                raise TypeError("User must be an instance of User")
             scan_data['scanned_by'] = user
 
+        return self._create_scan_entry(scan_data)
+
+    def _create_scan_entry(self, scan_data):
+        """
+        Helper method to create the scan entry in the database.
+        This handles scan creation and uniqueness constraints.
+        """
         try:
             return NFCTagScan.objects.create(**scan_data)
         except IntegrityError:
@@ -136,6 +155,16 @@ class BaseNFCTag(models.Model):
         else:
             raise TypeError("Counter must be an int, bytes, or str")
 
+    def get_form(self):
+        if not self.content_object:
+            return None
+
+        try:
+            return self.content_object.get_form()
+        except Exception as e:
+            print(e)
+            return None
+
     @property
     def url(self):
         return self.get_url()
@@ -144,6 +173,14 @@ class BaseNFCTag(models.Model):
         if self.content_object and hasattr(self.content_object, 'url'):
             return self.content_object.url
         return self.get_fallback_url()
+
+    def get_urls(self):
+        if self.content_object:
+            try:
+                return {'Page': self.get_url()}
+            except Exception as e:
+                print(e)
+                return {'Page': self.get_fallback_url()}
 
     @staticmethod
     def get_fallback_url():
@@ -184,6 +221,18 @@ class NFCTag(BaseNFCTag):
             self.label = f"NFC Tag {n}"
         super().save(*args, **kwargs)
 
+    def build_context(self, group=None):
+        return {
+            'heading': str(self),
+            'urls': self.get_urls(group),
+            'form': self.get_form(group)
+        }
+
+    def get_form(self, group=None):
+        # TODO: Implement form customization based on group
+        form = super().get_form()
+        return form
+
     def get_url(self, action=None):
         if action and action in self.viewset_actions:
             try:
@@ -193,10 +242,7 @@ class NFCTag(BaseNFCTag):
         super().get_url()
 
     def get_urls(self, group=None):
-        if self.content_object:
-            urls = {'Page': self.get_url()}
-        else:
-            urls = {'Page': self.get_fallback_url()}
+        urls = super().get_urls()
 
         if group == 'visitor':
             pass  # No additional URLs for visitors

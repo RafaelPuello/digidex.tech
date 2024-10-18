@@ -292,6 +292,10 @@ class InventoryFormPage(RoutablePageMixin, AbstractForm):
         context['plants'] = self.get_plants()
         return context
 
+    @property
+    def form(self):
+        return self.get_form()
+
     def get_form_fields(self):
         return self.inventory_form_fields.all()
 

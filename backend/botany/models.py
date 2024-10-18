@@ -97,6 +97,9 @@ class UserPlant(
     def get_parent_collection(self):
         return self.user.collection
 
+    def get_form(self):
+        return self.box.form
+
 
 class UserPlantGalleryImage(GalleryImageMixin):
     plant = ParentalKey(
