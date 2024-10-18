@@ -193,14 +193,14 @@ class BaseNFCTag(models.Model):
     def url(self):
         return self.get_url()
 
-    def get_url(self):
-        try:
-            obj = self.get_tagged_object()
-            return obj.url
-        except ValueError:  # If no object is tagged
-            return self.get_fallback_url()
-        except AttributeError:  # If the object does not have a url method
-            return self.get_fallback_url()
+    def get_url(self, action=None):
+        if action is None or action not in self.viewset_actions:
+            try:
+                obj = self.get_tagged_object()
+                return obj.url
+            except ValueError or AttributeError:
+                return self.get_fallback_url()
+        return self.get_admin_url(action)
 
     def get_tagged_object(self):
         if not self.content_object:
@@ -218,11 +218,6 @@ class BaseNFCTag(models.Model):
             return cls.objects.get(serial_number=uid)
         except cls.DoesNotExist:
             return None
-
-    def get_url(self, action=None):
-        if action is None or action not in self.viewset_actions:
-            return super().get_url()
-        return self.get_admin_url(action)
 
     def get_admin_url(self, action):
         viewset = self.get_viewset()
