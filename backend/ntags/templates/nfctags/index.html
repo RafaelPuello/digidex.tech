@@ -3,20 +3,26 @@
 {% block title %}NFC Tags{% endblock %}
 
 {% block content %}
-  <div class="utility-page-wrap">
-    <div class="utility-page-content w-password-page w-form">
-      <div class="subtitle green">NFC Tags<br></div>
-      <h4 class="heading">{{ heading }}</h4>
-      {% if object_context %}
-        <a href="{{ object_context.url }}" class="button w-button">{{ object_context.title }}</a>
-      {% endif %}
-      {% if form_context %}
-        {% include "nfctags/includes/form.html" with form=form_context.form url=form_context.form_url %}
-      {% endif %}
+  <section class="section-top">
+    <div class="content">
+      <div class="block-top">
+        <h1 class="heading-top">Linked NFC Tags</h1>
+        {% if intro %}
+          <p class="paragraph-top">{{ intro }}</p>
+        {% endif %}
+      </div>
     </div>
-  </div>
+  </section>
 
-  {% if admin_context %}
-    {% include "nfctags/includes/admin.html" with urls=admin_context.urls %}
+  {% if details %}
+    {% include "nfctags/includes/details.html" with card=details %}
+  {% endif %}
+
+  {% if tasks %}
+    {% include "nfctags/includes/tasks.html" with form=tasks.form url=tasks.form_url %}
+  {% endif %}
+
+  {% if views %}
+    {% include "nfctags/includes/views.html" with urls=views.urls %}
   {% endif %}
 {% endblock %}

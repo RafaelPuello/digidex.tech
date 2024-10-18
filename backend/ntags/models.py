@@ -150,33 +150,44 @@ class BaseNFCTag(models.Model):
 
     def build_context(self, request):
         return {
-            'heading': str(self),
-            'object_context': self.get_object_context(),
-            'form_context': self.get_form_context(request)
+            'details': self.get_details(),
+            'tasks': self.get_tasks(request),
+            'views': self.get_views()
         }
 
-    def get_object_context(self):
+    def get_details(self):
+        _details = {
+            'heading': str(self),
+            'text': 'Home',
+            'url': self.get_fallback_url()
+        }
+
         try:
             obj = self.get_tagged_object()
-            return {
-                'title': str(obj),
-                'url': obj.url if hasattr(obj, 'url') else self.get_fallback_url(),
-            }
-        except ValueError:  # No object is tagged
-            return {
-                'title': 'Home',
-                'url': self.get_fallback_url(),
-            }
+            _details.update({
+                'text': str(obj),
+                'url': obj.url,
+            })
+        # Leave defaults for exceptions
+        except ValueError:
+            # No object is tagged
+            pass
+        except AttributeError:
+            # The object does not have a url method
+            pass
+        return _details
 
-    def get_admin_context(self):
-        return None
-
-    def get_form_context(self, request):
+    def get_tasks(self, request):
         try:
             obj = self.get_tagged_object()
-            return obj.get_form_context(request)
+            return obj.get_tasks(request)
         except ValueError:
             return None
+
+    def get_views(self):
+        return {
+            'urls': {action.title(): self.get_admin_url(action) for action in self.viewset_actions}
+        }
 
     @property
     def url(self):
@@ -208,6 +219,23 @@ class BaseNFCTag(models.Model):
         except cls.DoesNotExist:
             return None
 
+    def get_url(self, action=None):
+        if action is None or action not in self.viewset_actions:
+            return super().get_url()
+        return self.get_admin_url(action)
+
+    def get_admin_url(self, action):
+        viewset = self.get_viewset()
+        url_name = viewset.get_url_name(action)
+        return reverse(url_name, args=[self.pk])
+
+    def get_breadcrumb_items(self):
+        viewset = self.get_viewset()
+        return viewset.breadcrumbs_items
+
+    def get_viewset(self):
+        return self.snippet_viewset
+
 
 class NFCTag(BaseNFCTag):
 
@@ -234,49 +262,6 @@ class NFCTag(BaseNFCTag):
             n = self.user.nfc_tags.count() + 1
             self.label = f"NFC Tag {n}"
         super().save(*args, **kwargs)
-
-    def build_context(self, request, for_visitor=False):
-        context = super().build_context(request)
-        
-        if for_visitor:
-            return context
-
-        context.update({'admin_context': self.get_admin_context()})
-        return context
-
-    def get_admin_context(self):
-        # Will be used to generate the admin context
-        return {
-            'urls': self.get_urls_for_group("owner")
-        }
-
-    def get_urls_for_group(self, group):
-        if group == 'owner':
-            try:
-                return {action.title(): self.get_admin_url(action) for action in self.viewset_actions}
-            except Exception as e:
-                raise(e)
-        elif group == 'visitor':
-            return None  # {'Scan': self.get_admin_url('usage')}
-        else:
-            raise ValueError("Invalid group")
-
-    def get_url(self, action=None):
-        if action is None or action not in self.viewset_actions:
-            return super().get_url()
-        return self.get_admin_url(action)
-
-    def get_admin_url(self, action):
-        viewset = self.get_viewset()
-        url_name = viewset.get_url_name(action)
-        return reverse(url_name, args=[self.pk])
-
-    def get_breadcrumb_items(self):
-        viewset = self.get_viewset()
-        return viewset.breadcrumbs_items
-
-    def get_viewset(self):
-        return self.snippet_viewset
 
 
 class NFCTagScan(models.Model):

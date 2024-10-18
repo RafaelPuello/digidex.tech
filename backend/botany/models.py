@@ -109,7 +109,7 @@ class UserPlant(
     def get_parent_collection(self):
         return self.user.collection
 
-    def get_form_context(self, request):
+    def get_tasks(self, request):
         form = self.box.form
         if form:
             return {

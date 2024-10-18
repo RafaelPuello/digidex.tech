@@ -35,15 +35,10 @@ def link_nfc_tag(request):
         return redirect(NFCTag.get_fallback_url())
 
     scan = {'counter': counter}
-
-    # Determine view context based on user authentication
-    for_visitor = True
     if request.user.is_authenticated:
         scan.update({'user': request.user})
 
-        if request.user == nfc_tag.user:
-            for_visitor = False
-    context = nfc_tag.build_context(request, for_visitor)
+    context = nfc_tag.build_context(request)
 
     # Attempt to log the scan and return the response
     try:

@@ -1,7 +1,0 @@
-<form action="{{ url }}" method="POST" class="utility-page-form w-password-page">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <div class="error-message w-password-page w-form-fail">
-    <div class="text-error">Incorrect password. Please try again.</div>
-  </div>
-</form>

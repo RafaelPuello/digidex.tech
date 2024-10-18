@@ -1,0 +1,12 @@
+<div class="utility-page-wrap">
+  <div class="utility-page-content w-password-page w-form">
+    <div class="subtitle green">tasks<br></div>
+    {% if heading %}
+      <h4 class="heading">{{ heading }}</h4>
+    {% endif %}
+    <form action="{{ url }}" method="POST" class="utility-page-form w-password-page">
+      {% csrf_token %}
+      {{ form.as_p }}
+    </form>
+  </div>
+</div>
