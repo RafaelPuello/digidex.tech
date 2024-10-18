@@ -34,19 +34,11 @@ def link_nfc_tag(request):
         messages.error(request, _('Invalid serial number. NFC Tag ASCII mirror improperly configured.'))
         return redirect(NFCTag.get_fallback_url())
 
-    context = {'heading': str(nfc_tag)}
     scan = {'counter': counter}
-
-    # Determine what URLs to display based on request user
     if request.user.is_authenticated:
         scan.update({'user': request.user})
 
-        if request.user == nfc_tag.user:
-            context.update({'urls': nfc_tag.get_urls('user')})
-        else:
-            context.update({'urls': nfc_tag.get_urls('visitor')})
-    else:
-        context.update({'urls': nfc_tag.get_urls('visitor')})
+    context = nfc_tag.build_context(request)
 
     # Attempt to log the scan and return the response
     try:

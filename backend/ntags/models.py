@@ -83,7 +83,7 @@ class BaseNFCTag(models.Model):
     )
 
     def __str__(self):
-        return self.serial_number
+        return f"NFC Tag: {self.serial_number}"
 
     def __gt__(self, other):
         return self.serial_number > other.serial_number
@@ -104,14 +104,26 @@ class BaseNFCTag(models.Model):
         verbose_name_plural = _("nfc-tags")
 
     def log_scan(self, counter, user=None):
+        """
+        Log a scan for the NFC tag, optionally including a user.
+        """
         scan_data = {
             'nfc_tag': self,
             'counter': self.clean_scan_counter(counter)
         }
 
-        if user is not None and isinstance(user, User):
+        if user:
+            if not isinstance(user, User):
+                raise TypeError("User must be an instance of User")
             scan_data['scanned_by'] = user
 
+        return self._create_scan_entry(scan_data)
+
+    def _create_scan_entry(self, scan_data):
+        """
+        Helper method to create the scan entry in the database.
+        This handles scan creation and uniqueness constraints.
+        """
         try:
             return NFCTagScan.objects.create(**scan_data)
         except IntegrityError:
@@ -136,14 +148,64 @@ class BaseNFCTag(models.Model):
         else:
             raise TypeError("Counter must be an int, bytes, or str")
 
+    def build_context(self, request):
+        return {
+            'details': self.get_details(),
+            'tasks': self.get_tasks(request),
+            'views': self.get_views()
+        }
+
+    def get_details(self):
+        _details = {
+            'heading': str(self),
+            'text': 'Home',
+            'url': self.get_fallback_url()
+        }
+
+        try:
+            obj = self.get_tagged_object()
+            _details.update({
+                'text': str(obj),
+                'url': obj.url,
+            })
+        # Leave defaults for exceptions
+        except ValueError:
+            # No object is tagged
+            pass
+        except AttributeError:
+            # The object does not have a url method
+            pass
+        return _details
+
+    def get_tasks(self, request):
+        try:
+            obj = self.get_tagged_object()
+            return obj.get_tasks(request)
+        except ValueError:
+            return None
+
+    def get_views(self):
+        return {
+            'urls': {action.title(): self.get_admin_url(action) for action in self.viewset_actions}
+        }
+
     @property
     def url(self):
         return self.get_url()
 
-    def get_url(self):
-        if self.content_object and hasattr(self.content_object, 'url'):
-            return self.content_object.url
-        return self.get_fallback_url()
+    def get_url(self, action=None):
+        if action is None or action not in self.viewset_actions:
+            try:
+                obj = self.get_tagged_object()
+                return obj.url
+            except ValueError or AttributeError:
+                return self.get_fallback_url()
+        return self.get_admin_url(action)
+
+    def get_tagged_object(self):
+        if not self.content_object:
+            raise ValueError("No content object is tagged to this NFC Tag")
+        return self.content_object
 
     @staticmethod
     def get_fallback_url():
@@ -156,6 +218,18 @@ class BaseNFCTag(models.Model):
             return cls.objects.get(serial_number=uid)
         except cls.DoesNotExist:
             return None
+
+    def get_admin_url(self, action):
+        viewset = self.get_viewset()
+        url_name = viewset.get_url_name(action)
+        return reverse(url_name, args=[self.pk])
+
+    def get_breadcrumb_items(self):
+        viewset = self.get_viewset()
+        return viewset.breadcrumbs_items
+
+    def get_viewset(self):
+        return self.snippet_viewset
 
 
 class NFCTag(BaseNFCTag):
@@ -176,48 +250,13 @@ class NFCTag(BaseNFCTag):
     )
 
     def __str__(self):
-        return self.label if self.label else self.serial_number
+        return self.label if self.label else f"NFC Tag: {self.serial_number}"
 
     def save(self, *args, **kwargs):
         if not self.label and self.user:
             n = self.user.nfc_tags.count() + 1
             self.label = f"NFC Tag {n}"
         super().save(*args, **kwargs)
-
-    def get_url(self, action=None):
-        if action and action in self.viewset_actions:
-            try:
-                return self.get_admin_url(action)
-            except Exception as e:
-                raise e
-        super().get_url()
-
-    def get_urls(self, group=None):
-        if self.content_object:
-            urls = {'Page': self.get_url()}
-        else:
-            urls = {'Page': self.get_fallback_url()}
-
-        if group == 'visitor':
-            pass  # No additional URLs for visitors
-        elif group is None or group == 'user':
-            urls.update({action.title(): self.get_admin_url(action) for action in self.viewset_actions})
-        else:
-            raise ValueError("Invalid group value")
-
-        return urls
-
-    def get_admin_url(self, action):
-        viewset = self.get_viewset()
-        url_name = viewset.get_url_name(action)
-        return reverse(url_name, args=[self.pk])
-
-    def get_breadcrumb_items(self):
-        viewset = self.get_viewset()
-        return viewset.breadcrumbs_items
-
-    def get_viewset(self):
-        return self.snippet_viewset
 
 
 class NFCTagScan(models.Model):

@@ -1,0 +1,12 @@
+<section class="section">
+  <div class="content narrow">
+    <div class="page-body">
+      <div class="block-button">
+        <div class="subtitle green">views<br></div>
+        {% for action, url in urls.items %}
+          <a href="{{ url }}" class="button{% if action == 'Usage' %}-outline{% elif action == 'History' %} yellow{% else %} black{% endif %} w-button">{{ action }}</a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,9 @@
+<div class="utility-page-wrap">
+  <div class="utility-page-content">
+    <div class="subtitle green">details<br></div>
+    {% if card.heading %}
+      <h4 class="heading">{{ card.heading }}</h4>
+    {% endif %}
+    <a href="{{ card.url }}" class="button w-button">{{ card.text }}</a>
+  </div>
+</div>
