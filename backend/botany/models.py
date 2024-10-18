@@ -37,6 +37,11 @@ class UserPlant(
         unique=True,
         db_index=True
     )
+    slug = models.SlugField(
+        editable=False,
+        db_index=True,
+        max_length=255
+    )
     notes = StreamField(
         [('note', BotanyNoteBlock())],
         blank=True
@@ -50,14 +55,21 @@ class UserPlant(
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
+
     class Meta(TranslatableMixin.Meta):
         verbose_name = _('plant')
         verbose_name_plural = _('plants')
         indexes = [
             models.Index(fields=['box', 'name']),
+            models.Index(fields=['box', 'slug']),
         ]
         constraints = [
             models.UniqueConstraint(fields=['box', 'name'], name='unique_plant_name_in_box'),
+            models.UniqueConstraint(fields=['box', 'slug'], name='unique_plant_slug_in_box'),
         ]
 
     def get_preview_template(self, request, mode_name):
@@ -97,8 +109,15 @@ class UserPlant(
     def get_parent_collection(self):
         return self.user.collection
 
-    def get_form(self):
-        return self.box.form
+    def get_form_context(self, request):
+        form = self.box.form
+        if form:
+            return {
+                'form': form,
+                # 'form_fields': self.box.get_form_fields(),
+                'form_url': self.box.get_url(request)
+            }
+        return None
 
 
 class UserPlantGalleryImage(GalleryImageMixin):

@@ -83,7 +83,7 @@ class BaseNFCTag(models.Model):
     )
 
     def __str__(self):
-        return self.serial_number
+        return f"NFC Tag: {self.serial_number}"
 
     def __gt__(self, other):
         return self.serial_number > other.serial_number
@@ -102,13 +102,6 @@ class BaseNFCTag(models.Model):
         ordering = ['serial_number']
         verbose_name = _("nfc-tag")
         verbose_name_plural = _("nfc-tags")
-
-    def build_context(self):
-        return {
-            'heading': str(self),
-            'urls': self.get_urls(),
-            'form': self.get_form()
-        }
 
     def log_scan(self, counter, user=None):
         """
@@ -155,14 +148,34 @@ class BaseNFCTag(models.Model):
         else:
             raise TypeError("Counter must be an int, bytes, or str")
 
-    def get_form(self):
-        if not self.content_object:
-            return None
+    def build_context(self, request):
+        return {
+            'heading': str(self),
+            'object_context': self.get_object_context(),
+            'form_context': self.get_form_context(request)
+        }
 
+    def get_object_context(self):
         try:
-            return self.content_object.get_form()
-        except Exception as e:
-            print(e)
+            obj = self.get_tagged_object()
+            return {
+                'title': str(obj),
+                'url': obj.url if hasattr(obj, 'url') else self.get_fallback_url(),
+            }
+        except ValueError:  # No object is tagged
+            return {
+                'title': 'Home',
+                'url': self.get_fallback_url(),
+            }
+
+    def get_admin_context(self):
+        return None
+
+    def get_form_context(self, request):
+        try:
+            obj = self.get_tagged_object()
+            return obj.get_form_context(request)
+        except ValueError:
             return None
 
     @property
@@ -170,17 +183,18 @@ class BaseNFCTag(models.Model):
         return self.get_url()
 
     def get_url(self):
-        if self.content_object and hasattr(self.content_object, 'url'):
-            return self.content_object.url
-        return self.get_fallback_url()
+        try:
+            obj = self.get_tagged_object()
+            return obj.url
+        except ValueError:  # If no object is tagged
+            return self.get_fallback_url()
+        except AttributeError:  # If the object does not have a url method
+            return self.get_fallback_url()
 
-    def get_urls(self):
-        if self.content_object:
-            try:
-                return {'Page': self.get_url()}
-            except Exception as e:
-                print(e)
-                return {'Page': self.get_fallback_url()}
+    def get_tagged_object(self):
+        if not self.content_object:
+            raise ValueError("No content object is tagged to this NFC Tag")
+        return self.content_object
 
     @staticmethod
     def get_fallback_url():
@@ -213,7 +227,7 @@ class NFCTag(BaseNFCTag):
     )
 
     def __str__(self):
-        return self.label if self.label else self.serial_number
+        return self.label if self.label else f"NFC Tag: {self.serial_number}"
 
     def save(self, *args, **kwargs):
         if not self.label and self.user:
@@ -221,37 +235,36 @@ class NFCTag(BaseNFCTag):
             self.label = f"NFC Tag {n}"
         super().save(*args, **kwargs)
 
-    def build_context(self, group=None):
+    def build_context(self, request, for_visitor=False):
+        context = super().build_context(request)
+        
+        if for_visitor:
+            return context
+
+        context.update({'admin_context': self.get_admin_context()})
+        return context
+
+    def get_admin_context(self):
+        # Will be used to generate the admin context
         return {
-            'heading': str(self),
-            'urls': self.get_urls(group),
-            'form': self.get_form(group)
+            'urls': self.get_urls_for_group("owner")
         }
 
-    def get_form(self, group=None):
-        # TODO: Implement form customization based on group
-        form = super().get_form()
-        return form
+    def get_urls_for_group(self, group):
+        if group == 'owner':
+            try:
+                return {action.title(): self.get_admin_url(action) for action in self.viewset_actions}
+            except Exception as e:
+                raise(e)
+        elif group == 'visitor':
+            return None  # {'Scan': self.get_admin_url('usage')}
+        else:
+            raise ValueError("Invalid group")
 
     def get_url(self, action=None):
-        if action and action in self.viewset_actions:
-            try:
-                return self.get_admin_url(action)
-            except Exception as e:
-                raise e
-        super().get_url()
-
-    def get_urls(self, group=None):
-        urls = super().get_urls()
-
-        if group == 'visitor':
-            pass  # No additional URLs for visitors
-        elif group is None or group == 'user':
-            urls.update({action.title(): self.get_admin_url(action) for action in self.viewset_actions})
-        else:
-            raise ValueError("Invalid group value")
-
-        return urls
+        if action is None or action not in self.viewset_actions:
+            return super().get_url()
+        return self.get_admin_url(action)
 
     def get_admin_url(self, action):
         viewset = self.get_viewset()
