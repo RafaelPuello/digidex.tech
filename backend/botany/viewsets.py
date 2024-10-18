@@ -41,8 +41,8 @@ class UserPlantViewSet(SnippetViewSet):
         FieldPanel("box"),
         FieldPanel("name"),
         FieldPanel("description"),
-        FieldPanel("notes"),
-        InlinePanel("gallery_images", label="Images"),
+        FieldPanel("notes", classname="collapsed"),
+        InlinePanel("gallery_images", label="Images", classname="collapsed"),
     ]
 
     private_panels = [

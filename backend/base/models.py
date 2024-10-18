@@ -80,6 +80,10 @@ class BaseDocument(AbstractDocument):
 
     admin_form_fields = Document.admin_form_fields + ('source',)
 
+    class Meta:
+        verbose_name = _("document")
+        verbose_name_plural = _("documents")
+
 
 class BaseImage(AbstractImage):
     """
@@ -110,6 +114,10 @@ class BaseImage(AbstractImage):
     )
 
     admin_form_fields = Image.admin_form_fields + ('alt',)
+
+    class Meta:
+        verbose_name = _("image")
+        verbose_name_plural = _("images")
 
 
 class BaseRendition(AbstractRendition):
@@ -149,7 +157,7 @@ class AbstractGallery(Orderable):
         max_length=250
     )
 
-    class Meta(Orderable.Meta):
+    class Meta:
         abstract = True
         ordering = ["sort_order"]
 
@@ -169,11 +177,11 @@ class GalleryImageMixin(AbstractGallery):
         FieldPanel('caption'),
     ]
 
-    class Meta(AbstractGallery.Meta):
+    class Meta:
         abstract = True
         ordering = ["sort_order"]
-        verbose_name = _("image")
-        verbose_name_plural = _("images")
+        verbose_name = _("gallery image")
+        verbose_name_plural = _("gallery images")
 
 
 class CollectionMixin(models.Model):

@@ -7,6 +7,7 @@ from wagtail.blocks import (
     StructBlock
 )
 from wagtail.images.blocks import ImageChooserBlock
+from django.utils.translation import gettext as _
 
 
 class BaseHeadingBlock(StructBlock):
@@ -52,4 +53,5 @@ class BaseCardBlock(StructBlock):
 
     class Meta:
         icon = "doc-full"
+        label = _("card")
         template = 'base/blocks/base_card_block.html'
