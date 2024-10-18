@@ -43,6 +43,8 @@ class UserPlantViewSet(SnippetViewSet):
             FieldPanel("name"),
         ]),
         FieldPanel("description"),
+        FieldPanel("notes", classname="collapsed"),
+        InlinePanel("gallery_images", label="Images", classname="collapsed"),
     ]
 
     journal_panels = [
