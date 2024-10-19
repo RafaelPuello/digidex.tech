@@ -1,6 +1,7 @@
 import uuid
 from django.db import models, transaction
 from django.conf import settings
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
@@ -17,7 +18,7 @@ from wagtail.admin.panels import (
 from wagtail.contrib.forms.models import AbstractForm, AbstractFormField
 from wagtail.contrib.forms.panels import FormSubmissionsPanel
 
-from wagtail.contrib.routable_page.models import RoutablePageMixin, path
+from wagtail.contrib.routable_page.models import RoutablePageMixin, path, re_path
 
 from base.models import CollectionMixin
 
@@ -103,7 +104,7 @@ class InventoryIndexCollection(CollectionMixin, models.Model):
         return InventoryIndexPage.get_for_user(self.user)
 
 
-class InventoryIndexPage(Page):
+class InventoryIndexPage(RoutablePageMixin, Page):
 
     user_collection = models.OneToOneField(
         'inventory.InventoryIndexCollection',
@@ -137,6 +138,18 @@ class InventoryIndexPage(Page):
     class Meta:
         verbose_name = _('user home page')
         verbose_name_plural = _('user home pages')
+
+    @re_path(r'^(?P<box_slug>[\w-]+)/(?P<plant_slug>[\w-]+)')
+    def plant_details(self, request, box_slug, plant_slug):
+        from botany.models import UserPlant
+        plant = get_object_or_404(
+            UserPlant.objects.filter(slug=plant_slug, box__slug=box_slug, box__in=self.get_children().live())
+        )
+        return self.render(
+            request,
+            context_overrides={'plant': plant},
+            template="inventory/inventory_detail_page.html"
+        )
 
     def get_context(self, request):
         context = super().get_context(request)
@@ -248,7 +261,7 @@ class InventoryFormField(AbstractFormField):
     )
 
 
-class InventoryFormPage(RoutablePageMixin, AbstractForm):
+class InventoryFormPage(AbstractForm):
 
     description = models.TextField(blank=True)
     form_submission_text = RichTextField(blank=True)
@@ -292,22 +305,8 @@ class InventoryFormPage(RoutablePageMixin, AbstractForm):
         context['plants'] = self.get_plants()
         return context
 
-    @property
-    def form(self):
-        return self.get_form()
-
     def get_form_fields(self):
         return self.inventory_form_fields.all()
-
-    @path('<slug:plant_slug>/')
-    def plant_details(self, request, plant_slug):
-        from botany.models import UserPlant
-        plant = get_object_or_404(UserPlant, slug=plant_slug, box=self)
-        return self.render(
-            request,
-            context_overrides={'plant': plant},
-            template="inventory/inventory_detail_page.html"
-        )
 
     def get_plants(self):
         from botany.models import UserPlant

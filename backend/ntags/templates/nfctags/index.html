@@ -1,28 +1,80 @@
-{% extends "base/base.html" %}
-
-{% block title %}NFC Tags{% endblock %}
+{% extends "nfctags/base.html" %}
+{% load static %}
 
 {% block content %}
-  <section class="section-top">
+  <section class="section">
     <div class="content">
-      <div class="block-top">
-        <h1 class="heading-top">Linked NFC Tags</h1>
-        {% if intro %}
-          <p class="paragraph-top">{{ intro }}</p>
-        {% endif %}
+      <div class="w-layout-grid grid-banner">
+        <div class="block-banner">
+          <div class="subtitle white">linked nfc tag<br></div>
+          {% if details.heading %}
+            <h2 class="heading banner">{{ details.heading }}</h2>
+          {% endif %}
+          <a href="{{ details.url }}" class="button yellow w-button">{{ details.text }}</a>
+        </div>
+        <div class="lottie-banner"></div>
       </div>
     </div>
   </section>
 
-  {% if details %}
-    {% include "nfctags/includes/details.html" with card=details %}
-  {% endif %}
-
-  {% if tasks %}
-    {% include "nfctags/includes/tasks.html" with form=tasks.form url=tasks.form_url %}
-  {% endif %}
-
-  {% if views %}
-    {% include "nfctags/includes/views.html" with urls=views.urls %}
-  {% endif %}
+  <section class="section">
+    <div class="content">
+      {% if tasks.views %}
+        <div class="lottie-wrapper">
+          {% with tasks.views as views %}
+            <div class="tasks-lottie">
+              {% if views.edit %}
+                <a href="{{ views.edit.url }}" class="tasks-lottie-link w-inline-block">
+                  <div class="block-icon-tasks-lottie">
+                    <img src="{% static 'nfctags/images/edit.svg' %}" loading="eager" alt="" class="icon-tasks-lottie"></div>
+                  <div class="block-heading-tasks-lottie">
+                    <h4 class="heading-tasks-lottie">{{ views.edit.action }}</h4>
+                    <div class="text-tasks-lottie">Edit NFC Tag</div>
+                  </div>
+                </a>
+              {% endif %}
+              {% if views.usage %}
+                <a href="{{ views.usage.url }}" class="tasks-lottie-link a2 w-inline-block">
+                  <div class="block-icon-tasks-lottie">
+                    <img src="{% static 'nfctags/images/usage.svg' %}" loading="eager" alt="" class="icon-tasks-lottie"></div>
+                  <div class="block-heading-tasks-lottie">
+                    <h4 class="heading-tasks-lottie">{{ views.usage.action }}</h4>
+                    <div class="text-tasks-lottie">NFC Tag Usage</div>
+                  </div>
+                </a>
+              {% endif %}
+              {% if views.history %}
+                <a href="{{ views.history.url }}" class="tasks-lottie-link a3 w-inline-block">
+                  <div class="block-icon-tasks-lottie">
+                    <img src="{% static 'nfctags/images/history.svg' %}" loading="eager" alt="" class="icon-tasks-lottie"></div>
+                  <div class="block-heading-tasks-lottie">
+                    <h4 class="heading-tasks-lottie">{{ views.history.action }}</h4>
+                    <div class="text-tasks-lottie">NFC Tag History</div>
+                  </div>
+                </a>
+              {% endif %}
+            </div>
+          {% endwith %}
+        </div>
+      {% endif %}
+      {% if tasks.form %}
+        <div class="tasks">
+          <div class="subtitle green">tasks<br></div>
+          <div class="form-block w-form">
+            <form action="{{ tasks.form_url }}" method="POST" class="form" aria-label="Task Form">
+              {% csrf_token %}
+              {{ tasks.form.as_p }}
+              <input type="submit" class="submit-button w-button">
+            </form>
+            <div class="success-message w-form-done" tabindex="-1" role="region" aria-label="Email Form success">
+              <div class="text-success">Thank you! Your submission has been received!</div>
+            </div>
+            <div class="error-message w-form-fail" tabindex="-1" role="region" aria-label="Email Form failure">
+              <div class="text-error">Oops! Something went wrong while submitting the form.</div>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </section>
 {% endblock %}

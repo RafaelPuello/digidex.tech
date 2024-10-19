@@ -1,0 +1,15 @@
+{% extends "base/base.html" %}
+
+{% load static %}
+
+{% block title %}NFC Tags{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" type="text/css" href="{% static 'nfctags/nfctags.css' %}">
+{% endblock  %}
+
+{% block content %}{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'nfctags/nfctags.js' %}"></script>
+{% endblock %}
