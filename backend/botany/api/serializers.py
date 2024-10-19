@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from wagtail.images.api.fields import ImageRenditionField
 
-from .models import UserPlant, UserPlantGalleryImage
+from ..models import UserPlant, UserPlantGalleryImage
 
 
 class UserPlantGalleryImageSerializer(serializers.ModelSerializer):

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import InventoryFormPage
+from ..models import InventoryFormPage
 
 
 class InventoryBoxSerializer(serializers.ModelSerializer):

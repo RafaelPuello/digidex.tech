@@ -8,6 +8,9 @@ from wagtail import urls as wagtail_urls
 from search.views import search
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
+from .api import api_router
+
+
 urlpatterns = [
     path("accounts/", include('allauth.urls')),
     # path("_allauth/", include("allauth.headless.urls")),
@@ -18,6 +21,7 @@ urlpatterns = [
     path('documents/', include(wagtaildocs_urls)),
     path('admin/', admin.site.urls),
     path("dashboard/", include(dashboard_urls)),
+    path('api/v2/', api_router.urls),
     path("", include(wagtail_urls)),
 ]
 

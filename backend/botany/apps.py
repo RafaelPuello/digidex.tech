@@ -9,6 +9,6 @@ class BotanyConfig(AppConfig):
 
     def ready(self):
         from wagtail.admin.forms.models import register_form_field_override
-        from .models import UserPlant
-        from .widgets import UserPlantChooserWidget
-        register_form_field_override(ForeignKey, to=UserPlant, override={'widget': UserPlantChooserWidget})
+        # from .models import UserPlant
+        # from .widgets import UserPlantChooserWidget
+        # register_form_field_override(ForeignKey, to=UserPlant, override={'widget': UserPlantChooserWidget})
