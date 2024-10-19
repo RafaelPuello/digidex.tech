@@ -16,6 +16,7 @@ def get_inventory_model_strings():
         return []
     return inventory_models
 
+
 def get_inventory_models():
     """
     Returns a query combining all models that are part of the inventory.
@@ -34,3 +35,30 @@ def get_inventory_models():
 
     # Combine all conditions with OR
     return conditions[0] if len(conditions) == 1 else query(*conditions, _connector=query.OR)
+
+
+def get_inventory_model_classes():
+    """
+    Returns a list of model classes that can be used with the inventory app.
+    """
+    from django.apps import apps
+    from django.contrib.contenttypes.models import ContentType
+
+    # Get the list of model strings from settings
+    model_strings = get_inventory_model_strings()
+    if not model_strings:
+        return ContentType.objects.none()
+
+    # Resolve model strings to content types
+    content_types = []
+    for model_string in model_strings:
+        try:
+            app_label, model_name = model_string.split('.')
+            model_class = apps.get_model(app_label, model_name)
+            if model_class:
+                content_type = ContentType.objects.get_for_model(model_class)
+                content_types.append(content_type)
+        except (ValueError, LookupError, ContentType.DoesNotExist):
+            warnings.warn(f"Could not find ContentType for model: {model_string}", UserWarning)
+
+    return ContentType.objects.filter(id__in=[ct.id for ct in content_types])
