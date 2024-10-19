@@ -58,36 +58,25 @@
     </div>
   </section>
 
-  <section class="section">
-    <div class="content">
-      <div class="tasks">
-        <div class="subtitle green">tasks<br></div>
-        <div class="form-block w-form">
-          <form action="{% pageurl page %}" method="POST" class="form" aria-label="Inventory Form">
-            {% csrf_token %}
-            {% for non_field_error in form.non_field_errors %}
-              <div class="error-message w-form-fail" aria-label="Form non-field failure">
-                <div class="text-error">{{ non_field_error }}</div>
-              </div>
-            {% endfor %}
-            {% for field in form %}
-              {% for field_error in field.errors %}
-                <div class="error-message w-form-fail" aria-label="Form field failure">
-                  <div class="text-error">{{ field_error }}</div>
+  {% if request.user.is_authenticated and request.user == page.owner %}
+    <section class="section">
+      <div class="content">
+        <div class="tasks">
+          <div class="subtitle green">tasks<br></div>
+          <div class="form-block w-form">
+            <form action="{% pageurl page %}" method="POST" class="form" aria-label="Inventory Form">
+              {% csrf_token %}
+              {% for non_field_error in form.non_field_errors %}
+                <div class="error-message w-form-fail" aria-label="Form non-field failure">
+                  <div class="text-error">{{ non_field_error }}</div>
                 </div>
               {% endfor %}
-              {{ field.errors }}
-              {{ field.label_tag }} {{ field }}
-              {% if field.help_text %}
-                <p class="help" id="{{ field.auto_id }}_helptext">
-                  {{ field.help_text|safe }}
-                </p>
-              {% endif %}
-            {% endfor %}
-            <input type="submit" class="submit-button w-button">
-          </form>
+              {{ form.as_div }}
+              <input type="submit" class="submit-button w-button">
+            </form>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+  {% endif %}
 {% endblock content %}
