@@ -30,49 +30,39 @@
 
   /* Primary Color - Deep Teal */
   --w-color-primary: #006D5B; /* hsl(168, 100%, 21%) */
-  --w-color-primary-200: #005247;
+  --w-color-primary-200: #005247; /* Darker shade for accents */
 
   /* Secondary Color - Soft Green */
+  --w-color-secondary: #2C906F;
   --w-color-secondary-hue: 160;
   --w-color-secondary-saturation: 53%;
   --w-color-secondary-lightness: 37%;
 
-  /* Generate shades of Secondary Color */
-  --w-color-secondary-600: hsl(160, 53%, 32%); /* Hover states */
-  --w-color-secondary-400: hsl(160, 53%, 42%); /* Active states */
-  --w-color-secondary-100: hsl(160, 53%, 82%); /* UI highlights over dark backgrounds */
-  --w-color-secondary-75: hsl(160, 53%, 87%);  /* UI highlights over dark text */
-  --w-color-secondary-50: hsl(160, 53%, 92%);  /* Backgrounds */
-
-  /* Additional Secondary Color - Soft Blue */
+  /* Additional Color - Soft Blue */
   --w-color-secondary-blue: #357ABD; /* hsl(213, 56%, 47%) */
-  --w-color-secondary-blue-600: #2F6CA9; /* Hover states */
-  --w-color-secondary-blue-400: #4288C8; /* Active states */
-  --w-color-secondary-blue-100: #A9CBE3; /* UI highlights */
-  --w-color-secondary-blue-50: #E1EFF6;  /* Backgrounds */
 
-  /* Additional Secondary Color - Warm Red */
+  /* Additional Color - Warm Red */
   --w-color-secondary-red: #D1495B; /* hsl(353, 61%, 56%) */
-  --w-color-secondary-red-600: #B04050; /* Hover states */
-  --w-color-secondary-red-400: #DC5E6D; /* Active states */
-  --w-color-secondary-red-100: #F1B7BD; /* UI highlights */
-  --w-color-secondary-red-50: #F9E4E6;  /* Backgrounds */
 
-  /* Success Messages */
-  --w-color-success-100: #00693E;
-  --w-color-success-50: #C3E6CB;
+  /* Positive Messages - Vibrant Green */
+  --w-color-positive-hue: 134;
+  --w-color-positive-saturation: 61%; /* 00693E hsl(134, 61%, 41%) */
+  --w-color-positive-lightness: 41%;
 
-  /* Information Messages */
-  --w-color-info-100: #3959FF;
-  --w-color-info-50: #D1ECF1;
+  /* Information Messages - Calm Blue */
+  --w-color-info-hue: 188;
+  --w-color-info-saturation: 71%; /* 3959FF hsl(188, 71%, 41%) */
+  --w-color-info-lightness: 41%;
 
-  /* Warning Messages */
-  --w-color-warning-100: #FFC107;
-  --w-color-warning-50: #FFF3CD;
+  /* Warning Messages - Soft Amber */
+  --w-color-warning-hue: 45;
+  --w-color-warning-saturation: 100%;
+  --w-color-warning-lightness: 50%;
 
-  /* Error Messages */
-  --w-color-error-100: #DC5349;
-  --w-color-error-50: #FDECEA;
+  /* Critical Messages - Strong Red */
+  --w-color-critical-hue: 354;
+  --w-color-critical-saturation: 70%; /* F8D7DA Background for critical states */
+  --w-color-critical-lightness: 47%;
 }
 
 .w-layout-grid {

@@ -46,6 +46,7 @@ def get_nfc_taggable_model_strings():
         return []
     return taggable_models
 
+
 def get_nfc_taggable_models():
     """
     Returns a query combining all models that are taggable by NFC tags.
@@ -64,3 +65,30 @@ def get_nfc_taggable_models():
 
     # Combine all conditions with OR
     return conditions[0] if len(conditions) == 1 else query(*conditions, _connector=query.OR)
+
+
+def get_nfc_taggable_model_classes():
+    """
+    Returns a list of model classes that are taggable by NFC tags.
+    """
+    from django.apps import apps
+    from django.contrib.contenttypes.models import ContentType
+
+    # Get the list of model strings from settings
+    model_strings = get_nfc_taggable_model_strings()
+    if not model_strings:
+        return ContentType.objects.none()
+
+    # Resolve model strings to model classes
+    content_types = []
+    for model_string in model_strings:
+        try:
+            app_label, model_name = model_string.split('.')
+            model_class = apps.get_model(app_label, model_name)
+            if model_class:
+                content_type = ContentType.objects.get_for_model(model_class)
+                content_types.append(content_type)
+        except (ValueError, LookupError):
+            warnings.warn(f"Could not find ContentType for model: {model_string}", UserWarning)
+
+    return ContentType.objects.filter(id__in=[ct.id for ct in content_types])
