@@ -1,5 +1,5 @@
 from django.apps import AppConfig
-from django.db.models import ForeignKey
+from django.db.models import ForeignKey  # noqa
 
 
 class BotanyConfig(AppConfig):
@@ -8,7 +8,7 @@ class BotanyConfig(AppConfig):
     label = 'botany'
 
     def ready(self):
-        from wagtail.admin.forms.models import register_form_field_override
-        from .models import UserPlant
-        from .widgets import UserPlantChooserWidget
-        register_form_field_override(ForeignKey, to=UserPlant, override={'widget': UserPlantChooserWidget})
+        from wagtail.admin.forms.models import register_form_field_override  # noqa
+        # from .models import UserPlant
+        # from .widgets import UserPlantChooserWidget
+        # register_form_field_override(ForeignKey, to=UserPlant, override={'widget': UserPlantChooserWidget})

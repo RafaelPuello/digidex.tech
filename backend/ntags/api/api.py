@@ -3,7 +3,7 @@ from rest_framework import status, viewsets, permissions
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 
-from .models import NFCTag
+from ..models import NFCTag
 from .serializers import NFCTagSerializer
 
 
