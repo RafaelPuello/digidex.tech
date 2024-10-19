@@ -35,6 +35,8 @@ NTAG_EEPROM_SIZES = (
 
 class BaseNFCTag(models.Model):
 
+    viewset_actions = ['edit', 'usage', 'history']
+
     limited_options = get_nfc_taggable_models
 
     serial_number = models.CharField(
@@ -152,7 +154,6 @@ class BaseNFCTag(models.Model):
         return {
             'details': self.get_details(),
             'tasks': self.get_tasks(request),
-            'views': self.get_views()
         }
 
     def get_details(self):
@@ -162,32 +163,29 @@ class BaseNFCTag(models.Model):
             'url': self.get_fallback_url()
         }
 
-        try:
-            obj = self.get_tagged_object()
-            _details.update({
-                'text': str(obj),
-                'url': obj.url,
-            })
-        # Leave defaults for exceptions
-        except ValueError:
-            # No object is tagged
-            pass
-        except AttributeError:
-            # The object does not have a url method
-            pass
+        if self.content_object:
+            # An object is tagged
+            _details.update({'text': str(self.content_object)})
+
+            try:
+                _details.update({'url': self.content_object.url,})
+            except AttributeError:
+                # The object does not have a url method
+                pass
+
         return _details
 
     def get_tasks(self, request):
-        try:
-            obj = self.get_tagged_object()
-            return obj.get_tasks(request)
-        except ValueError:
-            return None
+        tasks = {'views': {action: self.get_admin_url(action) for action in self.viewset_actions}}
+        
+        if self.content_object: 
+            try:
+                tasks.update(self.content_object.get_inventory_form(request))
+            except AttributeError:
+                # The object does not have method for tasks
+                pass
 
-    def get_views(self):
-        return {
-            'urls': {action.title(): self.get_admin_url(action) for action in self.viewset_actions}
-        }
+        return tasks
 
     @property
     def url(self):
@@ -233,8 +231,6 @@ class BaseNFCTag(models.Model):
 
 
 class NFCTag(BaseNFCTag):
-
-    viewset_actions = ['edit', 'usage', 'history']
 
     design = models.ForeignKey(
         'NFCTagDesign',

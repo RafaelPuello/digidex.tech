@@ -1,4 +1,4 @@
-from wagtail.admin.panels import TabbedInterface, FieldPanel, InlinePanel, ObjectList
+from wagtail.admin.panels import TabbedInterface, FieldPanel, FieldRowPanel, InlinePanel, ObjectList
 from wagtail.snippets.views.chooser import SnippetChooserViewSet
 from wagtail.snippets.views.snippets import SnippetViewSet
 
@@ -37,21 +37,23 @@ class UserPlantViewSet(SnippetViewSet):
     add_to_admin_menu = True
     chooser_viewset_class = UserPlantChooserViewSet
 
-    public_panels = [
-        FieldPanel("box"),
-        FieldPanel("name"),
+    detail_panels = [
+        FieldRowPanel([
+            FieldPanel("box"),
+            FieldPanel("name"),
+        ]),
         FieldPanel("description"),
-        FieldPanel("notes", classname="collapsed"),
-        InlinePanel("gallery_images", label="Images", classname="collapsed"),
     ]
 
-    private_panels = [
+    journal_panels = [
+        FieldPanel("notes", classname="collapsed"),
+        InlinePanel("gallery_images", label="Image Gallery", classname="collapsed"),
     ]
 
     edit_handler = TabbedInterface(
         [
-            ObjectList(public_panels, heading='Details'),
-            ObjectList(private_panels, heading='Admin only', permission="superuser"),
+            ObjectList(detail_panels, heading='Details'),
+            ObjectList(journal_panels, heading='Journal'),
         ]
     )
 

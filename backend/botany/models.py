@@ -109,15 +109,18 @@ class UserPlant(
     def get_parent_collection(self):
         return self.user.collection
 
-    def get_tasks(self, request):
-        form = self.box.form
+    def get_inventory_form(self, request):
+        tasks = {}
+
+        form = self.box.get_form(page=self.box, user=request.user)
         if form:
-            return {
+            tasks.update({
                 'form': form,
-                # 'form_fields': self.box.get_form_fields(),
+                # 'form_fields': self.box.get_inventory_form_fields(),
                 'form_url': self.box.get_url(request)
-            }
-        return None
+            })
+
+        return tasks
 
 
 class UserPlantGalleryImage(GalleryImageMixin):

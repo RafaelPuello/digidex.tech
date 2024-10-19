@@ -1565,7 +1565,7 @@ figcaption {
   margin-bottom: 5px;
 }
 
-.textarea, .form :is(textarea) {
+.textarea {
   border: 1px solid var(--border);
   background-color: var(--white);
   color: var(--heading);
@@ -1589,7 +1589,7 @@ figcaption {
   color: #14171899;
 }
 
-.text-field, .form :is(input) {
+.text-field{
   border: 1px solid var(--border);
   background-color: var(--white);
   color: var(--heading);
@@ -1622,14 +1622,6 @@ figcaption {
 
 .text-field.transparent::placeholder {
   color: #ffffffa6;
-}
-
-.form :is(select) {
-  width: 100%;
-  max-width: 500px;
-  min-height: 40px;
-  margin-top: 5px;
-  margin-bottom: 10px;
 }
 
 .form .helptext {
