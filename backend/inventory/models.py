@@ -331,10 +331,7 @@ class InventoryFormPage(AbstractForm):
     def process_form_submission(self, form):
         return self.get_submission_class().objects.create(
             form_data=form.cleaned_data,
-            page=self,
-            include_all=form.include_all,
-            content_type=form.content_type,
-            object_id=form.object_id,
+            page=self
         )
 
 
@@ -367,7 +364,8 @@ class InventoryFormSubmission(AbstractFormSubmission):
     def get_data(self):
         form_data = super().get_data()
         form_data.update({
-            'username': self.user.username,
+            'include_all': self.include_all,
+            'content_object': self.content_object,
         })
 
         return form_data
