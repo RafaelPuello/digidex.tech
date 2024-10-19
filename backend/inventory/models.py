@@ -1,7 +1,8 @@
 import uuid
 from django.db import models, transaction
 from django.conf import settings
-from django.http import Http404
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.shortcuts import get_object_or_404
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
@@ -15,12 +16,13 @@ from wagtail.admin.panels import (
     TabbedInterface, ObjectList
 )
 
-from wagtail.contrib.forms.models import AbstractForm, AbstractFormField
+from wagtail.contrib.forms.models import AbstractForm, AbstractFormField, AbstractFormSubmission
 from wagtail.contrib.forms.panels import FormSubmissionsPanel
 
-from wagtail.contrib.routable_page.models import RoutablePageMixin, path, re_path
+from wagtail.contrib.routable_page.models import RoutablePageMixin, re_path
 
 from base.models import CollectionMixin
+from . import get_inventory_models
 
 
 class InventoryIndexCollection(CollectionMixin, models.Model):
@@ -279,16 +281,20 @@ class InventoryFormPage(AbstractForm):
 
     content_panels = [
         TitleFieldPanel('title', classname="title"),
-        FormSubmissionsPanel(),
         FieldPanel('slug'),
         FieldPanel('description'),
-        InlinePanel('inventory_form_fields', label="Form fields"),
+    ]
+
+    form_panels = [
+        FormSubmissionsPanel(),
+        InlinePanel('inventory_form_fields', label="Fields", classname="collapsed"),
         FieldPanel('form_submission_text'),
 
     ]
 
     edit_handler = TabbedInterface([
         ObjectList(content_panels, heading='Details'),
+        ObjectList(form_panels, heading='Form'),
         ObjectList(Page.promote_panels, heading='Promote', permission="superuser"),
         ObjectList(Page.settings_panels, heading='Settings', permission="superuser"),
     ])
@@ -319,8 +325,49 @@ class InventoryFormPage(AbstractForm):
     def get_parent_collection(self):
         return self.owner.index_collection.collection
 
-    content_panels = AbstractForm.content_panels + [
-        FieldPanel('intro'),
-        InlinePanel('form_fields', label="Form fields"),
-        FieldPanel('thank_you_text'),
-    ]
+    def get_submission_class(self):
+        return InventoryFormSubmission
+
+    def process_form_submission(self, form):
+        return self.get_submission_class().objects.create(
+            form_data=form.cleaned_data,
+            page=self,
+            include_all=form.include_all,
+            content_type=form.content_type,
+            object_id=form.object_id,
+        )
+
+
+class InventoryFormSubmission(AbstractFormSubmission):
+
+    limited_options = get_inventory_models
+
+    include_all = models.BooleanField(
+        default=False
+    )
+    content_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        verbose_name=_("Content type"),
+        limit_choices_to=limited_options,
+        null=True,
+        blank=True,
+        related_name="form_submissions"
+    )
+    object_id = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        db_index=True
+    )
+    content_object = GenericForeignKey(
+        "content_type",
+        "object_id"
+    )
+
+    def get_data(self):
+        form_data = super().get_data()
+        form_data.update({
+            'username': self.user.username,
+        })
+
+        return form_data
