@@ -333,13 +333,16 @@ WAGTAILSEARCH_BACKENDS = {
 # ------------------------------------------------------------------------
 NFC_TAG_MODEL = 'ntags.NFCTag'
 
-NFC_TAGGABLE_MODELS = [
-    'botany.UserPlant'
-]
-
 NFC_TAG_FALLBACK_URL = '/'
 
 NFC_TAG_LINK_URL = WAGTAILADMIN_BASE_URL + '/link'
+
+# ------------------------------------------------------------------------
+# Wagtail-Inventory Configuration
+# ------------------------------------------------------------------------
+INVENTORY_MODELS = NFC_TAGGABLE_MODELS = [
+    'botany.UserPlant'
+]
 
 try:
     from .local import *  # noqa
