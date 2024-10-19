@@ -1,3 +1,5 @@
+from django.utils.html import format_html
+from django.templatetags.static import static
 from wagtail import hooks
 from wagtail.admin.wagtail_hooks import LockedPagesMenuItem
 from wagtail.admin.site_summary import PagesSummaryItem
@@ -11,6 +13,11 @@ from wagtail.admin.wagtail_hooks import (
     PageTypesReportMenuItem,
     ExplorerMenuItem
 )
+
+
+@hooks.register('insert_global_admin_css')
+def global_admin_css():
+    return format_html('<link rel="stylesheet" href="{}">', static('base/css/theme.css'))
 
 
 @hooks.register('construct_explorer_page_queryset')

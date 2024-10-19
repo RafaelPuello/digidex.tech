@@ -1,0 +1,56 @@
+:root {
+  --white: white;
+  --background: #f4f6f7;
+  --border: rgba(15, 100, 146, .2);
+  --heading: #141718;
+  --paragraph: rgba(20, 23, 24, .8);
+
+  --accent-a1: #00693e;
+  --accent-a2: #bc0087;
+  --accent-a3: #3959ff;
+  --accent-a4: #ffc107;
+
+  --accent-b1: rgba(114, 174, 131, 0.07);
+  --accent-b2: rgba(188, 0, 135, .07);
+  --accent-b3: rgba(57, 89, 255, .07);
+
+  /* Fonts */
+  --w-font-sans: 'Space Grotesk', sans-serif;
+  --w-font-mono: 'IBM Plex Mono', monospace;
+
+  /* Primary Color - Deep Teal */
+  --w-color-primary: #006D5B; /* hsl(168, 100%, 21%) */
+  --w-color-primary-200: #005247; /* Darker shade for accents */
+
+  /* Secondary Color - Soft Green */
+  --w-color-secondary: #2C906F;
+  --w-color-secondary-hue: 160;
+  --w-color-secondary-saturation: 53%;
+  --w-color-secondary-lightness: 37%;
+
+  /* Additional Color - Soft Blue */
+  --w-color-secondary-blue: #357ABD; /* hsl(213, 56%, 47%) */
+
+  /* Additional Color - Warm Red */
+  --w-color-secondary-red: #D1495B; /* hsl(353, 61%, 56%) */
+
+  /* Positive Messages - Vibrant Green */
+  --w-color-positive-hue: 134;
+  --w-color-positive-saturation: 61%; /* 00693E hsl(134, 61%, 41%) */
+  --w-color-positive-lightness: 41%;
+
+  /* Information Messages - Calm Blue */
+  --w-color-info-hue: 188;
+  --w-color-info-saturation: 71%; /* 3959FF hsl(188, 71%, 41%) */
+  --w-color-info-lightness: 41%;
+
+  /* Warning Messages - Soft Amber */
+  --w-color-warning-hue: 45;
+  --w-color-warning-saturation: 100%;
+  --w-color-warning-lightness: 50%;
+
+  /* Critical Messages - Strong Red */
+  --w-color-critical-hue: 354;
+  --w-color-critical-saturation: 70%; /* F8D7DA Background for critical states */
+  --w-color-critical-lightness: 47%;
+}
