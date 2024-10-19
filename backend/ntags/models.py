@@ -178,7 +178,7 @@ class BaseNFCTag(models.Model):
     def get_tasks(self, request):
         tasks = {'views': {action: self.get_admin_url(action) for action in self.viewset_actions}}
 
-        if self.content_object: 
+        if self.content_object:
             try:
                 tasks.update(self.content_object.get_inventory_form(request))
             except AttributeError:
