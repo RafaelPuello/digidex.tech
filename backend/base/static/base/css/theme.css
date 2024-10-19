@@ -24,33 +24,31 @@
 
   /* Secondary Color - Soft Green */
   --w-color-secondary: #2C906F;
-  --w-color-secondary-hue: 160;
-  --w-color-secondary-saturation: 53%;
-  --w-color-secondary-lightness: 37%;
+  --w-color-secondary-600: hsl(160, 53%, 32%); /* Hover states */
+  --w-color-secondary-400: hsl(160, 53%, 42%); /* Active states */
+  --w-color-secondary-100: hsl(160, 53%, 82%); /* UI highlights over dark backgrounds */
+  --w-color-secondary-75: hsl(160, 53%, 87%);  /* UI highlights over dark text */
+  --w-color-secondary-50: hsl(160, 53%, 92%);  /* Backgrounds */
 
-  /* Additional Color - Soft Blue */
+  /* Additional Secondary Colors */
   --w-color-secondary-blue: #357ABD; /* hsl(213, 56%, 47%) */
-
-  /* Additional Color - Warm Red */
   --w-color-secondary-red: #D1495B; /* hsl(353, 61%, 56%) */
 
   /* Positive Messages - Vibrant Green */
-  --w-color-positive-hue: 134;
-  --w-color-positive-saturation: 61%; /* 00693E hsl(134, 61%, 41%) */
-  --w-color-positive-lightness: 41%;
+  --w-color-positive-100: #28A745; /* hsl(134, 61%, 41%) */
+  --w-color-positive-50: #C3E6CB;  /* Background for positive states */
 
   /* Information Messages - Calm Blue */
-  --w-color-info-hue: 188;
-  --w-color-info-saturation: 71%; /* 3959FF hsl(188, 71%, 41%) */
-  --w-color-info-lightness: 41%;
+  --w-color-info-100: #17A2B8; /* hsl(188, 71%, 41%) */
+  --w-color-info-50: #D1ECF1; /* Background for information messages */
 
   /* Warning Messages - Soft Amber */
-  --w-color-warning-hue: 45;
-  --w-color-warning-saturation: 100%;
-  --w-color-warning-lightness: 50%;
+  --w-color-warning-100: #FFC107; /* hsl(45, 100%, 50%) */
+  --w-color-warning-50: #FFF3CD;  /* Background for warnings */
+
 
   /* Critical Messages - Strong Red */
-  --w-color-critical-hue: 354;
-  --w-color-critical-saturation: 70%; /* F8D7DA Background for critical states */
-  --w-color-critical-lightness: 47%;
+  --w-color-critical-200: #DC3545; /* hsl(354, 70%, 47%) */
+  --w-color-critical-100: #F8D7DA; /* Background for critical states */
+  --w-color-critical-50: #FDECEA;  /* Background only */
 }
