@@ -341,11 +341,11 @@ figcaption {
 }
 
 .messages-block.warning {
-  background-color: var(--accent-a2);
+  background-color: var(--accent-a4);
 }
 
 .messages-block.error {
-  background-color: var(--accent-a4);
+  background-color: #DC3545;
 }
 
 .message {
