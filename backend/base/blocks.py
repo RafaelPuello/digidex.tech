@@ -45,6 +45,17 @@ class BaseBodyBlock(RichTextBlock):
     icon = "pilcrow"
 
 
+class BaseNoteBlock(StructBlock):
+    heading = CharBlock(form_classname="title")
+    date = DateBlock()
+    body = TextBlock()
+
+    class Meta:
+        icon = "form"
+        label = _("note")
+        template = 'base/blocks/base_note_block.html'
+
+
 class BaseCardBlock(StructBlock):
     heading = CharBlock(form_classname="title")
     date = DateBlock()

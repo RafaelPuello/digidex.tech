@@ -4,6 +4,9 @@ from django.db import transaction
 from django.core.exceptions import ValidationError
 from wagtail.admin.forms import WagtailAdminModelForm
 
+from .views import PlantSpecies
+from .widgets import SpeciesChooserWidget
+
 
 class UserPlantForm(WagtailAdminModelForm):
     # Adding a non-model field to the form, defaulting to hidden
@@ -15,6 +18,12 @@ class UserPlantForm(WagtailAdminModelForm):
         label="Copies",
         help_text="Number of copies to create.",
         widget=forms.HiddenInput()
+    )
+    species = forms.ModelChoiceField(
+        queryset=PlantSpecies.objects.all(),
+        label="Species",
+        help_text="Select a species for this plant.",
+        widget=SpeciesChooserWidget
     )
 
     def __init__(self, *args, **kwargs):
@@ -58,4 +67,4 @@ class UserPlantForm(WagtailAdminModelForm):
         return instance
 
     class Meta:
-        fields = ['box', 'name', 'description', 'copies', 'notes']
+        fields = ['box', 'name', 'species', 'description', 'copies', 'notes']

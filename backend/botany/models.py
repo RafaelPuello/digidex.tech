@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from modelcluster.models import ClusterableModel
 from modelcluster.fields import ParentalKey
 from wagtail.fields import StreamField
-from wagtail.models import PreviewableMixin, Orderable
+from wagtail.models import Orderable
 from wagtail.search import index
 
 from base.models import GalleryImageMixin
@@ -71,12 +71,7 @@ class SubstrateMix(models.Model):
         return self.name
 
 
-class UserPlant(
-    Orderable,
-    ClusterableModel,
-    index.Indexed,
-    PreviewableMixin
-):
+class UserPlant(Orderable, ClusterableModel, index.Indexed):
     uuid = models.UUIDField(
         default=uuid.uuid4,
         editable=False,
@@ -100,9 +95,13 @@ class UserPlant(
     description = models.TextField(
         blank=True
     )
-    substrate_mix = models.ForeignKey(
-        'SubstrateMix',
-        related_name='user_plants',
+    taxon_id = models.PositiveBigIntegerField(
+        blank=True,
+        default=6
+    )
+    substrate = models.ForeignKey(
+        SubstrateMix,
+        related_name='+',
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
@@ -141,13 +140,6 @@ class UserPlant(
             models.UniqueConstraint(fields=['box', 'name'], name='unique_plant_name_in_box'),
             models.UniqueConstraint(fields=['box', 'slug'], name='unique_plant_slug_in_box'),
         ]
-
-    def get_custom_form_class(self):
-        from .forms import UserPlantForm
-        return UserPlantForm
-
-    def get_preview_template(self, request, mode_name):
-        return "botany/user_plant.html"
 
     @property
     def main_image(self, rendition=None):
