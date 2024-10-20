@@ -1,4 +1,4 @@
-from wagtail.admin.panels import TabbedInterface, FieldPanel, FieldRowPanel, InlinePanel, ObjectList
+from wagtail.admin.panels import MultiFieldPanel, FieldPanel, FieldRowPanel
 from wagtail.snippets.views.snippets import SnippetViewSet
 
 from .models import UserPlant
@@ -18,27 +18,19 @@ class UserPlantViewSet(SnippetViewSet):
     base_url_path = "inventory/plants"
     add_to_admin_menu = True
 
-    content_panels = [
-        FieldRowPanel([
-            FieldPanel("box"),
-            FieldPanel("name"),
+    panels = [
+        MultiFieldPanel([
+            FieldRowPanel([
+                FieldPanel("box", classname="col3"),
+                FieldPanel("species", classname="col3"),
+                FieldPanel("taxon_id", classname="col1"),
+                FieldPanel("name", classname="col5"),
+            ]),
+            FieldPanel("description"),
+            FieldPanel("image"),
         ]),
-        FieldPanel("description"),
-        FieldPanel("species"),
-        FieldPanel("copies"),
+        FieldPanel("copies", classname="collapsed"),
     ]
-
-    journal_panels = [
-        FieldPanel("notes", classname="collapsed"),
-        InlinePanel("gallery_images", label="Image Gallery", classname="collapsed"),
-    ]
-
-    edit_handler = TabbedInterface(
-        [
-            ObjectList(content_panels, heading='Details'),
-            ObjectList(journal_panels, heading='Journal'),
-        ]
-    )
 
     def get_queryset(self, request):
         queryset = UserPlant.objects.filter(box__owner=request.user)

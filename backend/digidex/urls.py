@@ -19,6 +19,7 @@ urlpatterns = [
     path("search/", search, name="search"),
     path("link/", include('ntags.urls')),
     path('documents/', include(wagtaildocs_urls)),
+    path('botany/', include('botany.urls')),
     path('admin/', admin.site.urls),
     path("dashboard/", include(dashboard_urls)),
     path('api/v2/', api_router.urls),

@@ -5,13 +5,12 @@ from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from modelcluster.models import ClusterableModel
 from modelcluster.fields import ParentalKey
-from wagtail.fields import StreamField
+from wagtail.fields import RichTextField
 from wagtail.models import Orderable
 from wagtail.search import index
 
-from base.models import GalleryImageMixin
+from base.models import BaseImage
 
-from .blocks import BotanyNoteBlock
 from .forms import UserPlantForm
 
 
@@ -71,6 +70,29 @@ class SubstrateMix(models.Model):
         return self.name
 
 
+class PlantNote(models.Model):
+    plant = ParentalKey(
+        'UserPlant',
+        related_name='notes',
+        on_delete=models.CASCADE
+    )
+    heading = models.CharField(
+        max_length=255,
+        blank=True
+    )
+    content = RichTextField()
+    timestamp = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    def __str__(self):
+        return f"{self.plant.name}'s note"
+
+    class Meta:
+        verbose_name = _('Plant Note')
+        verbose_name_plural = _('Plant Notes')
+
+
 class UserPlant(Orderable, ClusterableModel, index.Indexed):
     uuid = models.UUIDField(
         default=uuid.uuid4,
@@ -95,6 +117,13 @@ class UserPlant(Orderable, ClusterableModel, index.Indexed):
     description = models.TextField(
         blank=True
     )
+    image = models.ForeignKey(
+        BaseImage,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        blank=True,
+        null=True
+    )
     taxon_id = models.PositiveBigIntegerField(
         blank=True,
         default=6
@@ -105,10 +134,6 @@ class UserPlant(Orderable, ClusterableModel, index.Indexed):
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
-    )
-    notes = StreamField(
-        [('note', BotanyNoteBlock())],
-        blank=True
     )
     active = models.BooleanField(
         default=False
@@ -140,26 +165,6 @@ class UserPlant(Orderable, ClusterableModel, index.Indexed):
             models.UniqueConstraint(fields=['box', 'name'], name='unique_plant_name_in_box'),
             models.UniqueConstraint(fields=['box', 'slug'], name='unique_plant_slug_in_box'),
         ]
-
-    @property
-    def main_image(self, rendition=None):
-        if rendition is None:
-            return self.get_main_image()
-        pass  # TODO: Implement image rendition
-
-    def get_main_image(self):
-        gallery_item = self.gallery_images.first()
-        if gallery_item:
-            return gallery_item.image
-        else:
-            return None
-
-    @property
-    def images(self):
-        return self.get_images()
-
-    def get_images(self):
-        return self.gallery_images.all()
 
     @property
     def url(self):
@@ -209,21 +214,3 @@ class UserPlant(Orderable, ClusterableModel, index.Indexed):
         # Bulk create all plant copies for efficiency
         # UserPlant.objects.bulk_create(plant_copies, ignore_conflicts=True)
         return plant_copies
-
-
-class UserPlantGalleryImage(GalleryImageMixin):
-    plant = ParentalKey(
-        UserPlant,
-        on_delete=models.CASCADE,
-        related_name='gallery_images'
-    )
-
-    class Meta(GalleryImageMixin.Meta):
-        abstract = False
-
-    def get_image_rendition(self, spec):
-        """
-        Generates an image rendition based on a given spec string
-        (e.g., "fill-300x300").
-        """
-        return self.image.get_rendition(spec)
