@@ -14,11 +14,6 @@
   --accent-b2: rgba(188, 0, 135, .07);
   --accent-b3: rgba(57, 89, 255, .07);
 
-  --w-color-positive-100: #28A745; /* hsl(134, 61%, 41%) */
-  --w-color-info-100: #17A2B8; /* hsl(188, 71%, 41%) */
-  --w-color-warning-100: #FFC107; /* hsl(45, 100%, 50%) */
-  --w-color-critical-100: #DC3545; /* hsl(354, 70%, 47%) */
-
   /* Fonts */
   --w-font-sans: 'Space Grotesk', sans-serif;
   --w-font-mono: 'IBM Plex Mono', monospace;
@@ -338,19 +333,19 @@ figcaption {
 }
 
 .messages-block.info {
-  background-color: var(--w-color-info-100);
+  background-color: var(--accent-a3);
 }
 
 .messages-block.success {
-  background-color: var(--w-color-success-100);
+  background-color: var(--accent-a1);
 }
 
 .messages-block.warning {
-  background-color: var(--w-color-warning-100);
+  background-color: var(--accent-a4);
 }
 
 .messages-block.error {
-  background-color: var(--w-color-error-100);
+  background-color: #DC3545;
 }
 
 .message {
