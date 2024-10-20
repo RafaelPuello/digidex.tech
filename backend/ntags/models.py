@@ -150,10 +150,9 @@ class BaseNFCTag(models.Model):
         else:
             raise TypeError("Counter must be an int, bytes, or str")
 
-    def build_context(self, request):
+    def build_context(self):
         return {
-            'details': self.get_details(),
-            'tasks': self.get_tasks(request),
+            'details': self.get_details()
         }
 
     def get_details(self):
@@ -175,30 +174,16 @@ class BaseNFCTag(models.Model):
 
         return _details
 
-    def get_tasks(self, request):
-        tasks = {'views': {action: self.get_admin_url(action) for action in self.viewset_actions}}
-
-        if self.content_object:
-            try:
-                tasks.update(self.content_object.get_inventory_form(request))
-            except AttributeError:
-                # The object does not have method for tasks
-                pass
-
-        return tasks
-
     @property
     def url(self):
         return self.get_url()
 
-    def get_url(self, action=None):
-        if action is None or action not in self.viewset_actions:
-            try:
-                obj = self.get_tagged_object()
-                return obj.url
-            except ValueError or AttributeError:
-                return self.get_fallback_url()
-        return self.get_admin_url(action)
+    def get_url(self):
+        try:
+            obj = self.get_tagged_object()
+            return obj.url
+        except ValueError or AttributeError:
+            return self.get_fallback_url()
 
     def get_tagged_object(self):
         if not self.content_object:
@@ -216,18 +201,6 @@ class BaseNFCTag(models.Model):
             return cls.objects.get(serial_number=uid)
         except cls.DoesNotExist:
             return None
-
-    def get_admin_url(self, action):
-        viewset = self.get_viewset()
-        url_name = viewset.get_url_name(action)
-        return reverse(url_name, args=[self.pk])
-
-    def get_breadcrumb_items(self):
-        viewset = self.get_viewset()
-        return viewset.breadcrumbs_items
-
-    def get_viewset(self):
-        return self.snippet_viewset
 
 
 class NFCTag(BaseNFCTag):
@@ -253,6 +226,39 @@ class NFCTag(BaseNFCTag):
             n = self.user.nfc_tags.count() + 1
             self.label = f"NFC Tag {n}"
         super().save(*args, **kwargs)
+
+    def build_context(self, request):
+        context = super().build_context()
+        context.update({'views': self.get_views()})
+        if self.content_object:
+            context.update({'tasks': self.get_tasks(request)})
+        return context
+
+    def get_views(self):
+        return {action: self.get_admin_url(action) for action in self.viewset_actions}
+
+    def get_tasks(self, request):
+        tasks = {}
+
+        try:
+            tasks.update(self.content_object.get_inventory_form(request))
+        except AttributeError:
+            # The object does not have method for tasks
+            pass
+
+        return tasks
+
+    def get_admin_url(self, action):
+        viewset = self.get_viewset()
+        url_name = viewset.get_url_name(action)
+        return reverse(url_name, args=[self.pk])
+
+    def get_breadcrumb_items(self):
+        viewset = self.get_viewset()
+        return viewset.breadcrumbs_items
+
+    def get_viewset(self):
+        return self.snippet_viewset
 
 
 class NFCTagScan(models.Model):

@@ -7,7 +7,6 @@ from modelcluster.models import ClusterableModel
 from modelcluster.fields import ParentalKey
 from wagtail.fields import RichTextField
 from wagtail.models import Orderable
-from wagtail.search import index
 
 from base.models import BaseImage
 
@@ -93,7 +92,7 @@ class PlantNote(models.Model):
         verbose_name_plural = _('Plant Notes')
 
 
-class UserPlant(Orderable, ClusterableModel, index.Indexed):
+class UserPlant(Orderable, ClusterableModel):
     uuid = models.UUIDField(
         default=uuid.uuid4,
         editable=False,
@@ -138,11 +137,6 @@ class UserPlant(Orderable, ClusterableModel, index.Indexed):
     active = models.BooleanField(
         default=False
     )
-
-    search_fields = [
-        index.SearchField('name'),
-        index.AutocompleteField('name'),
-    ]
 
     base_form_class = UserPlantForm
 
