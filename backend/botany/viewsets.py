@@ -19,18 +19,17 @@ class UserPlantViewSet(SnippetViewSet):
     add_to_admin_menu = True
 
     content_panels = [
+        FieldRowPanel([FieldPanel("box"),], classname="col12"),
         FieldRowPanel([
-            FieldPanel("box"),
-            FieldPanel("name"),
+            FieldPanel("taxon_id", classname="col4"),
+            FieldPanel("name", classname="col8"),
         ]),
         FieldPanel("description"),
-        FieldPanel("species"),
         FieldPanel("copies"),
     ]
 
     journal_panels = [
-        FieldPanel("notes", classname="collapsed"),
-        InlinePanel("gallery_images", label="Image Gallery", classname="collapsed"),
+        InlinePanel("notes", classname="collapsed"),
     ]
 
     edit_handler = TabbedInterface(
