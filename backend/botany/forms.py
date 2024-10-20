@@ -12,7 +12,8 @@ class UserPlantForm(WagtailAdminModelForm):
         min_value=0,
         initial=0,
         required=False,
-        label="Number of Plants",
+        label="Copies",
+        help_text="Number of copies to create.",
         widget=forms.HiddenInput()
     )
 
@@ -34,7 +35,7 @@ class UserPlantForm(WagtailAdminModelForm):
             self.add_error('name', 'Name must be at least 3 characters long.')
 
         # Use regex to match only allowed characters (alphanumeric and dash)
-        if not re.match(r'^[\w\-]+$', name):
+        if not re.match(r'^[\w\s\-]+$', name):
             raise ValidationError('Name must contain only letters, numbers, and hyphens.')
 
         return name
@@ -49,31 +50,12 @@ class UserPlantForm(WagtailAdminModelForm):
 
         if commit:
             instance.save()
-
-            # Get the number of copies from cleaned_data
             copies = self.cleaned_data.get('copies', 0)
 
             if copies > 0:
-                # Create copies starting from '-1' up to '-(copies)'
-                self.create_plant_copies(instance, copies)
-            else:
-                instance.save()
+                instance.create_copies(copies)
 
         return instance
 
     class Meta:
         fields = ['box', 'name', 'description', 'copies', 'notes']
-
-    @transaction.atomic
-    def create_plant_copies(self, plant, copies):
-        from .models import UserPlant
-
-        # Start copy number from 1 and end at copies + 1
-        for copy in range(1, copies + 1):
-            plant_copy = UserPlant(
-                box=plant.box,
-                name=f"{plant.name} - {copy}",
-                description=plant.description,
-                notes=plant.notes,
-            )
-            plant_copy.save()
