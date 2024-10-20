@@ -24,6 +24,7 @@ class UserPlantViewSet(SnippetViewSet):
             FieldPanel("name"),
         ]),
         FieldPanel("description"),
+        FieldPanel("species"),
         FieldPanel("copies"),
     ]
 

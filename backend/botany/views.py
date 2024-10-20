@@ -33,24 +33,22 @@ class PlantSpecies(APIModel):
     def from_query_data(cls, data):
         return cls(
             key=data.get('key'),
-            scientificName=data.get('scientificName'),
             canonicalName=data.get('canonicalName'),
-            rank=data.get('rank'),
-            taxonomicStatus=data.get('taxonomicStatus'),
+            scientificName=data.get('scientificName')
         )
 
     @classmethod
     def from_individual_data(cls, data):
         return cls(
             key=data.get('key'),
-            scientificName=data.get('scientificName'),
             canonicalName=data.get('canonicalName'),
-            rank=data.get('rank'),
-            taxonomicStatus=data.get('taxonomicStatus'),
+            scientificName=data.get('scientificName')
         )
 
     def __str__(self):
-        return self.scientificName or self.canonicalName
+        if self.canonicalName and self.scientificName:
+            return f"{self.canonicalName} ({self.scientificName})"
+        return self.canonicalName or self.scientificName
 
 
 class PlantSpeciesChooserViewSet(ChooserViewSet):
