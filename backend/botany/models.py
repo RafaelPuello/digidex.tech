@@ -1,5 +1,5 @@
 import uuid
-from django.db import models
+from django.db import models, transaction
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from modelcluster.models import ClusterableModel
@@ -132,6 +132,31 @@ class UserPlant(
             })
 
         return tasks
+
+    @transaction.atomic
+    def create_plant_copies(self, copies):
+        """
+        Creates specified number of copies of this UserPlant instance.
+        """
+        if copies < 1:
+            raise ValueError("Number of copies must be at least 1.")
+
+        plant_copies = []
+
+        for copy_number in range(1, copies + 1):
+            plant_copy = UserPlant(
+                box=self.box,
+                name=f"{self.name} - {copy_number}",
+                description=self.description,
+                notes=self.notes,
+                active=self.active,
+            )
+            plant_copies.append(plant_copy)
+
+        # Bulk create all plant copies for efficiency
+        UserPlant.objects.bulk_create(plant_copies)
+
+        return plant_copies
 
 
 class UserPlantGalleryImage(GalleryImageMixin):
