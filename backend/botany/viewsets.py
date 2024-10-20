@@ -1,4 +1,4 @@
-from wagtail.admin.panels import MultiFieldPanel, FieldPanel, FieldRowPanel
+from wagtail.admin.panels import MultiFieldPanel, InlinePanel, FieldPanel, FieldRowPanel
 from wagtail.snippets.views.snippets import SnippetViewSet
 
 from .models import UserPlant
@@ -27,7 +27,11 @@ class UserPlantViewSet(SnippetViewSet):
                 FieldPanel("name", classname="col5"),
             ]),
             FieldPanel("description"),
+        ]),
+        MultiFieldPanel([
             FieldPanel("image"),
+            FieldPanel("substrate"),
+            InlinePanel("notes", label="Notes"),
         ]),
         FieldPanel("copies", classname="collapsed"),
     ]

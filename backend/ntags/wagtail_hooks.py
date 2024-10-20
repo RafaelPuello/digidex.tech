@@ -32,7 +32,7 @@ class NFCTagSnippetViewSet(SnippetViewSet):
     menu_name = "tags"
     menu_order = 131
     copy_view_enabled = False
-    admin_url_namespace = "nfc_tags"
+    url_namespace = "nfc_tags"
     base_url_path = "nfc-tags/tags"
     list_display = ["label", "design"]
     list_per_page = 25
@@ -80,7 +80,7 @@ class NFCTagDesignSnippetViewSet(SnippetViewSet):
     list_filter = {"name": ["icontains"]}
     list_display = ["name", "description"]
     list_per_page = 25
-    admin_url_namespace = "nfc_tag_designs"
+    url_namespace = "nfc_tag_designs"
     base_url_path = "nfc-tags/designs"
 
     content_panels = [

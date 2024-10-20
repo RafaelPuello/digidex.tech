@@ -294,7 +294,6 @@ class InventoryFormPage(AbstractForm):
         FormSubmissionsPanel(),
         InlinePanel('inventory_form_fields', label="Fields", classname="collapsed"),
         FieldPanel('form_submission_text'),
-
     ]
 
     edit_handler = TabbedInterface([
@@ -329,12 +328,6 @@ class InventoryFormPage(AbstractForm):
 
     def get_parent_collection(self):
         return self.owner.index_collection.collection
-
-    content_panels = AbstractForm.content_panels + [
-        FieldPanel('intro'),
-        InlinePanel('form_fields', label="Form fields"),
-        FieldPanel('thank_you_text'),
-    ]
 
     def get_submission_class(self):
         return InventoryFormSubmission
