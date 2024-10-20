@@ -48,6 +48,9 @@ class UserPlant(
         [('note', BotanyNoteBlock())],
         blank=True
     )
+    active = models.BooleanField(
+        default=False
+    )
 
     search_fields = [
         index.SearchField('name'),
