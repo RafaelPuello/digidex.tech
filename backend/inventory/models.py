@@ -3,7 +3,8 @@ from django.db import models, transaction
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
-from django.shortcuts import get_object_or_404
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger  # noqa
+from django.shortcuts import get_object_or_404, render
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
@@ -140,6 +141,30 @@ class InventoryIndexPage(RoutablePageMixin, Page):
         verbose_name = _('user home page')
         verbose_name_plural = _('user home pages')
 
+    ajax_template = 'inventory/includes/collection.html'
+    
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request, *args, **kwargs)
+        plants = self.get_plants(30)
+
+        # Pagination logic
+        # paginator = Paginator(plants, 30)
+        # page = request.GET.get('page')
+        # try:
+        #     plants = paginator.page(page)
+        # except PageNotAnInteger:
+        #     plants = paginator.page(1)
+        # except EmptyPage:
+        #     plants = paginator.page(paginator.num_pages)
+
+        context['plants'] = plants
+
+        # If AJAX request, render with ajax template
+        # if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        #    return render(request, self.ajax_template, context)
+
+        return context
+
     @re_path(r'^(?P<box_slug>[\w-]+)/(?P<plant_slug>[\w-]+)')
     def plant_details(self, request, box_slug, plant_slug):
         from botany.models import UserPlant
@@ -151,12 +176,6 @@ class InventoryIndexPage(RoutablePageMixin, Page):
             context_overrides={'plant': plant},
             template="inventory/inventory_detail_page.html"
         )
-
-    def get_context(self, request):
-        context = super().get_context(request)
-        context['boxes'] = self.get_boxes(10)
-        context['plants'] = self.get_plants(30)
-        return context
 
     def get_boxes(self, num=None):
         """
@@ -364,6 +383,8 @@ class InventoryFormSubmission(AbstractFormSubmission):
         "content_type",
         "object_id"
     )
+
+    ajax_template = 'inventory/includes/collection.html'
 
     def get_data(self):
         form_data = super().get_data()

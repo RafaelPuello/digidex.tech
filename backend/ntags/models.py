@@ -164,7 +164,7 @@ class BaseNFCTag(models.Model):
 
         if self.content_object:
             # An object is tagged
-            _details.update({'text': str(self.content_object)})
+            _details.update({'text': 'View More'})
 
             try:
                 _details.update({'url': self.content_object.url})
@@ -212,20 +212,9 @@ class NFCTag(BaseNFCTag):
         blank=True,
         related_name='+'
     )
-    label = models.CharField(
-        max_length=64,
-        null=True,
-        db_index=True
-    )
 
     def __str__(self):
-        return self.label if self.label else f"NFC Tag: {self.serial_number}"
-
-    def save(self, *args, **kwargs):
-        if not self.label and self.user:
-            n = self.user.nfc_tags.count() + 1
-            self.label = f"NFC Tag {n}"
-        super().save(*args, **kwargs)
+        return str(self.content_object) if self.content_object else f"NFC Tag: {self.serial_number}"
 
     def build_context(self, request):
         context = super().build_context()
