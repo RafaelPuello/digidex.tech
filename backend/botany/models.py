@@ -9,7 +9,9 @@ from wagtail.models import TranslatableMixin, PreviewableMixin, Orderable
 from wagtail.search import index
 
 from base.models import GalleryImageMixin
+
 from .blocks import BotanyNoteBlock
+from .forms import UserPlantForm
 
 
 class UserPlant(
@@ -52,6 +54,8 @@ class UserPlant(
         index.AutocompleteField('name'),
     ]
 
+    base_form_class = UserPlantForm
+
     def __str__(self):
         return self.name
 
@@ -71,6 +75,10 @@ class UserPlant(
             models.UniqueConstraint(fields=['box', 'name'], name='unique_plant_name_in_box'),
             models.UniqueConstraint(fields=['box', 'slug'], name='unique_plant_slug_in_box'),
         ]
+
+    def get_custom_form_class(self):
+        from .forms import UserPlantForm
+        return UserPlantForm
 
     def get_preview_template(self, request, mode_name):
         return "botany/user_plant.html"
