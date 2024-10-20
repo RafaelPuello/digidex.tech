@@ -53,7 +53,7 @@ class UserPlantForm(WagtailAdminModelForm):
             copies = self.cleaned_data.get('copies', 0)
 
             if copies > 0:
-                instance.create_plant_copies(instance, copies)
+                instance.create_copies(copies)
 
         return instance
 

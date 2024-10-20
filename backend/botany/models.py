@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from modelcluster.models import ClusterableModel
 from modelcluster.fields import ParentalKey
 from wagtail.fields import StreamField
-from wagtail.models import TranslatableMixin, PreviewableMixin, Orderable
+from wagtail.models import PreviewableMixin, Orderable
 from wagtail.search import index
 
 from base.models import GalleryImageMixin
@@ -75,7 +75,6 @@ class UserPlant(
     Orderable,
     ClusterableModel,
     index.Indexed,
-    TranslatableMixin,
     PreviewableMixin
 ):
     uuid = models.UUIDField(
@@ -131,7 +130,7 @@ class UserPlant(
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
-    class Meta(TranslatableMixin.Meta):
+    class Meta:
         verbose_name = _('plant')
         verbose_name_plural = _('plants')
         indexes = [
@@ -198,7 +197,7 @@ class UserPlant(
         return tasks
 
     @transaction.atomic
-    def create_plant_copies(self, copies):
+    def create_copies(self, copies):
         """
         Creates specified number of copies of this UserPlant instance.
         """
@@ -208,20 +207,16 @@ class UserPlant(
         plant_copies = []
 
         for copy_number in range(1, copies + 1):
-            plant_copy = UserPlant(
+            plant_copy = UserPlant.objects.create(
                 box=self.box,
                 name=f"{self.name} - {copy_number}",
                 description=self.description,
-                notes=self.notes,
-                active=self.active,
             )
             plant_copies.append(plant_copy)
 
         # Bulk create all plant copies for efficiency
-        UserPlant.objects.bulk_create(plant_copies)
-
+        # UserPlant.objects.bulk_create(plant_copies, ignore_conflicts=True)
         return plant_copies
-
 
 class UserPlantGalleryImage(GalleryImageMixin):
     plant = ParentalKey(
