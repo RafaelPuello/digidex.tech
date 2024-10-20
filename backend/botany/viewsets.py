@@ -1,4 +1,4 @@
-from wagtail.admin.panels import MultiFieldPanel, FieldPanel, FieldRowPanel, InlinePanel, ObjectList
+from wagtail.admin.panels import MultiFieldPanel, FieldPanel, FieldRowPanel
 from wagtail.snippets.views.snippets import SnippetViewSet
 
 from .models import UserPlant

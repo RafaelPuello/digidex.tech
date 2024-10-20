@@ -25,8 +25,9 @@ class UserPlantForm(WagtailAdminModelForm):
     )
     species = forms.ModelChoiceField(
         queryset=PlantSpecies.objects.all(),
-        label="Species",
-        widget=SpeciesChooserWidget
+        label="",
+        required=False,
+        widget=forms.HiddenInput()
     )
 
     def __init__(self, *args, **kwargs):
@@ -75,7 +76,7 @@ class UserPlantForm(WagtailAdminModelForm):
         instance = super().save(commit=False)
 
         # Set the taxon_id on the instance before saving
-        instance.taxon_id = self.cleaned_data.get('taxon_id')
+        # instance.taxon_id = self.cleaned_data.get('taxon_id')
     
         if commit:
             instance.save()
