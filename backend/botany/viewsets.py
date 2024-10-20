@@ -10,7 +10,7 @@ class UserPlantViewSet(SnippetViewSet):
     menu_label = "Plants"
     menu_name = "plants"
     menu_order = 120
-    copy_view_enabled = True
+    copy_view_enabled = False
     admin_url_namespace = "inventory_plants"
     list_display = ["name", "description"]
     list_per_page = 50
@@ -18,12 +18,13 @@ class UserPlantViewSet(SnippetViewSet):
     base_url_path = "inventory/plants"
     add_to_admin_menu = True
 
-    detail_panels = [
+    content_panels = [
         FieldRowPanel([
             FieldPanel("box"),
             FieldPanel("name"),
         ]),
         FieldPanel("description"),
+        FieldPanel("copies"),
     ]
 
     journal_panels = [
@@ -33,7 +34,7 @@ class UserPlantViewSet(SnippetViewSet):
 
     edit_handler = TabbedInterface(
         [
-            ObjectList(detail_panels, heading='Details'),
+            ObjectList(content_panels, heading='Details'),
             ObjectList(journal_panels, heading='Journal'),
         ]
     )
