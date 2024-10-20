@@ -117,7 +117,7 @@ class UserPlant(Orderable, ClusterableModel, index.Indexed):
     description = models.TextField(
         blank=True
     )
-    image =  models.ForeignKey(
+    image = models.ForeignKey(
         BaseImage,
         on_delete=models.SET_NULL,
         related_name='+',

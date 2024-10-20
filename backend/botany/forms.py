@@ -15,14 +15,17 @@ class UserPlantForm(WagtailAdminModelForm):
         min_value=0,
         initial=0,
         required=False,
-        label="Copies",
-        help_text="Number of copies to create.",
+        label="",
+        widget=forms.HiddenInput()
+    )
+    taxon_id = forms.IntegerField(
+        label="",
+        required=False,
         widget=forms.HiddenInput()
     )
     species = forms.ModelChoiceField(
         queryset=PlantSpecies.objects.all(),
         label="Species",
-        help_text="Select a species for this plant.",
         widget=SpeciesChooserWidget
     )
 
@@ -31,6 +34,8 @@ class UserPlantForm(WagtailAdminModelForm):
         # Check if the instance is being created or edited
         if self.instance.pk is None:
             # If creating, set the widget to visible
+            self.fields['copies'].label = "Copies"
+            self.fields['copies'].help_text = "Number of copies to create."
             self.fields['copies'].widget = forms.NumberInput()
 
     def clean_name(self):
@@ -49,6 +54,18 @@ class UserPlantForm(WagtailAdminModelForm):
 
         return name
 
+    def clean_species(self):
+        """
+        Cleans the 'species' field to ensure it is a valid PlantSpecies instance.
+        """
+        species = self.cleaned_data.get('species')
+
+        if species:
+            # Set the taxon_id to the primary key of the selected species
+            self.cleaned_data['taxon_id'] = species.key
+
+        return self.cleaned_data
+
     @transaction.atomic
     def save(self, commit=True):
         """
@@ -57,6 +74,9 @@ class UserPlantForm(WagtailAdminModelForm):
         """
         instance = super().save(commit=False)
 
+        # Set the taxon_id on the instance before saving
+        instance.taxon_id = self.cleaned_data.get('taxon_id')
+    
         if commit:
             instance.save()
             copies = self.cleaned_data.get('copies', 0)
@@ -67,4 +87,4 @@ class UserPlantForm(WagtailAdminModelForm):
         return instance
 
     class Meta:
-        fields = ['box', 'name', 'species', 'description', 'copies', 'notes']
+        fields = ['box', 'name', 'description', 'taxon_id', 'species', 'copies']

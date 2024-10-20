@@ -15,7 +15,8 @@ class PlantSpeciesQuerySet(APIQuerySet):
         self.filters.extend([
             ('rank', 'SPECIES'),
             ('status', 'ACCEPTED'),
-            ('higherTaxonKey', 6)
+            # ('higherTaxonKey', 6)  # 6 is the key for the Plantae kingdom
+            ('higherTaxonKey', 2519)   # 2519 is the key for the Cactaceae family
         ])
 
 
@@ -53,8 +54,8 @@ class PlantSpecies(APIModel):
 
 class PlantSpeciesChooserViewSet(ChooserViewSet):
     model = PlantSpecies
-    choose_one_text = "Choose a species"
-    choose_another_text = "Choose another species"
+    choose_one_text = "Choose a plant species"
+    choose_another_text = "Choose another plant species"
     is_searchable = True
 
 
