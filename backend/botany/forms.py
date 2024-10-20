@@ -9,9 +9,9 @@ class UserPlantForm(WagtailAdminModelForm):
     # Adding a non-model field to the form, defaulting to hidden
     copies = forms.IntegerField(
         max_value=30,
-        min_value=0, 
-        initial=0, 
-        required=False, 
+        min_value=0,
+        initial=0,
+        required=False,
         label="Number of Plants",
         widget=forms.HiddenInput()
     )

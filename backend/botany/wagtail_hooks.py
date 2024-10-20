@@ -15,7 +15,7 @@ def create_multiple_copies(request, instance):
     """
     # Check if 'num_copies' is in the request POST data (assuming it's sent from the form)
     num_copies = int(request.POST.get('num_copies', 1))
-    
+
     if num_copies > 1:
         # Create the specified number of copies
         for i in range(num_copies - 1):  # Minus 1, as the original has already been created
