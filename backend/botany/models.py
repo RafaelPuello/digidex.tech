@@ -218,6 +218,7 @@ class UserPlant(
         # UserPlant.objects.bulk_create(plant_copies, ignore_conflicts=True)
         return plant_copies
 
+
 class UserPlantGalleryImage(GalleryImageMixin):
     plant = ParentalKey(
         UserPlant,
