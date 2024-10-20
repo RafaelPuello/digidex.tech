@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from wagtail.admin.forms import WagtailAdminModelForm
 
 from .views import PlantSpecies
-from .widgets import SpeciesChooserWidget
+# from .widgets import SpeciesChooserWidget
 
 
 class UserPlantForm(WagtailAdminModelForm):
@@ -77,7 +77,7 @@ class UserPlantForm(WagtailAdminModelForm):
 
         # Set the taxon_id on the instance before saving
         # instance.taxon_id = self.cleaned_data.get('taxon_id')
-    
+
         if commit:
             instance.save()
             copies = self.cleaned_data.get('copies', 0)
