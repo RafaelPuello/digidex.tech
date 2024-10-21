@@ -1,5 +1,5 @@
 from wagtail.admin.panels import MultiFieldPanel, InlinePanel, FieldPanel, FieldRowPanel
-from wagtail.snippets.views.snippets import SnippetViewSet, SnippetChooserViewSet
+from wagtail.snippets.views.snippets import SnippetViewSet
 
 from .models import UserPlant
 
