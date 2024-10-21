@@ -2,6 +2,8 @@ from django import forms
 from wagtail.admin.forms import WagtailAdminModelForm
 from django.contrib.contenttypes.models import ContentType
 
+from . import get_nfc_taggable_model_strings
+
 
 class NFCTagAdminForm(WagtailAdminModelForm):
     item = forms.ModelChoiceField(
@@ -20,6 +22,18 @@ class NFCTagAdminForm(WagtailAdminModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        
+        taggable_models = get_nfc_taggable_model_strings()
+
+        if len(taggable_models) == 1:
+            from django.apps import apps
+            model_string = taggable_models[0]
+            try:
+                app_label, model_name = model_string.split('.')
+                self.fields['content_type'].initial =  apps.get_model(app_label, model_name)
+            except (ValueError, LookupError):
+                raise ValueError(f"Invalid NFC_TAG_MODEL '{model_string}'")
+
         self.fields['content_type'].label = 'Linked Object Type'
 
         content_type_id = self.get_content_type_id()

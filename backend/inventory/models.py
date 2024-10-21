@@ -211,7 +211,7 @@ class InventoryIndex(RoutablePageMixin, Page):
             QuerySet: The plant queryset.
         """
         from botany.models import UserPlant
-        plants_q = UserPlant.objects.filter(box__in=self.get_boxes())
+        plants_q = UserPlant.objects.for_user(self.owner)
 
         if not plants_q.exists():
             return plants_q.none()

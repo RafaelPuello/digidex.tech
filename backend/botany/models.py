@@ -9,9 +9,9 @@ from wagtail.fields import RichTextField
 from wagtail.models import Orderable
 
 from base.models import BaseImage
-from ntags.models import BaseNFCTag
 
 from .forms import UserPlantAdminForm
+from .managers import UserPlantManager
 
 
 class PlantSubstrate(models.Model):
@@ -26,6 +26,8 @@ class PlantSubstrate(models.Model):
     description = models.TextField(
         blank=True
     )
+
+    objects = UserPlantManager()
 
     class Meta:
         verbose_name = _('Plant Substrate')
@@ -160,6 +162,10 @@ class UserPlant(Orderable, ClusterableModel):
             models.UniqueConstraint(fields=['box', 'name'], name='unique_plant_name_in_box'),
             models.UniqueConstraint(fields=['box', 'slug'], name='unique_plant_slug_in_box'),
         ]
+
+    @property
+    def user(self):
+        return self.box.owner
 
     @property
     def url(self):
