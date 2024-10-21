@@ -215,7 +215,7 @@ class BaseGenericNFCTag(BaseNFCTag):
 
     def build_context(self, request):
         context = super().build_context()
-    
+
         if self.content_object:
             context.update({'tasks': self.get_tasks(request)})
 
@@ -250,7 +250,6 @@ class BaseGenericNFCTag(BaseNFCTag):
                 return self.content_object.url
             except AttributeError:  # The object does not have an attribute or property for url
                 return super().get_content_url()
-
 
 
 class NFCTag(BaseGenericNFCTag):

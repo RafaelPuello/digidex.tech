@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger  # noqa
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render  # noqa
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
@@ -142,7 +142,7 @@ class InventoryIndex(RoutablePageMixin, Page):
         verbose_name_plural = _('user home pages')
 
     ajax_template = 'inventory/includes/collection.html'
-    
+
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
         plants = self.get_plants(30)

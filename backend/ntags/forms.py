@@ -22,7 +22,7 @@ class NFCTagAdminForm(WagtailAdminModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
+
         taggable_models = get_nfc_taggable_model_strings()
 
         if len(taggable_models) == 1:
@@ -30,7 +30,7 @@ class NFCTagAdminForm(WagtailAdminModelForm):
             model_string = taggable_models[0]
             try:
                 app_label, model_name = model_string.split('.')
-                self.fields['content_type'].initial =  apps.get_model(app_label, model_name)
+                self.fields['content_type'].initial = apps.get_model(app_label, model_name)
             except (ValueError, LookupError):
                 raise ValueError(f"Invalid NFC_TAG_MODEL '{model_string}'")
 

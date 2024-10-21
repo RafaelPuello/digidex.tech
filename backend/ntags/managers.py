@@ -6,7 +6,6 @@ from . import get_nfc_tag_model
 
 class NFCTaggableManager(models.Manager):
 
-
     def get_linked_object_type(self):
         """
         Get the ContentType for the linked object.
