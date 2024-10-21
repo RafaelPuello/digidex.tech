@@ -19,7 +19,7 @@
       },
       "required": ["user", "collection"]
     },
-    "InventoryIndexPage": {
+    "InventoryIndex": {
       "type": "object",
       "properties": {
         "user_collection": {
@@ -47,7 +47,7 @@
       },
       "required": ["user_collection", "title", "slug"]
     },
-    "InventoryFormPage": {
+    "InventoryBox": {
       "type": "object",
       "properties": {
         "uuid": {
@@ -89,11 +89,11 @@
       "$ref": "#/definitions/InventoryIndexCollection"
     },
     "inventory": {
-      "$ref": "#/definitions/InventoryIndexPage"
+      "$ref": "#/definitions/InventoryIndex"
     },
     "boxes": {
       "type": "array",
-      "items": { "$ref": "#/definitions/InventoryFormPage" }
+      "items": { "$ref": "#/definitions/InventoryBox" }
     }
   }
 }

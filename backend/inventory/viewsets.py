@@ -2,11 +2,11 @@ from wagtail.admin.views.generic.chooser import ChooseView
 from wagtail.admin.viewsets.chooser import ChooserViewSet
 from wagtail.admin.viewsets.pages import PageListingViewSet
 
-from .models import InventoryFormPage
+from .models import InventoryBox
 
 
 class BoxListingViewSet(PageListingViewSet):
-    model = InventoryFormPage
+    model = InventoryBox
     icon = "desktop"
     menu_order = 110
     menu_label = "Inventory"
@@ -26,11 +26,11 @@ class BoxChooserView(ChooseView):
         # r.raise_for_status()
         # results = r.json()
         # return results
-        return InventoryFormPage.objects.filter(owner=self.request.user)
+        return InventoryBox.objects.filter(owner=self.request.user)
 
 
 class BoxChooserViewSet(ChooserViewSet):
-    model = InventoryFormPage
+    model = InventoryBox
     icon = "desktop"
     choose_one_text = "Choose a box"
     edit_item_text = "Edit this box"

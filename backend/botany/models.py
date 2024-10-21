@@ -105,7 +105,7 @@ class UserPlant(Orderable, ClusterableModel):
         max_length=255
     )
     box = models.ForeignKey(
-        'inventory.InventoryFormPage',
+        'inventory.InventoryBox',
         related_name='plants',
         on_delete=models.CASCADE
     )

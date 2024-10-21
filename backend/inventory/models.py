@@ -103,10 +103,10 @@ class InventoryIndexCollection(CollectionMixin, models.Model):
             return _instance
 
     def get_user_page(self):
-        return InventoryIndexPage.get_for_user(self.user)
+        return InventoryIndex.get_for_user(self.user)
 
 
-class InventoryIndexPage(RoutablePageMixin, Page):
+class InventoryIndex(RoutablePageMixin, Page):
 
     user_collection = models.OneToOneField(
         'inventory.InventoryIndexCollection',
@@ -119,7 +119,7 @@ class InventoryIndexPage(RoutablePageMixin, Page):
         'home.HomePage'
     ]
     child_page_types = [
-        'inventory.InventoryFormPage'
+        'inventory.InventoryBox'
     ]
 
     shared_panels = []
@@ -174,7 +174,7 @@ class InventoryIndexPage(RoutablePageMixin, Page):
         return self.render(
             request,
             context_overrides={'plant': plant},
-            template="inventory/inventory_detail_page.html"
+            template="inventory/inventory_detail.html"
         )
 
     def get_boxes(self, num=None):
@@ -187,7 +187,7 @@ class InventoryIndexPage(RoutablePageMixin, Page):
         Returns:
             QuerySet: The plant queryset.
         """
-        boxes_q = InventoryFormPage.objects.descendant_of(self).live().specific()
+        boxes_q = InventoryBox.objects.descendant_of(self).live().specific()
 
         if not boxes_q.exists():
             return boxes_q.none()
@@ -275,13 +275,13 @@ class InventoryIndexPage(RoutablePageMixin, Page):
 
 class InventoryFormField(AbstractFormField):
     page = ParentalKey(
-        'InventoryFormPage',
+        'InventoryBox',
         on_delete=models.CASCADE,
         related_name='inventory_form_fields'
     )
 
 
-class InventoryFormPage(AbstractForm):
+class InventoryBox(AbstractForm):
 
     description = models.TextField(blank=True)
     form_submission_text = RichTextField(blank=True)
@@ -299,7 +299,7 @@ class InventoryFormPage(AbstractForm):
     ]
 
     parent_page_types = [
-        'inventory.InventoryIndexPage'
+        'inventory.InventoryIndex'
     ]
     child_page_types = []
 

@@ -24,8 +24,7 @@ class HomePage(Page):
         'wagtailcore.Page'
     ]
     child_page_types = [
-        'inventory.InventoryIndexPage',
-        'inventory.InventoryBoxPage',
+        'inventory.InventoryIndex',
         'blog.BlogIndexPage',
         'blog.TagIndexPage',
         'portfolio.PortfolioIndexPage',
