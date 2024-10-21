@@ -13,6 +13,7 @@ from base.models import GalleryImageMixin
 
 from . import get_nfc_taggable_models
 from .validators import validate_ascii_mirror_uid
+from .forms import NFCTagAdminForm
 
 User = get_user_model()
 
@@ -84,6 +85,9 @@ class BaseNFCTag(models.Model):
         "object_id"
     )
 
+
+    base_form_class = NFCTagAdminForm
+
     def __str__(self):
         return f"NFC Tag: {self.serial_number}"
 
@@ -102,8 +106,8 @@ class BaseNFCTag(models.Model):
             )
         ]
         ordering = ['serial_number']
-        verbose_name = _("nfc-tag")
-        verbose_name_plural = _("nfc-tags")
+        verbose_name = _("NFC Tag")
+        verbose_name_plural = _("NFC Tags")
 
     def log_scan(self, counter, user=None):
         """
@@ -276,8 +280,8 @@ class NFCTagScan(models.Model):
         return f"{self.nfc_tag} scan #{self.counter} at {self.scanned_at}"
 
     class Meta:
-        verbose_name = _("scan")
-        verbose_name_plural = _("scans")
+        verbose_name = _("NFC Tag Scan")
+        verbose_name_plural = _("NFC Tag Scans")
         constraints = [
             models.UniqueConstraint(
                 fields=['nfc_tag', 'counter'], name='unique_nfc_tag_counter'
@@ -307,8 +311,8 @@ class NFCTagDesign(ClusterableModel):
         return self.name
 
     class Meta:
-        verbose_name = _("nfc_tag design")
-        verbose_name_plural = _("nfc_tag designs")
+        verbose_name = _("NFC Tag Design")
+        verbose_name_plural = _("NFC Tag Designs")
         ordering = ['name']
 
 

@@ -10,7 +10,7 @@ from wagtail.models import Orderable
 
 from base.models import BaseImage
 
-from .forms import UserPlantForm
+from .forms import UserPlantAdminForm
 
 
 class PlantSubstrate(models.Model):
@@ -138,7 +138,7 @@ class UserPlant(Orderable, ClusterableModel):
         default=False
     )
 
-    base_form_class = UserPlantForm
+    base_form_class = UserPlantAdminForm
 
     def __str__(self):
         return self.name

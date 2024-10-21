@@ -2,8 +2,6 @@ from django import forms
 from wagtail.admin.forms import WagtailAdminModelForm
 from django.contrib.contenttypes.models import ContentType
 
-from .models import NFCTag
-
 
 class NFCTagAdminForm(WagtailAdminModelForm):
     item = forms.ModelChoiceField(
@@ -18,7 +16,6 @@ class NFCTagAdminForm(WagtailAdminModelForm):
     )
 
     class Meta:
-        model = NFCTag
         fields = ['content_type', 'item', 'active', 'design']
 
     def __init__(self, *args, **kwargs):
@@ -63,9 +60,9 @@ class NFCTagAdminForm(WagtailAdminModelForm):
                 if object_id:
                     self.set_item_initial_value(model_class, object_id)
             except ContentType.DoesNotExist:
-                self.fields['item'].queryset = NFCTag.objects.none()
+                self.fields['item'].queryset = ContentType.objects.none()
         else:
-            self.fields['item'].queryset = NFCTag.objects.none()
+            self.fields['item'].queryset = ContentType.objects.none()
 
     def set_item_initial_value(self, model_class, object_id):
         """
