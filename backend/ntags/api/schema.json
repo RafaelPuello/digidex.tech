@@ -82,10 +82,6 @@
         },
         "description": {
           "type": ["string", "null"]
-        },
-        "designer": {
-          "type": ["string", "null"],
-          "description": "Foreign key reference to User"
         }
       },
       "required": ["name"]

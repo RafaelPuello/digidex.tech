@@ -1,6 +1,22 @@
 import warnings
 
 
+def get_nfc_tag_fallback_url():
+    """
+    Returns the fallback URL for NFC tags.
+    """
+    from django.conf import settings
+
+    fallback_url = getattr(settings, 'NFC_TAG_FALLBACK_URL', None)
+    if fallback_url is None:
+        warnings.warn(
+            "NFC_TAG_FALLBACK_URL is not set. Defaulting to '/'.",
+            UserWarning
+        )
+        return '/'
+    return fallback_url
+
+
 def get_nfc_tag_model_string():
     """
     Returns the model string for the NFCTag model.

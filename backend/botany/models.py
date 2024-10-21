@@ -9,6 +9,7 @@ from wagtail.fields import RichTextField
 from wagtail.models import Orderable
 
 from base.models import BaseImage
+from ntags.models import BaseNFCTag
 
 from .forms import UserPlantAdminForm
 

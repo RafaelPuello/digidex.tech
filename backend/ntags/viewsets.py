@@ -1,7 +1,7 @@
-from wagtail.admin.panels import TabbedInterface, FieldPanel, ObjectList, InlinePanel
-from wagtail.snippets.views.snippets import SnippetViewSet, SnippetViewSetGroup  # noqa
+from wagtail.admin.panels import TabbedInterface, FieldPanel, ObjectList
+from wagtail.snippets.views.snippets import SnippetViewSet
 
-from .models import NFCTag, NFCTagDesign
+from .models import NFCTag
 
 
 class NFCTagSnippetViewSet(SnippetViewSet):
@@ -15,10 +15,10 @@ class NFCTagSnippetViewSet(SnippetViewSet):
     menu_order = 131
     url_namespace = "nfc_tags"
     url_prefix = "nfc-tags"
-    list_display = ["design"]
+    list_display = ["serial_number"]
     list_per_page = 25
     list_filter = {
-        "design": ["exact"],
+        "serial_number": ["icontains"],
     }
 
     content_panels = [
@@ -27,8 +27,7 @@ class NFCTagSnippetViewSet(SnippetViewSet):
     ]
 
     settings_panels = [
-        FieldPanel("active"),
-        FieldPanel("design")
+        FieldPanel("active")
     ]
     edit_handler = TabbedInterface(
         [
@@ -43,35 +42,3 @@ class NFCTagSnippetViewSet(SnippetViewSet):
             qs = self.model.objects.all()
 
         return qs.filter(user=request.user)
-
-
-class NFCTagDesignSnippetViewSet(SnippetViewSet):
-
-    model = NFCTagDesign
-    add_to_admin_menu = True
-    copy_view_enabled = False
-    menu_icon = "nfc-design"
-    menu_label = "NFC Tag Designs"
-    menu_name = "nfc-tag-designs"
-    menu_order = 132
-    url_namespace = "nfc_tag_designs"
-    url_prefix = "nfc-tag-designs"
-    list_filter = {"name": ["icontains"]}
-    list_display = ["name", "description"]
-    list_per_page = 25
-
-    content_panels = [
-        FieldPanel("name"),
-        FieldPanel("description"),
-        InlinePanel("gallery_images")
-    ]
-
-    settings_panels = [
-        FieldPanel("designer")
-    ]
-    edit_handler = TabbedInterface(
-        [
-            ObjectList(content_panels, heading='Details'),
-            ObjectList(settings_panels, heading='Status'),
-        ]
-    )

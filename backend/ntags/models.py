@@ -6,12 +6,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.urls import reverse
 from django.contrib.auth import get_user_model
-from modelcluster.fields import ParentalKey
-from modelcluster.models import ClusterableModel
 
-from base.models import GalleryImageMixin
-
-from . import get_nfc_taggable_models
+from . import get_nfc_taggable_models, get_nfc_tag_fallback_url
 from .validators import validate_ascii_mirror_uid
 from .forms import NFCTagAdminForm
 
@@ -37,8 +33,6 @@ NTAG_EEPROM_SIZES = (
 class BaseNFCTag(models.Model):
 
     viewset_actions = ['edit', 'usage', 'history']
-
-    limited_options = get_nfc_taggable_models
 
     serial_number = models.CharField(
         max_length=32,
@@ -66,27 +60,6 @@ class BaseNFCTag(models.Model):
     metadata = models.JSONField(
         default=dict,
     )
-    content_type = models.ForeignKey(
-        ContentType,
-        on_delete=models.CASCADE,
-        verbose_name=_("Content type"),
-        limit_choices_to=limited_options,
-        null=True,
-        blank=True,
-        related_name="nfc_tags"
-    )
-    object_id = models.PositiveIntegerField(
-        null=True,
-        blank=True,
-        db_index=True
-    )
-    content_object = GenericForeignKey(
-        "content_type",
-        "object_id"
-    )
-
-
-    base_form_class = NFCTagAdminForm
 
     def __str__(self):
         return f"NFC Tag: {self.serial_number}"
@@ -99,12 +72,6 @@ class BaseNFCTag(models.Model):
 
     class Meta:
         abstract = True
-        constraints = [
-            models.UniqueConstraint(
-                fields=['content_type', 'object_id'],
-                name='unique_content_object'
-            )
-        ]
         ordering = ['serial_number']
         verbose_name = _("NFC Tag")
         verbose_name_plural = _("NFC Tags")
@@ -156,90 +123,29 @@ class BaseNFCTag(models.Model):
 
     def build_context(self):
         return {
-            'details': self.get_details()
+            'details': self.get_details(),
+            'views': self.get_views()
         }
 
     def get_details(self):
-        _details = {
+        return {
             'heading': str(self),
             'text': 'Home',
             'url': self.get_fallback_url()
         }
 
-        if self.content_object:
-            # An object is tagged
-            _details.update({'text': 'View More'})
-
-            try:
-                _details.update({'url': self.content_object.url})
-            except AttributeError:
-                # The object does not have a url method
-                pass
-
-        return _details
-
     @property
     def url(self):
-        return self.get_url()
+        return self.get_content_url()
 
-    def get_url(self):
-        try:
-            obj = self.get_tagged_object()
-            return obj.url
-        except ValueError or AttributeError:
-            return self.get_fallback_url()
+    def get_content_url(self):
+        return self.get_fallback_url()
 
-    def get_tagged_object(self):
-        if not self.content_object:
-            raise ValueError("No content object is tagged to this NFC Tag")
-        return self.content_object
-
-    @staticmethod
-    def get_fallback_url():
-        from django.conf import settings
-        return settings.NFC_TAG_FALLBACK_URL
-
-    @classmethod
-    def get_from_uid(cls, uid):
-        try:
-            return cls.objects.get(serial_number=uid)
-        except cls.DoesNotExist:
-            return None
-
-
-class NFCTag(BaseNFCTag):
-
-    design = models.ForeignKey(
-        'NFCTagDesign',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='+'
-    )
-
-    def __str__(self):
-        return str(self.content_object) if self.content_object else f"NFC Tag: {self.serial_number}"
-
-    def build_context(self, request):
-        context = super().build_context()
-        context.update({'views': self.get_views()})
-        if self.content_object:
-            context.update({'tasks': self.get_tasks(request)})
-        return context
+    def get_tasks(self):
+        return {}
 
     def get_views(self):
         return {action: self.get_admin_url(action) for action in self.viewset_actions}
-
-    def get_tasks(self, request):
-        tasks = {}
-
-        try:
-            tasks.update(self.content_object.get_inventory_form(request))
-        except AttributeError:
-            # The object does not have method for tasks
-            pass
-
-        return tasks
 
     def get_admin_url(self, action):
         viewset = self.get_viewset()
@@ -252,6 +158,103 @@ class NFCTag(BaseNFCTag):
 
     def get_viewset(self):
         return self.snippet_viewset
+
+    def get_fallback_url(self):
+        return get_nfc_tag_fallback_url()
+
+    @classmethod
+    def get_from_uid(cls, uid):
+        try:
+            return cls.objects.get(serial_number=uid)
+        except cls.DoesNotExist:
+            return None
+
+
+class AbstractNFCTag(BaseNFCTag):
+
+    limited_options = get_nfc_taggable_models
+
+    content_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        verbose_name=_("Content type"),
+        limit_choices_to=limited_options,
+        null=True,
+        blank=True,
+        related_name="nfc_tags"
+    )
+    object_id = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        db_index=True
+    )
+    content_object = GenericForeignKey(
+        "content_type",
+        "object_id"
+    )
+
+    base_form_class = NFCTagAdminForm
+
+    def __str__(self):
+        return str(self.content_object) if self.content_object else f"NFC Tag: {self.serial_number}"
+
+    class Meta:
+        abstract = True
+        constraints = [
+            models.UniqueConstraint(
+                fields=['content_type', 'object_id'],
+                name='unique_content_object'
+            )
+        ]
+        ordering = ['serial_number']
+        verbose_name = _("NFC Tag")
+        verbose_name_plural = _("NFC Tags")
+
+    def build_context(self, request):
+        context = super().build_context()
+    
+        if self.content_object:
+            context.update({'tasks': self.get_tasks(request)})
+
+        return context
+
+    def get_details(self):
+        _details = super().get_details()
+
+        if self.content_object:  # Check if the NFC Tag is tagged to an object
+            _details.update({'text': 'View More'})
+
+            try:  # The object does not have a url attribute or property
+                _details.update({'url': self.content_object.url})
+            except AttributeError:
+                pass
+
+        return _details
+
+    @property
+    def url(self):
+        return self.get_content_url()
+
+    def get_content_url(self):
+        if self.content_object:
+            try:
+                return self.content_object.url
+            except AttributeError:  # The object does not have an attribute or property for url
+                return super().get_content_url()
+
+    def get_tasks(self, request):
+        tasks = {}
+
+        try:
+            tasks.update(self.content_object.get_inventory_form(request))
+        except AttributeError:  # The object does not have method for tasks
+            pass
+
+        return tasks
+
+
+class NFCTag(AbstractNFCTag):
+    pass
 
 
 class NFCTagScan(models.Model):
@@ -287,45 +290,3 @@ class NFCTagScan(models.Model):
                 fields=['nfc_tag', 'counter'], name='unique_nfc_tag_counter'
             )
         ]
-
-
-class NFCTagDesign(ClusterableModel):
-
-    name = models.CharField(
-        max_length=64,
-        unique=True
-    )
-    description = models.TextField(
-        blank=True,
-        null=True
-    )
-    designer = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='nfc_tag_designs'
-    )
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = _("NFC Tag Design")
-        verbose_name_plural = _("NFC Tag Designs")
-        ordering = ['name']
-
-
-class NFCTagDesignGalleryImage(GalleryImageMixin):
-    design = ParentalKey(
-        NFCTagDesign,
-        on_delete=models.CASCADE,
-        related_name='gallery_images'
-    )
-
-    def get_image_rendition(self, spec):
-        """
-        Generates an image rendition based on a given spec string
-        (e.g., "fill-300x300").
-        """
-        return self.image.get_rendition(spec)
