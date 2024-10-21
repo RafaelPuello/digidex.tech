@@ -202,7 +202,7 @@ class BaseGenericNFCTag(BaseNFCTag):
     base_form_class = NFCTagAdminForm
 
     def __str__(self):
-        return str(self.content_object) if self.content_object else f"NFC Tag: {self.serial_number}"
+        return f"NFC link for {str(self.content_object)}" if self.content_object else f"NFC Tag: {self.serial_number}"
 
     class Meta(BaseNFCTag.Meta):
         abstract = True

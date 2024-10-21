@@ -15,11 +15,7 @@ class NFCTagSnippetViewSet(SnippetViewSet):
     menu_order = 131
     url_namespace = "nfc_tags"
     url_prefix = "nfc-tags"
-    list_display = ["serial_number"]
     list_per_page = 25
-    list_filter = {
-        "serial_number": ["icontains"],
-    }
 
     panels = [
         FieldPanel("content_type"),

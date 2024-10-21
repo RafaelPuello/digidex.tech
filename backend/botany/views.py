@@ -59,11 +59,11 @@ class PlantSpecies(APIModel):
         return self.canonical_name or self.scientific_name
 
 
-class PlantSpeciesChooserViewSet(ChooserViewSet):
+class SpeciesChooserViewSet(ChooserViewSet):
     model = PlantSpecies
     choose_one_text = "Choose a plant species"
     choose_another_text = "Choose another plant species"
     is_searchable = True
 
 
-plant_species_chooser_viewset = PlantSpeciesChooserViewSet("plant_species_chooser")  # noqa
+species_chooser_viewset = SpeciesChooserViewSet("species_chooser")  # noqa

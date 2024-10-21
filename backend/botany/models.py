@@ -27,8 +27,6 @@ class PlantSubstrate(models.Model):
         blank=True
     )
 
-    objects = UserPlantManager()
-
     class Meta:
         verbose_name = _('Plant Substrate')
         verbose_name_plural = _('Plant Substrates')
@@ -140,6 +138,8 @@ class UserPlant(Orderable, ClusterableModel):
     active = models.BooleanField(
         default=False
     )
+
+    objects = UserPlantManager()
 
     base_form_class = UserPlantAdminForm
 

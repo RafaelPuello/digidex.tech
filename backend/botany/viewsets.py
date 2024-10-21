@@ -1,5 +1,5 @@
 from wagtail.admin.panels import MultiFieldPanel, InlinePanel, FieldPanel, FieldRowPanel
-from wagtail.snippets.views.snippets import SnippetViewSet
+from wagtail.snippets.views.snippets import SnippetViewSet, SnippetChooserViewSet
 
 from .models import UserPlant
 
@@ -35,5 +35,5 @@ class UserPlantViewSet(SnippetViewSet):
     ]
 
     def get_queryset(self, request):
-        queryset = UserPlant.objects.filter(box__owner=request.user)
+        queryset = UserPlant.objects.for_user(request.user)
         return queryset
