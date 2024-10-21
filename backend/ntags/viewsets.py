@@ -1,4 +1,4 @@
-from wagtail.admin.panels import TabbedInterface, FieldPanel, ObjectList
+from wagtail.admin.panels import FieldPanel
 from wagtail.snippets.views.snippets import SnippetViewSet
 
 from .models import NFCTag
@@ -21,20 +21,11 @@ class NFCTagSnippetViewSet(SnippetViewSet):
         "serial_number": ["icontains"],
     }
 
-    content_panels = [
+    panels = [
         FieldPanel("content_type"),
-        FieldPanel("item")
-    ]
-
-    settings_panels = [
+        FieldPanel("item"),
         FieldPanel("active")
     ]
-    edit_handler = TabbedInterface(
-        [
-            ObjectList(content_panels, heading='Details'),
-            ObjectList(settings_panels, heading='Status'),
-        ]
-    )
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)

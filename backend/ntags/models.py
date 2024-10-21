@@ -30,9 +30,7 @@ NTAG_EEPROM_SIZES = (
 )
 
 
-class BaseNFCTag(models.Model):
-
-    viewset_actions = ['edit', 'usage', 'history']
+class AbstractNFCTag(models.Model):
 
     serial_number = models.CharField(
         max_length=32,
@@ -123,8 +121,7 @@ class BaseNFCTag(models.Model):
 
     def build_context(self):
         return {
-            'details': self.get_details(),
-            'views': self.get_views()
+            'details': self.get_details()
         }
 
     def get_details(self):
@@ -141,8 +138,27 @@ class BaseNFCTag(models.Model):
     def get_content_url(self):
         return self.get_fallback_url()
 
-    def get_tasks(self):
-        return {}
+    def get_fallback_url(self):
+        return get_nfc_tag_fallback_url()
+
+    @classmethod
+    def get_from_uid(cls, uid):
+        try:
+            return cls.objects.get(serial_number=uid)
+        except cls.DoesNotExist:
+            return None
+
+
+class BaseNFCTag(AbstractNFCTag):
+
+    viewset_actions = ['edit', 'usage', 'history']
+
+    class Meta(AbstractNFCTag.Meta):
+        abstract = True
+
+    def build_context(self):
+        context = super().build_context()
+        return context.update({'views': self.get_views()})
 
     def get_views(self):
         return {action: self.get_admin_url(action) for action in self.viewset_actions}
@@ -159,18 +175,8 @@ class BaseNFCTag(models.Model):
     def get_viewset(self):
         return self.snippet_viewset
 
-    def get_fallback_url(self):
-        return get_nfc_tag_fallback_url()
 
-    @classmethod
-    def get_from_uid(cls, uid):
-        try:
-            return cls.objects.get(serial_number=uid)
-        except cls.DoesNotExist:
-            return None
-
-
-class AbstractNFCTag(BaseNFCTag):
+class BaseGenericNFCTag(BaseNFCTag):
 
     limited_options = get_nfc_taggable_models
 
@@ -198,7 +204,7 @@ class AbstractNFCTag(BaseNFCTag):
     def __str__(self):
         return str(self.content_object) if self.content_object else f"NFC Tag: {self.serial_number}"
 
-    class Meta:
+    class Meta(BaseNFCTag.Meta):
         abstract = True
         constraints = [
             models.UniqueConstraint(
@@ -206,9 +212,6 @@ class AbstractNFCTag(BaseNFCTag):
                 name='unique_content_object'
             )
         ]
-        ordering = ['serial_number']
-        verbose_name = _("NFC Tag")
-        verbose_name_plural = _("NFC Tags")
 
     def build_context(self, request):
         context = super().build_context()
@@ -217,6 +220,16 @@ class AbstractNFCTag(BaseNFCTag):
             context.update({'tasks': self.get_tasks(request)})
 
         return context
+
+    def get_tasks(self, request):
+        tasks = {}
+
+        try:
+            tasks.update(self.content_object.get_inventory_form(request))
+        except AttributeError:  # The object does not have method for tasks
+            pass
+
+        return tasks
 
     def get_details(self):
         _details = super().get_details()
@@ -231,10 +244,6 @@ class AbstractNFCTag(BaseNFCTag):
 
         return _details
 
-    @property
-    def url(self):
-        return self.get_content_url()
-
     def get_content_url(self):
         if self.content_object:
             try:
@@ -242,19 +251,12 @@ class AbstractNFCTag(BaseNFCTag):
             except AttributeError:  # The object does not have an attribute or property for url
                 return super().get_content_url()
 
-    def get_tasks(self, request):
-        tasks = {}
-
-        try:
-            tasks.update(self.content_object.get_inventory_form(request))
-        except AttributeError:  # The object does not have method for tasks
-            pass
-
-        return tasks
 
 
-class NFCTag(AbstractNFCTag):
-    pass
+class NFCTag(BaseGenericNFCTag):
+
+    class Meta(BaseGenericNFCTag.Meta):
+        pass
 
 
 class NFCTagScan(models.Model):

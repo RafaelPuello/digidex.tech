@@ -331,10 +331,6 @@ WAGTAILSEARCH_BACKENDS = {
 # ------------------------------------------------------------------------
 # Wagtail-nfctags Configuration
 # ------------------------------------------------------------------------
-NFC_TAG_MODEL = 'ntags.NFCTag'
-
-NFC_TAG_FALLBACK_URL = '/'
-
 NFC_TAG_LINK_URL = WAGTAILADMIN_BASE_URL + '/link'
 
 # ------------------------------------------------------------------------
