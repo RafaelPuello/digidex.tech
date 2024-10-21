@@ -8,6 +8,6 @@ class InventoryConfig(AppConfig):
 
     def ready(self):
         from wagtail.admin.forms.models import register_form_field_override
-        from .models import InventoryFormPage
+        from .models import InventoryBox
         from .widgets import BoxChooserWidget
-        register_form_field_override(ForeignKey, to=InventoryFormPage, override={'widget': BoxChooserWidget})
+        register_form_field_override(ForeignKey, to=InventoryBox, override={'widget': BoxChooserWidget})

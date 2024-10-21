@@ -55,6 +55,10 @@ class NavigationSettings(BaseGenericSetting):
         )
     ]
 
+    class Meta:
+        verbose_name = _("Navigation Settings")
+        verbose_name_plural = _("Navigation Settings")
+
 
 class BaseDocument(AbstractDocument):
     """
@@ -81,8 +85,8 @@ class BaseDocument(AbstractDocument):
     admin_form_fields = Document.admin_form_fields + ('source',)
 
     class Meta:
-        verbose_name = _("document")
-        verbose_name_plural = _("documents")
+        verbose_name = _("Document")
+        verbose_name_plural = _("Documents")
 
 
 class BaseImage(AbstractImage):
@@ -116,8 +120,8 @@ class BaseImage(AbstractImage):
     admin_form_fields = Image.admin_form_fields + ('alt',)
 
     class Meta:
-        verbose_name = _("image")
-        verbose_name_plural = _("images")
+        verbose_name = _("Image")
+        verbose_name_plural = _("Images")
 
 
 class BaseRendition(AbstractRendition):
@@ -140,6 +144,8 @@ class BaseRendition(AbstractRendition):
     )
 
     class Meta:
+        verbose_name = _("Rendition")
+        verbose_name_plural = _("Renditions")
         unique_together = (
             ('image', 'filter_spec', 'focal_point_key'),
         )
@@ -180,8 +186,8 @@ class GalleryImageMixin(AbstractGallery):
     class Meta:
         abstract = True
         ordering = ["sort_order"]
-        verbose_name = _("gallery image")
-        verbose_name_plural = _("gallery images")
+        verbose_name = _("Gallery Image")
+        verbose_name_plural = _("Gallery Images")
 
 
 class CollectionMixin(models.Model):

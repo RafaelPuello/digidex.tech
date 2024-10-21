@@ -8,7 +8,7 @@ from .views import PlantSpecies
 # from .widgets import SpeciesChooserWidget
 
 
-class UserPlantForm(WagtailAdminModelForm):
+class UserPlantAdminForm(WagtailAdminModelForm):
     # Adding a non-model field to the form, defaulting to hidden
     copies = forms.IntegerField(
         max_value=30,

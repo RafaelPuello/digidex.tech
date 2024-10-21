@@ -4,7 +4,7 @@ from django.contrib.auth.models import Group
 from base.utils import assign_group_permissions, assign_wagtail_group_permissions
 
 NTAG_PERMISSIONS = (
-    'change_nfctag', 'view_nfctagdesign', 'view_nfctagscan'
+    'change_nfctag', 'view_nfctagscan'
 )
 
 BOTANY_PERMISSIONS = (

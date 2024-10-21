@@ -11,11 +11,9 @@ class UserPlantViewSet(SnippetViewSet):
     menu_name = "plants"
     menu_order = 120
     copy_view_enabled = False
-    admin_url_namespace = "inventory_plants"
     list_display = ["name", "description"]
     list_per_page = 50
-    admin_url_namespace = "plants"
-    base_url_path = "inventory/plants"
+    url_namespace = "plants"
     add_to_admin_menu = True
 
     panels = [
@@ -37,5 +35,5 @@ class UserPlantViewSet(SnippetViewSet):
     ]
 
     def get_queryset(self, request):
-        queryset = UserPlant.objects.filter(box__owner=request.user)
+        queryset = UserPlant.objects.for_user(request.user)
         return queryset

@@ -10,7 +10,8 @@ from wagtail.models import Orderable
 
 from base.models import BaseImage
 
-from .forms import UserPlantForm
+from .forms import UserPlantAdminForm
+from .managers import UserPlantManager
 
 
 class PlantSubstrate(models.Model):
@@ -105,7 +106,7 @@ class UserPlant(Orderable, ClusterableModel):
         max_length=255
     )
     box = models.ForeignKey(
-        'inventory.InventoryFormPage',
+        'inventory.InventoryBox',
         related_name='plants',
         on_delete=models.CASCADE
     )
@@ -138,7 +139,9 @@ class UserPlant(Orderable, ClusterableModel):
         default=False
     )
 
-    base_form_class = UserPlantForm
+    objects = UserPlantManager()
+
+    base_form_class = UserPlantAdminForm
 
     def __str__(self):
         return self.name
@@ -159,6 +162,10 @@ class UserPlant(Orderable, ClusterableModel):
             models.UniqueConstraint(fields=['box', 'name'], name='unique_plant_name_in_box'),
             models.UniqueConstraint(fields=['box', 'slug'], name='unique_plant_slug_in_box'),
         ]
+
+    @property
+    def user(self):
+        return self.box.owner
 
     @property
     def url(self):

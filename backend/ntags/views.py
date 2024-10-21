@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.utils.translation import gettext_lazy as _
 
-from . import get_nfc_tag_model
+from . import get_nfc_tag_model, get_nfc_tag_fallback_url
 from .validators import validate_ascii_mirror
 
 NFCTag = get_nfc_tag_model()
@@ -19,20 +19,20 @@ def link_nfc_tag(request):
     mirrored_values = request.GET.get('m', None)
     if not mirrored_values:
         messages.error(request, _('No ASCII Mirror value found.'))
-        return redirect(NFCTag.get_fallback_url())
+        return redirect(get_nfc_tag_fallback_url())
 
     # Check mirrored_values is in the expected format
     try:
         uid, counter = validate_ascii_mirror(mirrored_values)
     except ValidationError as e:
         messages.error(request, _(f'Invalid ASCII Mirror value: {e}'))
-        return redirect(NFCTag.get_fallback_url())
+        return redirect(get_nfc_tag_fallback_url())
 
     # Check that the NFC Tag exists
     nfc_tag = NFCTag.get_from_uid(uid)
     if not nfc_tag:
         messages.error(request, _('Invalid serial number. NFC Tag ASCII mirror improperly configured.'))
-        return redirect(NFCTag.get_fallback_url())
+        return redirect(get_nfc_tag_fallback_url())
 
     scan = {'counter': counter}
     if request.user.is_authenticated:
