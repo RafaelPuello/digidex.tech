@@ -10,10 +10,10 @@ class NFCTagModelTest(TestCase):
         """
         pass
 
-    def test_serial_number_uniqueness(self):
+    def test_uid_uniqueness(self):
         """
         Testing uniqueness constraint should involve trying to create a second object with the same serial number.
         """
-        NFCTag.objects.create(serial_number="04E141124C2880", integrated_circuit="213")
+        NFCTag.objects.create(uid="04E141124C2880", integrated_circuit="213")
         with self.assertRaises(Exception):
-            NFCTag.objects.create(serial_number="04E141124C2880", integrated_circuit="213")
+            NFCTag.objects.create(uid="04E141124C2880", integrated_circuit="213")

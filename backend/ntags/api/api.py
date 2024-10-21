@@ -15,7 +15,7 @@ class NFCTagAPIViewSet(viewsets.ModelViewSet):
     serializer_class = NFCTagSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     authentication_classes = [JWTAuthentication]
-    lookup_field = 'serial_number'
+    lookup_field = 'uid'
 
     def get_queryset(self):
         if self.request.user.is_superuser:
@@ -29,13 +29,13 @@ class NFCTagAPIViewSet(viewsets.ModelViewSet):
         """
         Create a new NFC tag with the provided serial number.
         """
-        serial_number = request.data.get('serial_number')
+        uid = request.data.get('uid')
 
-        if not serial_number:
+        if not uid:
             return Response({"error": "Serial Number not provided."}, status=status.HTTP_400_BAD_REQUEST)
 
         nfc_tag, created = NFCTag.objects.update_or_create(
-            serial_number=serial_number
+            uid=uid
         )
 
         serializer = self.get_serializer(nfc_tag, context={'request': request})

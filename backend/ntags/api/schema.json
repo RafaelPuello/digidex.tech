@@ -8,7 +8,7 @@
     "NFCTag": {
       "type": "object",
       "properties": {
-        "serial_number": {
+        "uid": {
           "type": "string",
           "maxLength": 32
         },
@@ -49,7 +49,7 @@
           "description": "Generic foreign key link"
         }
       },
-      "required": ["serial_number", "integrated_circuit", "active"]
+      "required": ["uid", "integrated_circuit", "active"]
     },
     "NFCTagScan": {
       "type": "object",

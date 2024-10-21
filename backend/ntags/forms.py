@@ -3,7 +3,13 @@ from wagtail.admin.forms import WagtailAdminModelForm
 from django.contrib.contenttypes.models import ContentType
 
 
-class NFCTagAdminForm(WagtailAdminModelForm):
+class NFCTagRegistrationForm(forms.Form):
+    confirmation = forms.BooleanField(
+        required=True
+    )
+
+
+class NFCTagForm(WagtailAdminModelForm):
     item = forms.ModelChoiceField(
         queryset=None,
         required=False,

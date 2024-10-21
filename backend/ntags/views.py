@@ -1,8 +1,7 @@
 from django.contrib import messages
-from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
-from django.http import JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.translation import gettext_lazy as _
 
 from . import get_nfc_tag_model, get_nfc_tag_fallback_url
@@ -29,7 +28,7 @@ def link_nfc_tag(request):
         return redirect(get_nfc_tag_fallback_url())
 
     # Check that the NFC Tag exists
-    nfc_tag = NFCTag.get_from_uid(uid)
+    nfc_tag = NFCTag.object.get(uid=uid)
     if not nfc_tag:
         messages.error(request, _('Invalid serial number. NFC Tag ASCII mirror improperly configured.'))
         return redirect(get_nfc_tag_fallback_url())
@@ -49,20 +48,19 @@ def link_nfc_tag(request):
     return render(request, 'nfctags/index.html', context)
 
 
-def get_linkable_objects(request, objects_id):
+@login_required
+def register_nfc_tag(request, uid):
     """
-    Get the objects that can be linked to an NTAG.
+    Register an NFC Tag with the given UID and link it to the current user.
     """
-    try:
-        content_type = ContentType.objects.get(id=objects_id)
-        model_class = content_type.model_class()
-        objects = model_class.objects.all()
+    nfc_tag = get_object_or_404(NFCTag, uid=uid)
 
-        data = {
-            'objects': [{'id': obj.id, 'name': str(obj)} for obj in objects]
-        }
+    # Set the user field to the current user if not already set
+    if nfc_tag.user is None:
+        nfc_tag.user = request.user
+        nfc_tag.save()
+        messages.success(request, _('NFC Tag successfully registered to your account.'))
+    else:
+        messages.info(request, _('This NFC Tag is already registered.'))
 
-        return JsonResponse(data)
-
-    except ContentType.DoesNotExist:
-        return JsonResponse({'error': 'Invalid content type'}, status=400)
+    return redirect(get_nfc_tag_fallback_url())

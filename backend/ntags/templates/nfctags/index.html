@@ -2,77 +2,79 @@
 {% load static %}
 
 {% block content %}
-  <section class="section">
-    <div class="content">
-      <div class="w-layout-grid grid-banner">
-        <div class="block-banner">
-          <div class="subtitle white">linked nfc tag<br></div>
-          {% if details.heading %}
+  {% if details %}
+    <section class="section">
+      <div class="content">
+        <div class="w-layout-grid grid-banner">
+          <div class="block-banner">
+            <div class="subtitle white">linked nfc tag<br></div>
             <h2 class="heading banner">{{ details.heading }}</h2>
-          {% endif %}
-          <a href="{{ details.url }}" class="button yellow w-button">{{ details.text }}</a>
+            <a href="{{ details.url }}" class="button yellow w-button">{{ details.text }}</a>
+          </div>
+          <div class="lottie-banner"></div>
         </div>
-        <div class="lottie-banner"></div>
       </div>
-    </div>
-  </section>
+    </section>
+  {% endif %}
 
-  <section class="section">
-    <div class="content">
-      {% if views %}
-        <div class="lottie-wrapper">
-          <div class="tasks-lottie">
-            {% if views.edit %}
-              <a href="{{ views.edit }}" class="tasks-lottie-link w-inline-block">
-                <div class="block-icon-tasks-lottie">
-                  <img src="{% static 'nfctags/images/edit.svg' %}" loading="eager" alt="" class="icon-tasks-lottie"></div>
-                <div class="block-heading-tasks-lottie">
-                  <h4 class="heading-tasks-lottie">Edit</h4>
-                  <div class="text-tasks-lottie">Make changes</div>
-                </div>
-              </a>
-            {% endif %}
-            {% if views.usage %}
-              <a href="{{ views.usage }}" class="tasks-lottie-link a2 w-inline-block">
-                <div class="block-icon-tasks-lottie">
-                  <img src="{% static 'nfctags/images/usage.svg' %}" loading="eager" alt="" class="icon-tasks-lottie"></div>
-                <div class="block-heading-tasks-lottie">
-                  <h4 class="heading-tasks-lottie">Usage</h4>
-                  <div class="text-tasks-lottie">View usage</div>
-                </div>
-              </a>
-            {% endif %}
-            {% if views.history %}
-              <a href="{{ views.history }}" class="tasks-lottie-link a3 w-inline-block">
-                <div class="block-icon-tasks-lottie">
-                  <img src="{% static 'nfctags/images/history.svg' %}" loading="eager" alt="" class="icon-tasks-lottie"></div>
-                <div class="block-heading-tasks-lottie">
-                  <h4 class="heading-tasks-lottie">History</h4>
-                  <div class="text-tasks-lottie">View history</div>
-                </div>
-              </a>
-            {% endif %}
-          </div>
-        </div>
-      {% endif %}
-      {% if form %}
-        <div class="tasks">
-          <div class="subtitle green">tasks<br></div>
-          <div class="form-block w-form">
-            <form action="{{ form_url }}" method="POST" class="form" aria-label="Task Form">
-              {% csrf_token %}
-              {{ form.as_p }}
-              <input type="submit" class="submit-button w-button">
-            </form>
-            <div class="success-message w-form-done" tabindex="-1" role="region" aria-label="Email Form success">
-              <div class="text-success">Thank you! Your submission has been received!</div>
-            </div>
-            <div class="error-message w-form-fail" tabindex="-1" role="region" aria-label="Email Form failure">
-              <div class="text-error">Oops! Something went wrong while submitting the form.</div>
+  {% if views or forms %}
+    <section class="section">
+      <div class="content">
+        {% if views %}
+          <div class="lottie-wrapper">
+            <div class="tasks-lottie">
+              {% if views.edit %}
+                <a href="{{ views.edit }}" class="tasks-lottie-link w-inline-block">
+                  <div class="block-icon-tasks-lottie">
+                    <img src="{% static 'nfctags/images/edit.svg' %}" loading="eager" alt="" class="icon-tasks-lottie"></div>
+                  <div class="block-heading-tasks-lottie">
+                    <h4 class="heading-tasks-lottie">Edit</h4>
+                    <div class="text-tasks-lottie">Make changes</div>
+                  </div>
+                </a>
+              {% endif %}
+              {% if views.usage %}
+                <a href="{{ views.usage }}" class="tasks-lottie-link a2 w-inline-block">
+                  <div class="block-icon-tasks-lottie">
+                    <img src="{% static 'nfctags/images/usage.svg' %}" loading="eager" alt="" class="icon-tasks-lottie"></div>
+                  <div class="block-heading-tasks-lottie">
+                    <h4 class="heading-tasks-lottie">Usage</h4>
+                    <div class="text-tasks-lottie">View usage</div>
+                  </div>
+                </a>
+              {% endif %}
+              {% if views.history %}
+                <a href="{{ views.history }}" class="tasks-lottie-link a3 w-inline-block">
+                  <div class="block-icon-tasks-lottie">
+                    <img src="{% static 'nfctags/images/history.svg' %}" loading="eager" alt="" class="icon-tasks-lottie"></div>
+                  <div class="block-heading-tasks-lottie">
+                    <h4 class="heading-tasks-lottie">History</h4>
+                    <div class="text-tasks-lottie">View history</div>
+                  </div>
+                </a>
+              {% endif %}
             </div>
           </div>
-        </div>
-      {% endif %}
-    </div>
-  </section>
+        {% endif %}
+        {% if forms %}
+          <div class="tasks">
+            <div class="subtitle green">tasks<br></div>
+            <div class="form-block w-form">
+              <form action="{{ form_url }}" method="POST" class="form" aria-label="Task Form">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" class="submit-button w-button">
+              </form>
+              <div class="success-message w-form-done" tabindex="-1" role="region" aria-label="Email Form success">
+                <div class="text-success">Thank you! Your submission has been received!</div>
+              </div>
+              <div class="error-message w-form-fail" tabindex="-1" role="region" aria-label="Email Form failure">
+                <div class="text-error">Oops! Something went wrong while submitting the form.</div>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </section>
+  {% endif %}
 {% endblock %}

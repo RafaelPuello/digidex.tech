@@ -55,17 +55,22 @@ class UserPlantAdminForm(WagtailAdminModelForm):
 
         return name
 
-    def clean_species(self):
+    def clean_taxon_id(self):
         """
-        Cleans the 'species' field to ensure it is a valid PlantSpecies instance.
+        Cleans the 'taxon_id' field to ensure it is a valid integer.
         """
+        taxon_id = self.cleaned_data.get('taxon_id')
         species = self.cleaned_data.get('species')
 
         if species:
             # Set the taxon_id to the primary key of the selected species
-            self.cleaned_data['taxon_id'] = species.key
+            # self.cleaned_data['taxon_id'] = species.key
+            pass
 
-        return self.cleaned_data
+        if taxon_id is None:
+            taxon_id = 6  # Default to Plantae kingdom
+
+        return taxon_id
 
     @transaction.atomic
     def save(self, commit=True):
@@ -74,9 +79,6 @@ class UserPlantAdminForm(WagtailAdminModelForm):
         In this case, we save the initial instance and create copies if 'copies' > 0.
         """
         instance = super().save(commit=False)
-
-        # Set the taxon_id on the instance before saving
-        # instance.taxon_id = self.cleaned_data.get('taxon_id')
 
         if commit:
             instance.save()

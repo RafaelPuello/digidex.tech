@@ -1,9 +1,9 @@
 from django.urls import path
 
-from .views import link_nfc_tag, get_linkable_objects
+from .views import link_nfc_tag, register_nfc_tag
 
 app_name = "ntags"
 urlpatterns = [
     path('', link_nfc_tag, name='link'),
-    path('get-linkable-objects/<int:objects_id>/', get_linkable_objects, name='get-linkable-objects'),
+    path('register/<str:uid>', register_nfc_tag, name='register-nfc-tag'),
 ]

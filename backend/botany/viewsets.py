@@ -10,7 +10,7 @@ class UserPlantViewSet(SnippetViewSet):
     menu_label = "Plants"
     menu_name = "plants"
     menu_order = 120
-    copy_view_enabled = False
+    copy_view_enabled = True
     list_display = ["name", "description"]
     list_per_page = 50
     url_namespace = "plants"
